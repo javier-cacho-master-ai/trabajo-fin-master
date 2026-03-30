@@ -1,0 +1,21 @@
+project:
+  title: "unir_master-ia_tfe_mejora-senal-astronomica"
+format:
+  typst:
+    lang: es
+    filters:
+      - _filters/process_abstracts.lua
+    template-partials:
+      - typst-template.typ
+      - typst-show.typ
+
+    code-line-numbers: true
+
+    tbl-cap-location: bottom
+    tbl-pos: "H"
+
+citeproc: true
+bibliography: references.bib
+csl: https://www.zotero.org/styles/apa-with-abstract
+nocite: |
+  @*

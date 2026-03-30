@@ -1,0 +1,52 @@
+---
+title     : "Mejora de la señal astronómica"
+author    : "Carla Sequero \ J. Javier Cacho"
+date      : 2026-02-05
+abstract  : "" 
+keywords  : []
+---
+
+## Resumen
+Esto es una prueba
+
+## Abstract
+This is a test.
+
+## Introducción
+ 
+ 
+Ver figura @fig-ejemplo.
+
+![Una figura de ejemplo](_partials/assets/logo_unir_1666x348.png){#fig-ejemplo}
+
+
+### Motivación
+
+### Planteamiento del trabajo
+
+### Estructura del trabajo
+
+## Contexto y estado del arte
+
+### Contexto del problema
+
+### Estado del arte
+
+### Conclusiones
+
+## Objetivos concretos y metodología de trabajo
+
+### Objetivo general
+
+### Objetivos específicos
+
+### Metodología de trabajo
+
+## Identificación de requisitos
+
+## Descripción de la herramienta software desarrollada
+
+## Evaluación
+
+## Referencias bibliográficas
+
