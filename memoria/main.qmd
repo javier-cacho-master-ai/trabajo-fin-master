@@ -20,6 +20,8 @@ Ver figura @fig-ejemplo.
 ![Una figura de ejemplo](_partials/assets/logo_unir_1666x348.png){#fig-ejemplo}
 
 
+Esto esta una prueba.
+
 ### Motivación
 
 ### Planteamiento del trabajo
