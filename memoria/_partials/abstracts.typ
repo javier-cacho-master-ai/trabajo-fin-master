@@ -13,7 +13,7 @@
   )[
     #counter(page).update(1)
 
-    #set heading(numbering: none)
+    #set heading(numbering: none, outlined: false)
     #set par(..styles.body_paragraph_config)
     #set table(align: center + horizon)
 
