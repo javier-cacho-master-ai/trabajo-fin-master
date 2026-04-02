@@ -4,7 +4,7 @@
 #let get_abstracts(
   header_text: none,
   abstract_es: none,
-  abstract_en: none
+  abstract_en: none,
 ) = {
   page(
     header: get_header(header_text: header_text),
@@ -13,6 +13,7 @@
   )[
     #counter(page).update(1)
 
+    #set heading(numbering: none)
     #set par(..styles.body_paragraph_config)
     #set table(align: center + horizon)
 
