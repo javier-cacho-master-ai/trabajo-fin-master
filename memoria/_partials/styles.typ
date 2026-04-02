@@ -7,10 +7,10 @@
       paper: "a4",
       margin: (x: 2cm, y: 4cm),
     ),
-    text_config: (size: 12pt),
+    text_config: (size: 12pt, font: "Calibri"),
     heading_config: (numbering: "1.1."),
     heading_rules_setup: it => {
-      set text(fill: primary_color, font: "Calibri")
+      set text(fill: primary_color)
       block(above: 2em, below: 1.5em)[
         #it
       ]

@@ -2,6 +2,8 @@ project:
   title: "unir_master-ia_tfe_mejora-senal-astronomica"
 format:
   typst:
+    font-paths: ["assets/fonts"]
+    mainfont: "Calibri"
     lang: es
     filters:
       - _filters/process_abstracts.lua
