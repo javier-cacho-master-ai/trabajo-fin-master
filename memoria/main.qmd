@@ -10,7 +10,10 @@ keywords  : []
 Esto es una prueba
 
 ## Abstract
-This is a test.
+
+The use of Machine Learning methods in astronomy has been mainly focused on classification and clustering [@djorgovski2022applications]. In recent years, Generative Adversarial Networks have been used as well to generate synthetic astronomical data -see for example @garcia2022improving. However, deep learning methods are still a novel field worthy to be explored [@ting2025deep].
+In this paper we propose an innovative approach to improve the quality of astronomical signals in the Blue and Red Spectrum wavelengths (BS/RS). By training a model from the huge amount of low resolution data collected by the Gaia mission and the cross matched best high resolution ground based observations we expect to find hidden patterns that can be applied to allow the usage of these low resolution spectrum as proxy for high resolution ones. We evaluate our method on several benchmark subsets of the original dataset by comparing it with the real observations from high resolution sources.
+
 
 ## Introducción
  
