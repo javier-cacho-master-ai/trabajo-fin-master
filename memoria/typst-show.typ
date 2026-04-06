@@ -4,9 +4,9 @@
   subtitle: [$subtitle$],
   author: "$author$",
 
-  abstract_es: "$abstract_es$",
-  abstract_en: "$abstract_en$",
-  // abstract: [$abstract$],
+  abstract_es: [$abstract_es$],
+  abstract_en: [$abstract_en$],
+
   keywords: (
     $for(keywords)$
       "$keywords$",

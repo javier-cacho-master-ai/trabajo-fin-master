@@ -16,8 +16,8 @@ format:
     tbl-cap-location: bottom
     tbl-pos: "H"
 
-citeproc: true
+citeproc: false 
 bibliography: references.bib
-csl: https://www.zotero.org/styles/apa-with-abstract
+csl: apa.csl
 nocite: |
   @*
