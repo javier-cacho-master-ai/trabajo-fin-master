@@ -4,6 +4,7 @@ author    : "Carla Sequero \ J. Javier Cacho"
 date      : 2026-02-05
 abstract  : "" 
 keywords  : []
+bibliography: references.bib
 ---
 
 ## Resumen
@@ -27,6 +28,13 @@ Esto esta una prueba.
 
 ### Motivación
 
+
+"Antes de que los astrónomos puedan estudiar un objeto celeste, deben saber dónde encontrarlo. Sin este conocimiento, los astrónomos vagarían en vano en lo que Galileo alguna vez llamó un oscuro laberinto"
+
+Misiones anteriores a Gaia de la ESA:
+- Hipparcos: lanzado en 1989, primer satélite dedicado a la astrometría. Primer release de datos en 1997 continene posiciones, distancias y movimientos de casi 120 000 estrellas, datos 200 veces mas precisos que cualquier medida anterior. Mas adelante se volvió a analizar y se obtuvo un catálogo con casi 2,5 millones de estrellas pero menos preciso. @ESA_Gaia_BR296_2013
+
+
 ### Planteamiento del trabajo
 
 ### Estructura del trabajo
@@ -34,6 +42,45 @@ Esto esta una prueba.
 ## Contexto y estado del arte
 
 ### Contexto del problema
+Para poder desarollar este trabajo, necesitamos comprender términos clave para analizar los datos. 
+El primero es el *Paralaje*. Este término es necesario para comprender como conseguimos situar cuerpos estelares en el plano estelar. La Tierra orbita alrededor del Sol provocando que se recojan diferentes observaciones del mismo cuerpo estelar. 
+<!--Buscar definición exacta de paralaje-->\\
+
+Gaia aporta datos como por ejemplo el brillo, la temperatura, la composición y la masa. Para conseguirlo, consta de 3 instrumentos para detectar la luz que recogen los telescopios del satélite. El primero, mide las posiciones estelares en el cielo, el espectómetro medirá las velocidades radiales (RVS) y, por último, el instrumento fotométrico aportará dos espectros de baja resolución de dos bandas ópticas, la azul y la roja. Con dichos espectros se podrá determinar los datos anteriormente mencionados.
+
+El satélite en cuestión se encuentra en una posción espacial conocida como L2, ubicada a 1,5 millones de kilómetros de la Tierra y donde las fuerzas gravitacionales del Sol, la Tierra y la Luna están en equilibrio. Por otro lado, el satélite, el Sol y la Tierra siempre van a permanecer alineados, impidiendo así que ninguno de los cuerpos celestes mencionados se interponga en el campo de visión de Gaia. @ESA_Gaia_Datos_Clave
+
+La información viaja a la Tierra a una velocidad de 5Mbit/s, y es captado por las antenas de Cebreros (España) y Nueva Norcia (Australia). 
+La colección de datos de Gaia comenzó el 25 de julio de 2014 y finalizó el 15 de enero de 2025, desde el 27 de Marzo de 2025 Gaia se posicionó en su órbita de retiro alrededor del Sol. 
+
+
+Para entender como Gaia recoge todos los datos que disponemos a dia de hoy, es imprescindible entender sus *Scanning Laws* o mejor dicho, las reglas que determinan como se gira y mueve Gaia para escanear el cielo. Por un lado rota sobre si mismo cada 6 horas, al mismo tiempo el eje de rotación cambia con un periodo de 63 días pero siempre manteniéndose a 45 grados respecto al Sol, finalmente como anteriormente hemos comentado, este satélite orbita alrededor del Sol junto a la Tierra.
+De estos movimientos, se estima que durente los años de missión se han obtenido unas 70 mediciones astrometicas y fotométricas junto con aproximadamente 40 mediciones espectroscópicas usables por cada estrella. @Gaia_DR3_Documentation_2023 \\
+
+Cabe destacar que los datos que usaremos durante este trabajo ya han sido procesados anteriormente por el DPAC (*Data Processing and Analysis Consortium*), para ser específicos, las unidades de coordinación 3, 5, 6 y 8.
+
+La CU3 se encarga de el procesamiento astométrico de GAIA, obteniendo por lo tanto datos acerca de los movimientos y posiciones de las estrellas. Estos datos los usaremos para definir que cuerpos celestes consideramos en el estudio.\\
+
+
+La CU5 procesa los datos fotométricos, es decir de los ya anteriormente mencionados espectros BP y RP (*Blue Photometer* y *Red Photometer*). En el último *release* de datos, la media de la data recogida los últimos 34 meses fue usada, ya que como hemos mencionado anteriormente, el satélite toma datos del mismo cuerpo varias veces. Debida a la baja definición de los espectros BR/PR, se usan los *spectral-shape coefficients* (*SCP*), una derivación de los espectros BR/PR que que permiten distribuir el flujo en bandas o rangos espectrales separados por nanómetros. 
+
+A parte, los datos fotométricos que podemos encontrar en el DR3 ya han sido preprocesados. En primer lugar, se redujo el ruido de fondo, como por ejemplo el causado por la luz solar o de otras estrellas. La complicación de este proceso parte de que el ruido introducido no es completamente aleatorio, también dependerá de la posición actual del satélite respecto al Sol, por lo que se repite periódicamente. El ruido se ubica en un rango que que puede llegar a ser de aproximadamente 27 electrones/pixel/segundo, mientras que la media habitual del ruido espacial es de 0.2 electrones/pixel/segundo.\\
+
+
+GAIA consta de diferentes *CCD*s (*Charge-Coupled Devices*), es decir, sensores que captan la luz y la convierten en una señal que se pueda captar y digitalizar. Los espejos o lentes del satélite se encuentran en angulos diferentes respecto a los detectores de señales CCD, y al mismo tiempo , como GAIA se encuentra en constante movimiento, obtenemos datos con diferentes posiciones *AL* (*Along Scan*), esto resulta en la obtención de datos del mismo cuerpo celeste pero con diferentes longitudes de onda y pequeñas deviaciones entre tomas. Por eso es necesario corregir los datos obtenidos a partir de dos procesos denominados Correcciones diferenciales geométricas y de dispersión. 
+<!--(Sección 5.3.3) por si añadimos mas información--> 
+Por último, se lleva a cabo una Calibración, interna y externa, con la que se transforman a un sistema fotométrico común todos los datos captados con diferentes escenarios y finalmente se adecuan los datos a un flujo físico universal que pueda ser comparado con la información obtenida por otros satélites.
+
+<!-- IMPORTANTE ya se han comparado datos fotométricos con los de otros sistemas 
+
+https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/cu5pho_sec_photSystem/cu5pho_ssec_photRelations.html
+
+https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/cu5pho_sec_spss/
+
+-->
+
+
+
 
 ### Estado del arte
 
