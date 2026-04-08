@@ -27,16 +27,17 @@ En Diciembre de 2013 comenzó la misión Gaia de la Agencia Espacial Europea, el
 
 La propia agencia ESA describe en el reporte publicado en 2103 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto pero sin un orden o punto de referencia, en sus propias palabras, describen lo siguiente:<br>
 
-
 >"Antes de que los astrónomos puedan estudiar un objeto celeste, deben saber dónde encontrarlo. Sin este conocimiento, los astrónomos vagarían en vano en lo que Galileo alguna vez llamó un oscuro laberinto"
 <br>
 
-Por este motivo, la misión principal de Gaia se puede considerar muy útil para continuar desarollando estudios y conocimientos acerca del universo.<br><br>
+Por este motivo, la misión principal de Gaia se puede considerar muy útil para continuar desarollando estudios y conocimientos acerca del universo.<br>
 
-Más allá de este objetivo, Gaia ha podido aportar descubrimientos de objetos celestes que anteriormente no conocíamos. @ESA_Gaia_BR296_2013
-Esta misión ha proporcionado uno de los catálogos mas extensos y precisos hasta la fecha, no solo aportando datos astrométricos, sinó que también fotométricos y espectrofotométricos. Todos estos datos se basan en mediciones de espectros de baja resolución como lo son los BP/RP. 
+<br>
 
-Otras misiones como ahora la iniciada en XXXX por XXXX con el SURVEY *Sloan Digital Sky Survey* (*SDSS*), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un alcance menor. <!--Buscar REFERENCIAS-->
+Más allá de este objetivo, Gaia ha podido aportar descubrimientos de objetos celestes que anteriormente no conocíamos [@ESA_Gaia_BR296_2013].
+Esta misión ha proporcionado uno de los catálogos mas extensos y precisos hasta la fecha [@ESA_Gaia_Ultima_Luz_2025], no solo aportando datos astrométricos, sinó que también fotométricos y espectrofotométricos. Todos estos datos se basan en mediciones de espectros de baja resolución como lo son los BP/RP. 
+
+Otras misiones como ahora la iniciada en XXXX por XXXX con el survey (proyecto astronómico) *Sloan Digital Sky Survey* (*SDSS*), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un alcance menor. <!--Buscar REFERENCIAS-->
 De este hecho parte la idea del trabajo que se desarrolla a continuación.
 
 Si pudiesemos definir una similitud entre los espectros obtenidos por Gaia y SDSS, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto a el detalle que SDSS conlleva. 
@@ -45,9 +46,25 @@ En este contexto, gracias a los avances constantes de la inteligencia artificial
 
 ### Motivación
 
+A lo largo de 2026 se publicarán los últimos datos recolectados por Gaia en un último DR4 y catálogo final DR5. Se calcula que a lo largo de la misión, unas 2 billiones de estrellas y otros objetos celestes fueron captados por el satétile. [@ESA_Gaia_Ultima_Luz_2025]
+A parte nos ha permitido disponer de una imagen reconstruida de cómo un observador vería nuestra galaxia desde el esterior de esta, permitiendo crear un mata tridimensional de alrededor de 1,3 millones de cuásares.
+Estas son solo algunas de las hazañas que se han conseguido a partir de los datos qe Gaia ha recogido durante su misión. Dichos datos partían de dos espectros de baja resolución [@ESA_Gaia_BR296_2013].
+La motivación de este trabajo parte de la pregunta "¿Que hubiese sucedido si Gaia hubiese iniciado su viaje con la posibilidad de obtener mayor resolución de los espectros captados?".<br>
+
+<br>
+
+Otros satélites como bien SDSS (ya mencionado anteriormente), presentan una resolución mucho mayor a Gaia (<!-- BUSCAR DATOS Y FUENTE-->), pero se han visto limitados por su ubicación, dado que 
+SDSS depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@SDSSV_Primeras_Observaciones_2020].<br>
+<br>
+
+Desde este punto de vista, el potencial que un satélite como Gaia hubiese desarrollado teniendo las características de Sloan, sería inimaginable. 
+Por este motivo, en este trabajo queremos centrarnos en encontrar una relación o equivalencia entre los espectros de Gaia y los de Sloan. De esta forma, podríamos comparar el mismo cuerpo celeste observado desde los dos proyectos, y así tratar de conseguir una implementación de filtros de mejora de señal en Gaia, basados en los datos obtenidos de su comparación o estudio frente a Sloan.
+
+
+<!--
 Misiones anteriores a Gaia de la ESA:
 - Hipparcos: lanzado en 1989, primer satélite dedicado a la astrometría. Primer release de datos en 1997 continene posiciones, distancias y movimientos de casi 120 000 estrellas, datos 200 veces mas precisos que cualquier medida anterior. Mas adelante se volvió a analizar y se obtuvo un catálogo con casi 2,5 millones de estrellas pero menos preciso. @ESA_Gaia_BR296_2013
-
+-->
 
 
 ### Planteamiento del trabajo
@@ -66,11 +83,12 @@ Gaia aporta datos como por ejemplo el brillo, la temperatura, la composición y 
 El satélite en cuestión se encuentra en una posción espacial conocida como L2, ubicada a 1,5 millones de kilómetros de la Tierra y donde las fuerzas gravitacionales del Sol, la Tierra y la Luna están en equilibrio. Por otro lado, el satélite, el Sol y la Tierra siempre van a permanecer alineados, impidiendo así que ninguno de los cuerpos celestes mencionados se interponga en el campo de visión de Gaia. @ESA_Gaia_Datos_Clave
 
 La información viaja a la Tierra a una velocidad de 5Mbit/s, y es captado por las antenas de Cebreros (España) y Nueva Norcia (Australia). 
-La colección de datos de Gaia comenzó el 25 de julio de 2014 y finalizó el 15 de enero de 2025, desde el 27 de Marzo de 2025 Gaia se posicionó en su órbita de retiro alrededor del Sol. <br><br>
-
+La colección de datos de Gaia comenzó el 25 de julio de 2014 y finalizó el 15 de enero de 2025, desde el 27 de Marzo de 2025 Gaia se posicionó en su órbita de retiro alrededor del Sol. <br>
 
 Para entender como Gaia recoge todos los datos que disponemos a dia de hoy, es imprescindible entender sus *Scanning Laws* o mejor dicho, las reglas que determinan como se gira y mueve Gaia para escanear el cielo. Por un lado rota sobre si mismo cada 6 horas, al mismo tiempo el eje de rotación cambia con un periodo de 63 días pero siempre manteniéndose a 45 grados respecto al Sol, finalmente como anteriormente hemos comentado, este satélite orbita alrededor del Sol junto a la Tierra.
-De estos movimientos, se estima que durente los años de missión se han obtenido unas 70 mediciones astrometicas y fotométricas junto con aproximadamente 40 mediciones espectroscópicas usables por cada estrella. @Gaia_DR3_Documentation_2023 <br><br>
+De estos movimientos, se estima que durente los años de missión se han obtenido unas 70 mediciones astrometicas y fotométricas junto con aproximadamente 40 mediciones espectroscópicas usables por cada estrella. @Gaia_DR3_Documentation_2023 <br>
+
+<br>
 
 Cabe destacar que los datos que usaremos durante este trabajo ya han sido procesados anteriormente por el DPAC (*Data Processing and Analysis Consortium*), para ser específicos, las unidades de coordinación 3, 5, 6 y 8.
 
