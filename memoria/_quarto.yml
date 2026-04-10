@@ -16,8 +16,6 @@ format:
     tbl-cap-location: bottom
     tbl-pos: "H"
 
+    include-after-body: _partials/bibliography.typ
+
 citeproc: false 
-bibliography: references.bib
-csl: apa.csl
-nocite: |
-  @*

@@ -3,8 +3,9 @@
 #let cover(
   title: "Title",
   author: "Author",
+  director: "Director",
 ) = {
-  set text(fill: styles.primary_color)
+  set text(fill: styles.primary-color)
 
   page(
     numbering: none,
@@ -34,15 +35,16 @@
     #align(bottom + center)[
       #set text(12pt)
       #grid(
-        columns: 2,
-        gutter: .8em,
-        align: left,
+        columns: (12em, 12em),
+        gutter: 1.2em,
+
+        align: top + left,
         
         [Trabajo fin de estudio presentado por:], [#author],
         
         [Tipo de trabajo], [Desarrollo de Software],
         
-        [Director], [],
+        [Director], [#director],
         
         [Fecha], [#datetime.today().display()],
       )

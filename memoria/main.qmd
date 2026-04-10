@@ -1,20 +1,21 @@
 ---
-title     : "Redes Generativas de Aprendizaje Profundo para la mejora de la señal astronómica"
-author    : "Carla Sequero \ J. Javier Cacho"
+title     : "Mejora de la señal astronómica"
+author    : |
+  Carla Sequero \
+  J. Javier Cacho
+director  : "Dr. Guillermo Torralba Elipe"
 date      : 2026-02-05
-abstract  : "" 
-keywords  : []
-bibliography: references.bib
+keywords  : [generative ai, astronomy, machine learning, bs/rs, gaia]
 ---
 
 ## Resumen
-Esto es una prueba
+
+El uso de métodos de Machine Learning en astronomía se ha centrado principalmente en la clasificación y agrupamiento [@djorgovski2022applications]. En los últimos años, las Redes Generativas Antagónicas también se han utilizado para generar datos astronómicos sintéticos -véase por ejemplo "@garcia2022improving". Sin embargo, los métodos de aprendizaje profundo siguen siendo un campo novedoso que merece ser explorado [@ting2025deep]. En este trabajo proponemos un enfoque innovador para mejorar la calidad de las señales astronómicas en las longitudes de onda del Espectro Azul y Rojo (BS/RS). Al entrenar un modelo a partir de la gran cantidad de datos de baja resolución recopilados por la misión Gaia y cruzarlas con las observaciones terrestres de alta resolución, se esperan encontrar patrones ocultos que puedan aplicarse a los datos de baja resolución para aproximar los de alta resolución. Para evaluar este método se usan varios subconjuntos del conjunto de datos original y se comparan con las observaciones reales de fuentes de alta resolución terrestres.
 
 ## Abstract
 
 The use of Machine Learning methods in astronomy has been mainly focused on classification and clustering [@djorgovski2022applications]. In recent years, Generative Adversarial Networks have been used as well to generate synthetic astronomical data -see for example @garcia2022improving. However, deep learning methods are still a novel field worthy to be explored [@ting2025deep].
 In this paper we propose an innovative approach to improve the quality of astronomical signals in the Blue and Red Spectrum wavelengths (BS/RS). By training a model from the huge amount of low resolution data collected by the Gaia mission and the cross matched best high resolution ground based observations we expect to find hidden patterns that can be applied to allow the usage of these low resolution spectrum as proxy for high resolution ones. We evaluate our method on several benchmark subsets of the original dataset by comparing it with the real observations from high resolution sources.
-
 
 ## Introducción
  
@@ -49,9 +50,7 @@ También ha permitido disponer de una imagen reconstruida sobre cómo un observa
 Cabe destacar la gran diferencia respecto a su antecesor Hipparcos, dado que dicha misión, en su release final publicó un catálogo de 2,5 millones de estrellas comparado con los aproximadamente 2 billones que Gaia datará a lo largo de toda su misión[@ESA_Gaia_BR296_2013].
 
 Estas son solo algunas de las hazañas que se han conseguido a partir de los datos qe Gaia ha recogido durante su misión. Dichos datos partían de dos espectros de baja resolución [@ESA_Gaia_BR296_2013].
-La motivación de este trabajo parte de la pregunta "¿Que hubiese sucedido si Gaia hubiese iniciado su viaje con una mayor resolución de los espectros captados?".<br>
-
-<br>
+La motivación de este trabajo parte de la pregunta "¿Que hubiese sucedido si Gaia hubiese iniciado su viaje con una mayor resolución de los espectros captados?".  
 
 Otros satélites como SDSS (ya mencionado anteriormente), presentan una resolución mucho mayor a Gaia (<!-- BUSCAR DATOS Y FUENTE-->), pero se han visto limitados por su ubicación, dado que 
 SDSS depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@SDSSV_Primeras_Observaciones_2020].<br>

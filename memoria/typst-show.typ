@@ -2,7 +2,8 @@
   lang: "$lang$",
   title: "$title$",
   subtitle: [$subtitle$],
-  author: "$author$",
+  author: [$author$],
+  director: [$director$],
 
   abstract_es: [$abstract_es$],
   abstract_en: [$abstract_en$],
