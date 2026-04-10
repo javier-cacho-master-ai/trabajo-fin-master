@@ -1,18 +1,19 @@
-#import "header.typ": get_header
+#import "header.typ": get-header
 #import "styles.typ": styles
 
-#let get_body(
-  header_text: none,
-  content: none
+#let get-body(
+  header-text: none,
+  content: none,
 ) = {
+
   page(
-    header: get_header(header_text: header_text),
+    header: get-header(header-text: header-text),
     numbering: "1",
     number-align: bottom + right,
   )[
     #counter(page).update(1)
 
-    #set par(..styles.body_paragraph_config)
+    #set par(..styles.body-paragraph-config)
     #set table(align: center + horizon)
 
     #show figure: set align(center)

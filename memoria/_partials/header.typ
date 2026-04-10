@@ -1,7 +1,7 @@
-#let get_header(
-  header_text: "header text",
+#let get-header(
+  header-text: "header text",
 ) = {
   align(right)[
-    #header_text
+    #header-text
   ]
 }

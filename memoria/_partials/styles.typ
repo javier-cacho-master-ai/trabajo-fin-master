@@ -1,21 +1,33 @@
 #let styles = {
-  let primary_color = rgb("#033142")
+  let primary-color = rgb("#033142")
 
   (
-    primary_color: primary_color,
-    page_config: (
+    primary-color: primary-color,
+    page-config: (
       paper: "a4",
       margin: (x: 2cm, y: 4cm),
     ),
-    text_config: (size: 12pt, font: "Calibri"),
-    heading_config: (numbering: "1.1."),
-    heading_rules_setup: it => {
-      set text(fill: primary_color)
-      block(above: 2em, below: 1.5em)[
-        #it
-      ]
+    text-config: (size: 12pt, font: "Calibri"),
+    heading-config: (numbering: "1.1."),
+    heading-rules-setup: it => {
+      // Base styling rule (no page break)
+      let heading-base-rule(above: 0em) = it => {
+        set text(fill: primary-color)
+        block(
+          above: above,
+          below: 1.5em,
+        )[#it]
+      }
+      let above = if it.level == 1 { 0em } else { 2em }
+
+      // Page break only for level 1 and from the 3rd occurrence onward
+      if it.level == 1 and counter(heading).get().first() > 2 {
+        pagebreak(weak: true)
+      }
+
+      heading-base-rule(above: above)(it)
     },
-    body_paragraph_config: (
+    body-paragraph-config: (
       justify: true,
       leading: 1em,
       spacing: 1.2em,

@@ -1,6 +1,6 @@
 #import "styles.typ": styles
 
-#let table_of_contents() = {
+#let table-of-contents() = {
   page(
     numbering: none,
   )[
