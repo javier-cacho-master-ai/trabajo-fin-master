@@ -1,6 +1,5 @@
 #let styles = {
   let primary-color = rgb("#033142")
-
   (
     primary-color: primary-color,
     page-config: (
@@ -30,7 +29,7 @@
     body-paragraph-config: (
       justify: true,
       leading: 1em,
-      spacing: 1.2em,
+      spacing: 2em,
       first-line-indent: 0em,
     ),
   )
