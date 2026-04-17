@@ -36,7 +36,7 @@ Por este motivo, la misión principal de Gaia se puede considerar muy útil para
 Más allá de este objetivo, Gaia ha podido aportar descubrimientos de objetos celestes que anteriormente no conocíamos [@ESA_Gaia_BR296_2013].
 Esta misión ha proporcionado uno de los catálogos mas extensos y precisos hasta la fecha [@ESA_Gaia_Ultima_Luz_2025], no solo aportando datos astrométricos, sinó que también fotométricos y espectrofotométricos. Todos estos datos se basan en mediciones de espectros de baja resolución como lo son los BP/RP.  
 
-Otras misiones como ahora la iniciada en XXXX por XXXX con el survey (proyecto astronómico) *Sloan Digital Sky Survey* (*SDSS*), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un alcance menor. <!--Buscar REFERENCIAS-->
+Otras misiones como ahora la iniciada en el año 2000 con el survey (proyecto astronómico) *Sloan Digital Sky Survey* (*SDSS* o Sloan), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un alcance menor[@SDSS_Main].
 De este hecho parte la idea del trabajo que se desarrolla a continuación.
 
 Si pudiesemos definir una similitud entre los espectros obtenidos por Gaia y SDSS, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto a el detalle que SDSS conlleva. 
@@ -67,8 +67,19 @@ Misiones anteriores a Gaia de la ESA:
 
 
 ### Planteamiento del trabajo
+El objetivo principal del trabajo que se desarrolla a continuación es diseñar un modelo basado en redes neuronales que consiga convertir espectros Gaia en SDSS y/o viceversa. De esta forma conseguiríamos encontrar un modelo que relacione los datos captados por ambos proyectos, survey o satélite.
+
+Para llevarlo a cabo, primero debemos entender las características de ambas fuentes de información, dado que los datos que usaremos deben de estar correlacionados entre ambos datasets. 
+En concreto nos centraremos en el data release número 3 de Gaia y el 19 de Sloan. 
 
 ### Estructura del trabajo
+Para llegar al objetivo descrito anteriormente, primero será necesario recopilar los datos de ambas fuentes, para así hacer un *Cross match* de los datos de SDSS y Gaia. De este proceso, sacaremos un data ser con el catálogo de estrellas que han sido observadas por ambos instrumentos y de las cuales podemos analizar de forma paralela sus datos.
+Una vez tengamos identificados los datos con los que se trabajará, analizaremos la relacion señal-ruido que se obtiene entre ambos sets de datos. 
+A continuación preprocesaremos los datos con el objetivo de poder tratarlos por igual y que una parte del ruido incluído desaparezca (dentro de las capacidades que se permitan).
+
+A partir de estos datos procesados, entrenaremos diversos modelos de inteligencia artificial con el objetivo de que aprendan la relación existente entre ambos tipos de espectro. Es decir, que aprendan la relación entre los datos de Gaia y los de Sloan.
+A partir de aquí sacaremos conclusiones sobre la aplicabilidad y la calidad de los resultados obtenidos. 
+
 
 ## Contexto y estado del arte
 
@@ -118,6 +129,17 @@ Por último, se lleva a cabo una Calibración, interna y externa, con la que se 
 El procesamiento espectroscópico de los datos de Gaia se llava a cabo en la CU6 a partir de la información recogida por el *RVS* (*Radial Velocity Spectometer*). Estos espectros de rango situado entre 845 a 872 nanómetros servirán para determinar la velocidad radial de las estrellas. Para aumentar la calidad y poder manejar la información, igual que en el caso anterior, se llevarán a cabo diferentes procesos de limpieza y corrección de dichos espectros. También se calibrarán y combinarán los diferentes valores captados por las diversas mediciones del mismo cuerpo celeste que Gaia recogió durante su misión. <br><br>  
 
 Finalmente, en la CU8, a partir de todos los datos procesados hasta el momento (astrométricos, fotométricos y espectroscópicos), se obtendrán parámetros astrofísicos como la temperatura o la fuerza gravitatoria en la superficie del cuerpo. De ahí la importancia de conseguir datos no sesgados y libres de ruido como resultado de las primeras unidades de procesamiento de la información. Las características con las que se definan los elementos observados van a depender directamente de como la data es tratada y de la calidad que esta presente.
+
+En contraposición a Gaia, este trabajo también usará y analizará datos conseguidos gracias a Sloan, projecto iniciado con el mismo objetivo que Sloan, crear un mapa tridimensional. En este caso, el mapa actual creado gracias a este *survey* continiene mas de 930 000 galaxias y 120 000 quásars. 
+La primera operación bajo el nombre SDSS comenzó en el año 2000, y sigue activo con su quinta fase SDSS-V, que tiene planteado llegar a su fin en 2027 [@SDSS_Main].
+
+El último release de SDSS, número 19, incluye la información captada por esta quinta generación que anteriormente se mencionaba [@sdsscollaboration2025nineteenthdatareleasesloan], dividiendo los datos recogidos principalmente en programas diferentes: *Milky Way Mapper* y *Black Hole Mapper*. En el primero, se recogieron los espectros ópticos e infrarojos de mas de medio millon de estrellas, en el segundo se obtuvo el espectro óptico de 300 000 galaxias y quásares. También añadieron un nuevo catálogo basado en el medio interestelar local (*Local Volume Mapper*), que se seguirá desarrollando en futuros releases. 
+Para lo que este trabajo desarrollará, será importante el primer programa. mecionado, dado que estudia la Vía Láctea y aporta espectros estelares, parametros físicos y otras características necesarias como la composición química o la velocidad radial de los cuerpos estelares. 
+
+En los siguientes apartados del trabajo, se compararán e intentará establecer una conexión entre los espectros BR/PR o BS/PS de Gaia y los ópticos que Sloan capta. 
+Por un lado, los espectros rojo y azul de Gaia trabajan en resoluciones bajas, siendo concretos, los BP se ubican entre los 330 y 680 nm [@Gaia_DR3_Summary_2023], los RP en los 640 a 10150nm, mientras que el rango espectral aproximado de SDSS se mantiene entre los 380 y 920 nm [@sdsscollaboration2025nineteenthdatareleasesloan].
+
+
 
 
 ### Estado del arte
