@@ -20,7 +20,8 @@
       let above = if it.level == 1 { 0em } else { 2em }
 
       // Page break only for level 1 and from the 3rd occurrence onward
-      if it.level == 1 and counter(heading).get().first() > 2 {
+      // if it.level == 1 and counter(heading).get().first() > 2 {
+      if it.level == 1 and counter(heading).get().first() > 1 {
         pagebreak(weak: true)
       }
 
