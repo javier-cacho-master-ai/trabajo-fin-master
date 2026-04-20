@@ -175,14 +175,14 @@ La integración y estandarización de catálogos astronómicos masivos represent
 
 Para abordar esto asuntos, el análisis del estado del arte evidencia una transaición desde el uso de estas herramientas únicamente para clasificación o agrupamiento clásico hacia el uso las GANs y autoencoders variacionales que recientemente han demostrado su utilidad para la generación de datos sintéticos realistas y se establecen ya como herramientas útiles para la calibración y otras áreas relevantes en el estudio astronómico.
 
-Avanzando aún más allá, el éxito reciente en la mejora de resolución de datos del telescopio JWST mediante modelos generativos muestra que la aplicación de estás técnicas representa una  solución viable que puede ser también aplicada en el contexto de el catálogo astronómico que ofrece Gaia.
+Avanzando aún más allá, el éxito reciente en la mejora de resolución de datos del telescopio JWST mediante modelos generativos muestra que la aplicación de estás técnicas representa una  solución viable que puede ser también aplicada en el contexto de el catálogo astronómico que ofrece Gaia.  
 
+El propósito de la propuesta planteada en este documento es profundizar en la aplicación de estas técnicas novedosas ofreciendo soluciones útiles que aporten mejoras tangibles en el ámbito de la astronomía, especificamente para la mejora de las señales contenidas en el amplio catálogo que Gaia nos ofrece.
 
 ## Objetivos concretos y metodología de trabajo
 
 ### Objetivo general
 
-El propósito de la propuesta planteada en este documento es profundizar en la aplicación de estas técnicas novedosas ofreciendo soluciones útiles que aporten mejoras tangibles en el ámbito de la astronomía, especificamente para la mejora de las señales contenidas en el amplio catálogo que Gaia nos ofrece.
 
 ### Objetivos específicos
 
