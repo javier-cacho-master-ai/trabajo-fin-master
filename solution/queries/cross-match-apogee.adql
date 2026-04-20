@@ -1,16 +1,14 @@
-SELECT 
-    gaia.source_id, 
-    gaia.ra, 
-    gaia.dec, 
-    gaia.phot_g_mean_mag,
-    apogee.teff AS apogee_teff, 
-    apogee.logg AS apogee_logg, 
-    apogee.fe_h AS apogee_metallicity
-FROM gaiadr3.gaia_source AS gaia
-JOIN external.apogee_dr17 AS apogee
-  ON 1=CONTAINS(
-    POINT('ICRS', gaia.ra, gaia.dec),
-    CIRCLE('ICRS', apogee.ra, apogee.dec, 0.00027) 
-  )
-WHERE gaia.has_xp_continuous = 'True' 
-  AND apogee.teff IS NOT NULL
+SELECT TOP 100
+    g.source_id,
+    g.ra,
+    g.dec,
+    g.phot_bp_mean_mag,
+    g.phot_rp_mean_mag,
+    g.has_xp_continuous,
+    s.original_ext_source_id AS sdss_id,
+    s.angular_distance
+FROM gaiadr3.gaia_source AS g
+JOIN gaiadr3.sdssdr13_best_neighbour AS s
+  ON g.source_id = s.source_id
+WHERE g.has_xp_continuous = 'True'
+AND s.angular_distance < 0.02
