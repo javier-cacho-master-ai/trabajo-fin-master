@@ -1,0 +1,14 @@
+SELECT
+  gaia.source_id,
+  gaia.ra,
+  gaia.dec,
+  xmatch.original_ext_source_id,
+  xmatch.angular_distance
+FROM
+  gaiadr3.gaia_source AS gaia
+  JOIN gaiadr3.panstarrs1_best_neighbour AS xmatch
+    ON gaia.source_id = xmatch.source_id
+WHERE
+  gaia.random_index BETWEEN {start_index} AND {end_index}
+  AND gaia.phot_bp_mean_mag IS NOT NULL
+  AND xmatch.angular_distance <= 0.01

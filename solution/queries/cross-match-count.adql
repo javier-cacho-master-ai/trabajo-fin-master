@@ -1,0 +1,6 @@
+SELECT count(*) 
+FROM gaiadr3.gaia_source AS g
+JOIN gaiadr3.sdssdr13_best_neighbour AS s
+  ON g.source_id = s.source_id
+WHERE g.has_xp_continuous = 'True'
+AND s.angular_distance < 0.02
