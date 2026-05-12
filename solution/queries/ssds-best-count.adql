@@ -1,2 +1,0 @@
-SELECT  top 10 *
-FROM gaiadr3.sdssdr13_best_neighbour AS s
