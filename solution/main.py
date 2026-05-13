@@ -1,14 +1,29 @@
 # %% [markdown]
 #  # Uso de redes generativas para la mejora de la señal astronómica
-# 
-#  El presente jupyter notebook contiene el código usado para el entrenamiento y creación del modelo generativo.
-# 
+#
+# El presente "notebook" documenta la extracción y emparejamiento de los datos de Gaia y SDSS.
+#
+# Puesto que SDSS tiene menos datos con espectrografía que los que proporciona el crossmatch de Gaia, para mostrar los gráficos usaremos un ejemplo aleatorio de SDSS para mostrar la misma espectrometría para ese objeto en Gaia.cÑw
+#
+# El procedimiento será el siguiente:
+# 1. De Gaia, obtener los mejores crossmatches de Gaia y SDSS
+# 2. De SDSS, obtener la referencia de la tabla de SDSS con la espectrometría (SpecObj)
+# 3. De SDSS, seleccionar un ejemplo aleatorio
+# 4. De SDSS, obtener la espectrometría para el ejemplo obtenido en 3.
+# 5. De Gaia, obtener la espectrometría para la muestra seleccionada en 1.
+# 6. De Gaia, filtrar la espectrometría para el objeto obtenido en 3.
+# 7. De Gaia y SDSS, mostrar los gráficos para el objecto obtenido en 3 
 
 # %% [markdown]
-# # Extracción de los datos
+# ## Extracción de los datos
+
 
 # %% [markdown]
-#  ### Datos filtrados de Gaia con SDSS
+# ### Obtención de una muestra de objetos
+
+# %% [markdown]
+#  #### Crossmatches Gaia SDSS
+#  Se seleccionan aleatoriamente los mejores crossmatches entre Gaia y SDSS.
 
 # %%
 from pathlib import Path
@@ -17,7 +32,7 @@ from astropy.table import Table
 
 gaia_query_path = Path("services", "queries", "gaia_sdss_random_subset.adql")
 gaia_query_template = gaia_query_path.read_text(encoding="utf-8")
-gaia_query = gaia_query_template.format(start_index=0, end_index=10000)
+gaia_query = gaia_query_template.format(start_index=10000, end_index=20000)
 
 print(f"Executing Step 1: {gaia_query_path.name}...")
 gaia_query_job = Gaia.launch_job_async(gaia_query)
@@ -26,188 +41,172 @@ gaia_job_results = gaia_query_job.get_results() or Table()
 display(gaia_job_results)
 
 # %% [markdown]
-#  ### Datos espectrales de Gaia
-# 
-# 
-# 
-#  Para los datos espectrales debemos usar el [DataLink service](https://astroquery.readthedocs.io/en/latest/gaia/gaia.html#datalink-service-public-and-authenticated)
-
-# %% [markdown]
-#  #### Obtención de los datos
+#  #### SDSS - Datos de referencia de objetos
 
 # %%
-source_ids = ",".join(gaia_job_results['source_id'].astype(str))
-
-xp_data = Gaia.load_data(
-    ids=source_ids,
-    data_release="Gaia DR3",
-    retrieval_type="XP_SAMPLED",
-    # retrieval_type="XP_CONTINUOUS",
-    data_structure="INDIVIDUAL",
-    format="votable",
-    dump_to_file=False, # Datos en memoria
-)
-
-display(xp_data)
-
-
-# %% [markdown]
-#  #### Graficado de los datos
-
-# %%
-
-## Ejemplo de múltiples sources
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-df = pd.concat(
-    [v[0].to_table().to_pandas().assign(
-        source=key.split()[-1].replace('.xml', '')
-    ) for key, v in xp_data.items()],
-    ignore_index=True
-)
-
-sns.lineplot(data=df, x='wavelength', y='flux', hue='source')
-plt.show()
-
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-from matplotlib.collections import LineCollection
-from matplotlib.colors import Normalize
-from matplotlib.cm import ScalarMappable
-
-# 1. Build a flat DataFrame for a single spectrum (first source in xp_data)
-first_key = next(iter(xp_data))
-raw = xp_data[first_key][0].to_table().to_pandas()
-spectrum_df = pd.DataFrame({
-    'Wavelengt': raw['wavelength'],
-    'Flux': raw['flux']
-})
-
-# 2. Set the aesthetic theme globally (same as your example)
-sns.set_theme(style="ticks", rc={"axes.grid": True, "grid.linestyle": "--"})
-
-plt.figure(figsize=(12, 5))
-
-# 3. Plot a line whose colour changes from blue (short λ) to red (long λ) 
-#    (Seaborn does not provide this directly; we use a LineCollection)
-x = spectrum_df['Wavelengt'].values
-y = spectrum_df['Flux'].values
-
-norm = Normalize(vmin=x.min(), vmax=x.max())
-cmap = plt.get_cmap('coolwarm')          # blue -> red
-
-points = np.array([x, y]).T.reshape(-1, 1, 2)
-segments = np.concatenate([points[:-1], points[1:]], axis=1)
-
-lc = LineCollection(segments, cmap=cmap, norm=norm, linewidth=0.8)
-lc.set_array(x)                           # colour each segment by its x-start
-plt.gca().add_collection(lc)
-
-# 4. Axis labels and limits
-plt.xlabel('Longitud de Onda (nm)')
-plt.ylabel('Flujo (W / (nm m²))')
-plt.xlim(x.min(), x.max())
-plt.ylim(y.min(), y.max())
-
-# Optional colour bar to show the mapping
-cbar = plt.colorbar(ScalarMappable(norm=norm, cmap=cmap), ax=plt.gca())
-cbar.set_label('Wavelength (nm)')
-
-plt.tight_layout()
-plt.show()
-
-
-
-# %%
-import re
 from astroquery.sdss import SDSS
 from astropy.io import ascii
 from astropy.table import Table
-
-def sanitize_adql(raw_query: str) -> str:
-    """Removes SQL comments and compresses whitespace into single spaces."""
-    # 1. Remove block comments (/* ... */)
-    # The re.DOTALL flag allows '.' to match newline characters
-    no_blocks = re.sub(r'/\*.*?\*/', '', raw_query, flags=re.DOTALL)
-    
-    # 2. Remove inline comments (-- ...)
-    no_inlines = re.sub(r'--.*', '', no_blocks)
-    
-    # 3. Compress remaining whitespace (tabs, newlines, multiple spaces)
-    return re.sub(r'\s+', ' ', no_inlines).strip()
+import services.querying as sq
 
 gaia_crossmatch_ids = gaia_job_results["original_ext_source_id"]
 query_filter_ids = ",".join(gaia_crossmatch_ids.astype(str))
 
 sdss_query_path = Path("services", "queries", "sdss.adql")
 sdss_query_template = sdss_query_path.read_text(encoding="utf-8")
-sdss_query_template_sanitized = sanitize_adql(sdss_query_template)
+sdss_query_template_sanitized = sq.sanitize_adql(sdss_query_template)
 sdss_query = sdss_query_template_sanitized.format(filter_ids=query_filter_ids)
 
 sdss_query_result = SDSS.query_sql(sdss_query, data_release=13)
 
-# print(sdss_query_result.keys.filter['flux'])
-
 display(sdss_query_result)
 
 
-
-# %%
-import astropy.units as u
-
-spectra = SDSS.get_spectra(
-    plate=sdss_query_result["plate"][0],
-    mjd=sdss_query_result["mjd"][0],
-    fiberID=sdss_query_result["fiberID"][0],
-    data_release=13,
-)
-
-data = spectra[0][1].data
-
-
-wavelength = 0.1 * 10 ** data["loglam"]
-flux = data["flux"] * 1e-17 * u.erg / (u.cm**2 * u.s * u.AA)
- 
-plt.figure(figsize=(12, 5))
-plt.plot(wavelength, flux)
-plt.xlabel("Wavelength [nm]")
-plt.ylabel("Flux")
-plt.show()
+# %% [markdown]
+#  ### Obtención de los datos de espectrometría
 
 # %% [markdown]
-#  Mostrar el Gráfico
+#  #### SDSS - Selección ejemplo aleatorio
 
 # %%
-import seaborn as sns
-import pandas as pd
-import matplotlib.pyplot as plt
+import random as rnd
+sdss_sample_object = rnd.choice(sdss_query_result)
 
-# 1. We must force the raw FITS arrays into a DataFrame for Seaborn
-spectrum_df = pd.DataFrame({
-    'Wavelength': 10 ** spec_data['loglam'],
-    'Flux': spec_data['flux']
-})
+display(sdss_sample_object)
 
-# 2. Set the aesthetic theme globally (this replaces plt.grid and background tweaks)
-sns.set_theme(style="ticks", rc={"axes.grid": True, "grid.linestyle": "--"})
+# %% [markdown]
+# #### SDSS - Espectrometría para el ejemplo
 
-plt.figure(figsize=(12, 5))
+# %%
 
-# 3. The Seaborn plot command
-sns.lineplot(
-    data=spectrum_df, 
-    x='Wavelength', 
-    y='Flux', 
-    color='black', 
-    linewidth=0.8
+sdss_spectra_response = (
+    SDSS.get_spectra(
+        plate=sdss_sample_object["plate"],
+        mjd=sdss_sample_object["mjd"],
+        fiberID=sdss_sample_object["fiberID"],
+        data_release=13,
+    )
+    or []
 )
 
-plt.ylabel(r"Flux ($10^{-17} \text{ erg/cm}^2\text{/s/\AA}$)")
-plt.xlim(3800, 9200) 
-plt.show()
+# help(sdss_spectra_response)
+# dir(sdss_spectra_response)
+# print(sdss_spectra_response)
+
+sdss_fits_file = sdss_spectra_response[0]
+sdss_spectra_hdu = sdss_fits_file[
+    1
+]  # La primera tabla después de la cabecera contiene los datos
+sdss_spectra_data = sdss_spectra_hdu.data
+
+display(sdss_spectra_data)
+
+# %% [markdown]
+# #### Gaia - Espectrometría para la muestra
+
+# %% [markdown]
+#  Para los datos espectrales debemos usar el [DataLink service](https://astroquery.readthedocs.io/en/latest/gaia/gaia.html#datalink-service-public-and-authenticated)
+
+# %%
+source_ids = ",".join(gaia_job_results["source_id"].astype(str))
+
+gaia_spectra_data = Gaia.load_data(
+    ids=source_ids,
+    data_release="Gaia DR3",
+    retrieval_type="XP_SAMPLED",
+    # retrieval_type="XP_CONTINUOUS",
+    data_structure="INDIVIDUAL",
+    format="votable",
+    dump_to_file=False,  # Datos en memoria
+)
+
+display(gaia_spectra_data)
+
+# %% [markdown]
+# #### Gaia - Espectrometría para el ejemplo
+# Obtenemos la referencia en Gaia para el objecto de muestra de SDSS
+
+# %%
+
+gaia_sample_object_source_id = gaia_job_results[
+  gaia_job_results["original_ext_source_id"]
+  == sdss_sample_object["bestObjID"]
+]['source_id'].item()
+
+display(gaia_sample_object_source_id)
+
+# %% [markdown]
+# Y obtenemos la espctrometría para esa referencia.
+
+# %%
+# display(gaia_spectra_data.keys())
+
+gaia_sample_object_spectrum_file_name = (
+  f"XP_SAMPLED-Gaia DR3 {gaia_sample_object_source_id}.xml"
+)
+gaia_sample_object_spectrum_file_name = 'XP_SAMPLED-Gaia DR3 1065122928444442752.xml'
+gaia_spectra_data[gaia_sample_object_spectrum_file_name]
 
 
+# %% [markdown]
+# ### Gráficos comparativos
+
+# %% [markdown]
+# #### SDSS - Flujo y Longitud de Onda para una objeto
+
+# %%
+from services.sdss import parse_to_si
+from services.plotting import plot_physical_spectrum
+
+wavelength = sdss_spectra_data["loglam"]
+flux = sdss_spectra_data["flux"]
+
+sdss_spectrum_si = parse_to_si(wavelength, flux)
+
+plot_physical_spectrum(
+    spectrum=sdss_spectrum_si,
+    title=f"Espectro de SDSS (Unidades SI) - objID: {sdss_sample_object['bestObjID']})",
+)
+
+
+# %% [markdown]
+# #### Gaia - Flujo y Longitud de Onda para una objeto
+
+# %%
+print(gaia_spectra_data)
+
+# %%
+import services.plotting as spl
+from specutils import Spectrum
+import astropy.units as u
+
+first_key = next(iter(gaia_spectra_data))
+raw_table = gaia_spectra_data[first_key][0].to_table()
+
+gaia_object_spectrum = Spectrum(
+    spectral_axis=u.Quantity(raw_table["wavelength"], unit=u.nm),
+    flux=u.Quantity(raw_table["flux"], unit=u.Unit("W / (m2 nm)")),
+)
+
+spl.plot_physical_spectrum(
+    spectrum=gaia_object_spectrum, title="Espectro de Gaia para un objeto"
+)
+
+# # %% [markdown]
+# # #### Gaia - Flujo y Longitud de Onda para múltiples objetos
+
+# # %%
+# import pandas as pd
+# import seaborn as sns
+# import matplotlib.pyplot as plt
+
+# df = pd.concat(
+#     [
+#         v[0].to_table().to_pandas().assign(source=key.split()[-1].replace(".xml", ""))
+#         for key, v in gaia_spectra_data.items()
+#     ],
+#     ignore_index=True,
+# )
+
+# sns.lineplot(data=df, x="wavelength", y="flux", hue="source")
+# plt.show()

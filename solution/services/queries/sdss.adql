@@ -1,16 +1,13 @@
-SELECT 
-  p.objID, 
-  s.specObjID, 
-  s.plate, 
-  s.mjd, 
-  s.fiberID,
-  s.z AS redshift,
-  *
-FROM 
-  PhotoObj AS p
-JOIN 
-  SpecObj AS s ON p.objID = s.bestObjID
+SELECT
+  s.bestObjID
+  ,s.specObjID
+  ,s.plate
+  ,s.mjd
+  ,s.fiberID
+  ,s.z AS redshift
+FROM
+  SpecObj AS s
 WHERE 
-  p.CLEAN = 1 -- 
-  AND s.sciencePrimary = 1
-  AND p.objID IN ({filter_ids})
+  1=1
+  AND s.sciencePrimary = 1 -- Evita duplicados para el mismo objecto celeste
+  AND s.bestObjID IN ({filter_ids})
