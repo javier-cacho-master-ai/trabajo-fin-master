@@ -1,0 +1,16 @@
+SELECT 
+  p.objID, 
+  s.specObjID, 
+  s.plate, 
+  s.mjd, 
+  s.fiberID,
+  s.z AS redshift,
+  *
+FROM 
+  PhotoObj AS p
+JOIN 
+  SpecObj AS s ON p.objID = s.bestObjID
+WHERE 
+  p.CLEAN = 1 -- 
+  AND s.sciencePrimary = 1
+  AND p.objID IN ({filter_ids})
