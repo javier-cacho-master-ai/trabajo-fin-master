@@ -12,7 +12,7 @@
 # 4. De SDSS, obtener la espectrometría para el ejemplo obtenido en 3.
 # 5. De Gaia, obtener la espectrometría para la muestra seleccionada en 1.
 # 6. De Gaia, filtrar la espectrometría para el objeto obtenido en 3.
-# 7. De Gaia y SDSS, mostrar los gráficos para el objecto obtenido en 3 
+# 7. De Gaia y SDSS, mostrar los gráficos para el objecto obtenido en 3
 
 # %% [markdown]
 # ## Extracción de los datos
@@ -70,6 +70,7 @@ display(sdss_query_result)
 
 # %%
 import random as rnd
+
 sdss_sample_object = rnd.choice(sdss_query_result)
 
 display(sdss_sample_object)
@@ -109,44 +110,58 @@ display(sdss_spectra_data)
 
 # %%
 source_ids = ",".join(gaia_job_results["source_id"].astype(str))
+source_ids = "1265515347877933440"
 
 gaia_spectra_data = Gaia.load_data(
     ids=source_ids,
     data_release="Gaia DR3",
-    retrieval_type="XP_SAMPLED",
-    # retrieval_type="XP_CONTINUOUS",
+    # retrieval_type="XP_SAMPLED",
+    retrieval_type="XP_CONTINUOUS",
     data_structure="INDIVIDUAL",
     format="votable",
     dump_to_file=False,  # Datos en memoria
 )
 
-display(gaia_spectra_data)
+# %%
+# Grab the very first table from the nested structure
+table = list(gaia_spectra_data.values())[0][0].to_table()
+
+# The columns are right there
+print(table.colnames)
 
 # %% [markdown]
 # #### Gaia - Espectrometría para el ejemplo
 # Obtenemos la referencia en Gaia para el objecto de muestra de SDSS
 
 # %%
-
 gaia_sample_object_source_id = gaia_job_results[
-  gaia_job_results["original_ext_source_id"]
-  == sdss_sample_object["bestObjID"]
-]['source_id'].item()
+    gaia_job_results["original_ext_source_id"] == sdss_sample_object["bestObjID"]
+]["source_id"].item()
 
+display(type(gaia_sample_object_source_id))
 display(gaia_sample_object_source_id)
 
 # %% [markdown]
 # Y obtenemos la espctrometría para esa referencia.
 
 # %%
-# display(gaia_spectra_data.keys())
+import gaiaxpy
+import astropy.units as u
+from specutils import Spectrum
 
-gaia_sample_object_spectrum_file_name = (
-  f"XP_SAMPLED-Gaia DR3 {gaia_sample_object_source_id}.xml"
-)
-gaia_sample_object_spectrum_file_name = 'XP_SAMPLED-Gaia DR3 1065122928444442752.xml'
-gaia_spectra_data[gaia_sample_object_spectrum_file_name]
+# 1. Calibrate functionally using gaiaxpy
+source_ids = [gaia_sample_object_source_id]
+calibrated_spectra, sampling_grid = gaiaxpy.calibrate(source_ids)
 
+# 2. Extract arrays and attach Astropy units
+flux_array = calibrated_spectra["flux"].iloc[0]
+wavelength_qty = sampling_grid * u.nm
+flux_qty = flux_array * (u.W / (u.m**2 * u.nm))
+
+# 3. Instantiate the standard specutils Spectrum1D object
+gaia_object_spectrum = Spectrum(flux=flux_qty, spectral_axis=wavelength_qty)
+
+display(gaia_object_spectrum)
 
 # %% [markdown]
 # ### Gráficos comparativos
@@ -173,20 +188,9 @@ plot_physical_spectrum(
 # #### Gaia - Flujo y Longitud de Onda para una objeto
 
 # %%
-print(gaia_spectra_data)
-
-# %%
 import services.plotting as spl
 from specutils import Spectrum
 import astropy.units as u
-
-first_key = next(iter(gaia_spectra_data))
-raw_table = gaia_spectra_data[first_key][0].to_table()
-
-gaia_object_spectrum = Spectrum(
-    spectral_axis=u.Quantity(raw_table["wavelength"], unit=u.nm),
-    flux=u.Quantity(raw_table["flux"], unit=u.Unit("W / (m2 nm)")),
-)
 
 spl.plot_physical_spectrum(
     spectrum=gaia_object_spectrum, title="Espectro de Gaia para un objeto"
@@ -210,3 +214,5 @@ spl.plot_physical_spectrum(
 
 # sns.lineplot(data=df, x="wavelength", y="flux", hue="source")
 # plt.show()
+
+# %%
