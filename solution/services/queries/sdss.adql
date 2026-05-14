@@ -1,0 +1,13 @@
+SELECT
+  s.bestObjID
+  ,s.specObjID
+  ,s.plate
+  ,s.mjd
+  ,s.fiberID
+  ,s.z AS redshift
+FROM
+  SpecObj AS s
+WHERE 
+  1=1
+  AND s.sciencePrimary = 1 -- Evita duplicados para el mismo objecto celeste
+  AND s.bestObjID IN ({filter_ids})
