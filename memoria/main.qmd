@@ -1,21 +1,20 @@
 ---
-title     : "Mejora de la señal astronómica"
+title     : "Redes Generativas de Aprendizaje Profundo para la mejora de la señal astronómica"
 author    : |
   Carla Sequero \
   J. Javier Cacho
 director  : "Dr. Guillermo Torralba Elipe"
 date      : 2026-02-05
-keywords  : [generative ai, astronomy, machine learning, bs/rs, gaia]
+keywords  : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
 ---
 
 ## Resumen
 
-El uso de métodos de Machine Learning en astronomía se ha centrado principalmente en la clasificación y agrupamiento [@djorgovski2022applications]. En los últimos años, las Redes Generativas Antagónicas también se han utilizado para generar datos astronómicos sintéticos -véase por ejemplo "@garcia2022improving". Sin embargo, los métodos de aprendizaje profundo siguen siendo un campo novedoso que merece ser explorado [@ting2025deep]. En este trabajo proponemos un enfoque innovador para mejorar la calidad de las señales astronómicas en las longitudes de onda del Espectro Azul y Rojo (BS/RS). Al entrenar un modelo a partir de la gran cantidad de datos de baja resolución recopilados por la misión Gaia y cruzarlas con las observaciones terrestres de alta resolución, se esperan encontrar patrones ocultos que puedan aplicarse a los datos de baja resolución para aproximar los de alta resolución. Para evaluar este método se usan varios subconjuntos del conjunto de datos original y se comparan con las observaciones reales de fuentes de alta resolución terrestres.
+En este trabajo proponemos un enfoque innovador para mejorar la calidad de las señales astronómicas en las longitudes de onda del Espectro Azul y Rojo (BS/RS) del satélite Gaia. Al entrenar un modelo a partir de la gran cantidad de datos de baja resolución recopilados por la misión Gaia y cruzarlas con las observaciones terrestres de alta resolución, se esperan encontrar patrones ocultos que puedan aplicarse a los datos de baja resolución para aproximar los de alta resolución. Para evaluar este método se usan varios subconjuntos del conjunto de datos original y se comparan con las observaciones reales de fuentes de alta resolución terrestres.
 
 ## Abstract
 
-The use of Machine Learning methods in astronomy has been mainly focused on classification and clustering [@djorgovski2022applications]. In recent years, Generative Adversarial Networks have been used as well to generate synthetic astronomical data -see for example @garcia2022improving. However, deep learning methods are still a novel field worthy to be explored [@ting2025deep].
-In this paper we propose an innovative approach to improve the quality of astronomical signals in the Blue and Red Spectrum wavelengths (BS/RS). By training a model from the huge amount of low resolution data collected by the Gaia mission and the cross matched best high resolution ground based observations we expect to find hidden patterns that can be applied to allow the usage of these low resolution spectrum as proxy for high resolution ones. We evaluate our method on several benchmark subsets of the original dataset by comparing it with the real observations from high resolution sources.
+In this paper we propose an innovative approach to improve the quality of astronomical signals in the Blue and Red Spectrum wavelengths (BS/RS) provided by Gaia satelite. By training a model from the huge amount of low resolution data collected by the Gaia mission and the cross matched best high resolution ground based observations we expect to find hidden patterns that can be applied to allow the usage of these low resolution spectrum as proxy for high resolution ones. We evaluate our method on several benchmark subsets of the original dataset by comparing it with the real observations from high resolution sources.
 
 ## Introducción
  
@@ -24,22 +23,22 @@ Ver figura @fig-ejemplo.
 
 ![Una figura de ejemplo](_partials/assets/logo_unir_1666x348.png){#fig-ejemplo}
 -->
-En Diciembre de 2013 comenzó la misión GAIA (*Global Astrometric Interferometer for Astrophysics*) de la Agencia Espacial Europea. El satélite que mencionaremos de ahora en adelante como Gaia, fue puesto en el espacio con el objetivo de crear un mapa que permita conocer mas detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de ESA, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en el 1989 y finalizó en el 1993. Los datos que Gaia aporta son 200 veces mas precisos que los obtenidos por dicho satélite, pero aún así, de menor calidad que los obtenidos por otras misiones[@ESA_Gaia_Overview].  
+En diciembre de 2013 comenzó la misión GAIA [@Gaia_DR3_Documentation_2023] con el objetivo de crear un mapa que permita conocer más detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de ESA, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en el 1989 y finalizó en el 1993. Los datos que Gaia aporta son 200 veces más precisos que los obtenidos por dicho satélite, pero aun así, de menor calidad que los obtenidos por otros proyectos actuales [@ESA_Gaia_Overview].  
 
-La propia agencia ESA describe en el reporte publicado en 2013 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto pero sin un orden o punto de referencia, en sus propias palabras, describen lo siguiente:<br>
+La propia agencia ESA describe en el reporte publicado en 2013 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto, pero sin un orden o punto de referencia, en sus propias palabras, describen lo siguiente:<br>
 
 >"Antes de que los astrónomos puedan estudiar un objeto celeste, deben saber dónde encontrarlo. Sin este conocimiento, los astrónomos vagarían en vano en lo que Galileo alguna vez llamó un oscuro laberinto"
 <br>
 
-Por este motivo, la misión principal de Gaia se puede considerar muy útil para continuar desarollando estudios y conocimientos acerca del universo.  
+Por este motivo, la misión principal de Gaia se puede considerar muy útil para continuar desarrollando estudios y conocimientos acerca del universo.  
 
 Más allá de este objetivo, Gaia ha podido aportar descubrimientos de objetos celestes que anteriormente no conocíamos [@ESA_Gaia_BR296_2013].
-Esta misión ha proporcionado uno de los catálogos mas extensos y precisos hasta la fecha [@ESA_Gaia_Ultima_Luz_2025], no solo aportando datos astrométricos, sinó que también fotométricos y espectrofotométricos. Todos estos datos se basan en mediciones de espectros de baja resolución como lo son los BP/RP.  
+Esta misión ha proporcionado uno de los catálogos más extensos y precisos hasta la fecha [[@Gaia_DR3_Documentation_2023]], no solo aportando datos astrométricos, sino que también fotométricos y espectrofotométricos. 
 
-Otras misiones como ahora la iniciada en XXXX por XXXX con el survey (proyecto astronómico) *Sloan Digital Sky Survey* (*SDSS*), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un alcance menor. <!--Buscar REFERENCIAS-->
+Otras misiones, como ahora la iniciada en el año 2000 con *Sloan Digital Sky Survey* (*SDSS*), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un alcance menor [@SDSS_Main].
 De este hecho parte la idea del trabajo que se desarrolla a continuación.
 
-Si pudiesemos definir una similitud entre los espectros obtenidos por Gaia y SDSS, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto a el detalle que SDSS conlleva. 
+Si se pudiese definir una similitud entre los espectros obtenidos por Gaia y SDSS, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto al la calidad y detalle que SDSS conlleva. 
 En este contexto, gracias a los avances constantes de la inteligencia artificial, en este trabajo proponemos explorar técnicas que nos permitan llevar a cabo este objetivo; convertir espectros de Gaia en su equivalente SDSS y viceversa.
 
 
@@ -47,16 +46,15 @@ En este contexto, gracias a los avances constantes de la inteligencia artificial
 
 A lo largo de 2026 se publicarán los últimos datos recolectados por Gaia en un último DR4 y catálogo final DR5. Se calcula que a lo largo de la misión, unos 2 billiones de estrellas y otros objetos celestes fueron captados por el satélite. [@ESA_Gaia_Ultima_Luz_2025]
 También ha permitido disponer de una imagen reconstruida sobre cómo un observador vería nuestra galaxia desde el exterior de esta, pudiendo crear así un mapa tridimensional de alrededor de 1,3 millones de cuásares. 
-Cabe destacar la gran diferencia respecto a su antecesor Hipparcos, dado que dicha misión, en su release final publicó un catálogo de 2,5 millones de estrellas comparado con los aproximadamente 2 billones que Gaia datará a lo largo de toda su misión[@ESA_Gaia_BR296_2013].
+Cabe destacar la gran diferencia respecto a su antecesor Hipparcos, dado que dicha misión, en su *release* final publicó un catálogo de 2,5 millones de estrellas comparado con los aproximadamente 2 billones que Gaia datará a lo largo de toda su misión [@ESA_Gaia_BR296_2013].
 
-Estas son solo algunas de las hazañas que se han conseguido a partir de los datos qe Gaia ha recogido durante su misión. Dichos datos partían de dos espectros de baja resolución [@ESA_Gaia_BR296_2013].
+Estas son solo algunas de las hazañas que se han conseguido a partir de los datos que Gaia ha recogido hasta la actualidad durante su misión. Dichos datos partían de dos espectros de baja resolución [@ESA_Gaia_BR296_2013].
 La motivación de este trabajo parte de la pregunta "¿Que hubiese sucedido si Gaia hubiese iniciado su viaje con una mayor resolución de los espectros captados?".  
 
-Otros satélites como SDSS (ya mencionado anteriormente), presentan una resolución mucho mayor a Gaia (<!-- BUSCAR DATOS Y FUENTE-->), pero se han visto limitados por su ubicación, dado que 
-SDSS depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@SDSSV_Primeras_Observaciones_2020].<br>
+Otros satélites como SDSS (ya mencionado anteriormente), presentan una resolución mayor a Gaia, pero se han visto limitados por su ubicación, dado que SDSS depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@SDSSV_Primeras_Observaciones_2020].<br>
 <br>
 
-Desde este punto de vista, el potencial que un satélite como Gaia hubiese desarrollado teniendo las características de Sloan, parece indescigrable. 
+Desde este punto de vista, el potencial que un satélite como Gaia hubiese desarrollado teniendo las características de Sloan, parece indescifrable. 
 Por este motivo, en este trabajo queremos centrarnos en encontrar una relación o equivalencia entre los espectros de Gaia y los de Sloan. De esta forma, podríamos comparar el mismo cuerpo celeste observado desde los dos proyectos, y así tratar de conseguir una implementación de filtros de mejora de señal en Gaia, basados en los datos obtenidos de su comparación o estudio frente a Sloan.
 
 
@@ -67,58 +65,107 @@ Misiones anteriores a Gaia de la ESA:
 
 
 ### Planteamiento del trabajo
+El objetivo principal del trabajo que se desarrolla a continuación es diseñar un modelo basado en redes neuronales que consiga convertir espectros Gaia en SDSS y/o viceversa. De esta forma conseguiríamos encontrar un modelo que relacione los datos captados por ambos proyectos, survey o satélite.
+
+Para llevarlo a cabo, primero debemos entender las características de ambas fuentes de información, dado que los datos que usaremos deben de estar correlacionados entre ambos datasets. 
+En concreto nos centraremos en el data release número 3 de Gaia y el 13 de Sloan, dado que estos son los que en el DR3 de Gaia ya encontramos semi comparados, o por lo menos las asociaciones de neighborhood hechas [@Gaia_DR3_Documentation_2023].
+
+Cabe destacar que aunque a lo largo del trabajo el objetivo es conseguir una relación entre los dos espectros mencionados a través de un modelo basado en inteligencia artificial, la finalidad es poder mejorar la calidad de las mediciones que Gaia ha tomado durante su misión. En otras palabras, el trabajo pretende mejorar los datos de Gaia aproximándolos a datos de Sloan, dado que estos tienen una mejor resolución. 
+
+Dentro de los datasets a mejorar que podrían haber sido escogidos, Gaia es uno de los más nuevos y/o actuales, pero al mismo tiempo es relativamente de fácil acceso. 
 
 ### Estructura del trabajo
+Para llegar al objetivo descrito anteriormente, primero será necesario recopilar los datos de ambas fuentes, para así hacer un *Cross match* de los datos de SDSS y Gaia. De este proceso, sacaremos un data set con el catálogo de estrellas que han sido observadas por ambos instrumentos y de las cuales podemos analizar de forma paralela sus datos o espectros, para ser más precisos.
+Una vez tengamos identificados los datos con los que se trabajará, analizaremos la relación señal-ruido que se obtiene en ambos sets de datos. 
+A continuación, preprocesaremos los datos con el objetivo de poder tratarlos por igual y descartar todas las anomalías que puedan estropear el comportamiento de futuros modelos.
+
+A partir de estos datos procesados, entrenaremos diversos modelos de inteligencia artificial con el objetivo de que aprendan la relación existente entre ambos tipos de espectro. Es decir, que aprendan la relación entre los datos de Gaia y los de Sloan.
+A partir de aquí sacaremos conclusiones sobre la aplicabilidad y la calidad de los resultados obtenidos. 
+
 
 ## Contexto y estado del arte
+
+En el desarrollo de un estudio como el que se llevará a cabo en este documento, no solo es importante entender las conclusiones a las que se llega, sino que el contexto que encamina las decisiones tomadas es esencial. No solo es necesario tener una buena base de conocimientos sobre el tema, comprender el proceso de las investigaciones similares que llevaron al punto donde nos ubicamos a día de hoy es importante. 
 
 ### Contexto del problema
 <!-- Para poder desarollar este trabajo, necesitamos comprender términos clave para analizar los datos. El primero es el *Paralaje*. Este término es necesario para comprender como conseguimos situar cuerpos estelares en el plano estelar. La Tierra orbita alrededor del Sol provocando que se recojan diferentes observaciones del mismo cuerpo estelar.
 
-Buscar definición exacta de paralaje-->
+Buscar definición exacta de paralaje
 
-<!-- A partir de aquí todo menos lo que se indique explicitamente viene de aquí Gaia_DR3_Documentation_2023 -->
+Todos estos datos se basan en mediciones de espectros de baja resolución como lo son los BP/RP (*Blue Photometer / Red Photometer*), a los cuales denominaremos a lo largo del trabajo como BS/RS (*Blue Spectrum / Red Spectrum*).  
 
-Antes de enfocarnos en el desarollo central de este trabajo, debemos contextualizar con que datos trabajaremos y cuales son sus características. 
-En primer lugar nos centraremos en el satélite Gaia y el tipo de datos que aporta junto a como los obtiene. Gaia es el satélite principal de esta investigación, es el que aporta la motivación principal del trabajo, tiene muchos datos, pero con mucho ruido y por lo tanto mucho margen de error.  
+ A partir de aquí todo menos lo que se indique explicitamente viene de aquí Gaia_DR3_Documentation_2023 -->
+
+Antes de enfocarnos en el desarrollo central de este trabajo, debemos contextualizar con que datos trabajaremos y cuáles son sus características. 
+En primer lugar, nos centraremos en el satélite Gaia y el tipo de datos que aporta junto a como los obtiene. Gaia es el satélite principal de esta investigación, es el que aporta la motivación principal del trabajo, tiene muchos datos, pero con mucho ruido y, por lo tanto, mucho margen de error.  
 
 Los datos de Gaia serán comparados con los del survey SDSS o Sloan, como lo llamaremos en este estudio. 
 Deberemos encontrar las relaciones entre los datos que aportan ambos satélites para ser capaces de transformar espectros de Sloan en Gaia o viceversa.  
 
-Comenzaremos con una descripción detallada acerca de como los datos de Gaia son recogidos y tratados.  
+Comenzaremos con una descripción detallada acerca de como los datos de Gaia son recogidos y tratados, basándonos en la descripción dada en el paper de su tercer data release @Gaia_DR3_Documentation_2023  
+
+El satélite Gaia aporta datos como por ejemplo el brillo, la temperatura, la composición y la masa. Para conseguirlo, consta de 3 instrumentos para detectar la luz que recogen los telescopios del satélite. El primero, conocido como astrómetro, mide las posiciones estelares en el cielo, el espectómetro medirá las velocidades radiales (RVS) y, por último, el instrumento fotométrico aportará dos espectros de baja resolución de dos bandas ópticas, la azul y la roja. Con dichos espectros se podrá determinar los datos anteriormente mencionados.   
 
 
-El satélite Gaia aporta datos como por ejemplo el brillo, la temperatura, la composición y la masa. Para conseguirlo, consta de 3 instrumentos para detectar la luz que recogen los telescopios del satélite. El primero, conocido como astrómetro, mide las posiciones estelares en el cielo, el espectómetro medirá las velocidades radiales (RVS) y, por último, el instrumento fotométrico aportará dos espectros de baja resolución de dos bandas ópticas, la azul y la roja. Con dichos espectros se podrá determinar los datos anteriormente mencionados. @Gaia_DR3_Documentation_2023
-
-El satélite en cuestión se encuentra en una posción espacial conocida como L2, ubicada a 1,5 millones de kilómetros de la Tierra y donde las fuerzas gravitacionales del Sol, la Tierra y la Luna están en equilibrio. Por otro lado, el satélite, el Sol y la Tierra siempre van a permanecer alineados, impidiendo así que ninguno de los cuerpos celestes mencionados se interponga en el campo de visión de Gaia. @ESA_Gaia_Datos_Clave
+El satélite en cuestión se encuentra en una posición espacial conocida como L2, ubicada a 1,5 millones de kilómetros de la Tierra y donde las fuerzas gravitacionales del Sol, la Tierra y la Luna están en equilibrio. Por otro lado, el satélite, el Sol y la Tierra siempre van a permanecer alineados, impidiendo así que ninguno de los cuerpos celestes mencionados se interponga en el campo de visión de Gaia [@ESA_Gaia_Datos_Clave]. 
 
 La información viaja a la Tierra a una velocidad de 5Mbit/s, y es captado por las antenas de Cebreros (España) y Nueva Norcia (Australia). 
-La colección de datos de Gaia comenzó el 25 de julio de 2014 y finalizó el 15 de enero de 2025, desde el 27 de Marzo de 2025 Gaia se posicionó en su órbita de retiro alrededor del Sol[@ESA_Gaia_Overview]. <br>
+La colección de datos de Gaia comenzó el 25 de julio de 2014 y finalizó el 15 de enero de 2025, desde el 27 de marzo de 2025 Gaia se posicionó en su órbita de retiro alrededor del Sol [@ESA_Gaia_Overview]. <br>
 
-Para entender como Gaia recoge todos los datos que disponemos a dia de hoy, es imprescindible entender sus *Scanning Laws* o mejor dicho, las reglas que determinan como se gira y mueve para escanear el cielo. Por un lado, el satélite rota sobre si mismo cada 6 horas, al mismo tiempo el eje de rotación cambia con un periodo de 63 días pero siempre manteniéndose a 45 grados respecto al Sol, finalmente como anteriormente hemos comentado, este satélite orbita alrededor del Sol junto a la Tierra.
-De estos movimientos, se estima que durente los años de missión se han obtenido unas 70 mediciones astrometicas y fotométricas junto con aproximadamente 40 mediciones espectroscópicas usables por cada estrella. @Gaia_DR3_Documentation_2023   
+Para entender como Gaia recoge todos los datos que disponemos a día de hoy, es imprescindible conocer sus *Scanning Laws* o mejor dicho, las reglas que determinan como se gira y mueve para escanear el cielo. Por un lado, el satélite rota sobre sí mismo cada 6 horas, al mismo tiempo el eje de rotación cambia con un periodo de 63 días, pero siempre manteniéndose a 45 grados respecto al Sol, finalmente como anteriormente hemos comentado, este satélite orbita alrededor del Sol junto a la Tierra.
+De estos movimientos, se estima que durante los años de misión se han obtenido unas 70 mediciones astrométricas y fotométricas junto con aproximadamente 40 mediciones espectroscópicas por cada estrella. Cabe destacar que estos datos consideran solo el DR3 de Gaia [@Gaia_DR3_Documentation_2023].    
 
-A continuación, nos centraremos en entender como los datos que serán usados a lo largo del trabajo han sido obtenidos. Es decir, como se ha transformado la data original que Gaia ha recogido en su misión en datos comprensibles. Cabe destacar que el organismo encarcado de este procesado se denomina DPAC (*Data Processing and Analysis Consortium*). Para ser específicos, las unidades de coordinación que trabajan especialmente en los datos que son de interés para este estudio son el 3, 5, 6 y 8.
+A continuación, nos centraremos en entender como los datos que serán usados a lo largo del trabajo han sido obtenidos. Es decir, como se ha transformado la data original que Gaia ha recogido en su misión en datos comprensibles. Cabe destacar que el organismo encargado de este procesado se denomina DPAC (*Data Processing and Analysis Consortium*). Para ser específicos, las unidades de coordinación que trabajan especialmente en los datos que son de interés para este estudio son el 3, 5, 6 y 8.
 
-En primer lugar, la CU3 (*Coordination Unit*) se encarga del procesamiento astométrico de Gaia, obteniendo por lo tanto datos acerca de los movimientos y posiciones de las estrellas. Estos datos los usaremos para definir que cuerpos celestes consideramos en el estudio, dado que debemos tener en cuenta su posición para estar seguros de que se comparan los mismos cuerpos celestes. Consideraremos una desviación de 0.02 grados<br><br> <!-- es el valor que queremos considerar? -->. 
-
-
-La CU5 procesa los datos fotométricos, es decir de los ya anteriormente mencionados espectros BP y RP (*Blue Photometer* y *Red Photometer*). En el último *release* de datos (número 3), la media de la data recogida los últimos 34 meses fue usada, ya que como hemos comentado anteriormente en el apartado 1, el satélite toma datos del mismo cuerpo varias veces. Debida a la baja definición de los espectros BR/PR, se usan los *spectral-shape coefficients* (*SCP*), una derivación de los espectros BR/PR que que permiten distribuir el flujo en bandas o rangos espectrales categorizados por los nanómetros. <br>  
-
-El preprocesado de estos datos se puede dividir en varios pasos o puntos. Como el release mas actualizado es el DR3, nos centraremos en las técnicas aplicadas en esta base. El proceso comienza con una reducción el ruido de fondo, como por ejemplo el causado por la luz solar o de otras estrellas. La complicación de este paso parte de que el ruido introducido no es completamente aleatorio, también dependerá de la posición actual del satélite respecto al Sol, añadiendo por lo tanto periodicidad a las fluctuaciones observadas. En este caso concreto, el ruido espacial puede llegar a ubicarse cerca de los 27 electrones/pixel/segundo, mientras que la media habitual, en condiciones estáticas del espacio, es de 0.2 electrones/pixel/segundo.<br>
+En primer lugar, la CU3 (*Coordination Unit*) se encarga del procesamiento astrométrico de Gaia, obteniendo, por lo tanto, datos acerca de los movimientos y posiciones de las estrellas. Estos datos los usaremos para definir que cuerpos celestes consideramos en el estudio, dado que debemos tener en cuenta su posición para estar seguros de que se comparan los mismos cuerpos celestes. Consideraremos una desviación de 0.02 grados<br><br> <!-- es el valor que queremos considerar? -->. 
 
 
-GAIA consta de diferentes *CCD*s (*Charge-Coupled Devices*), es decir, sensores que captan la luz y la convierten en una señal que se pueda digitalizar. Los espejos o lentes del satélite se encuentran en ángulos diferentes respecto a los detectores de señales CCD, y al mismo tiempo, como GAIA se encuentra en constante movimiento, obtenemos datos con diferentes posiciones *AL* (*Along Scan*), esto resulta en la obtención de datos del mismo cuerpo celeste pero con diferentes longitudes de onda y pequeñas deviaciones entre tomas. Por eso es necesario corregir los datos obtenidos a partir de dos procesos denominados Correcciones diferenciales geométricas y de dispersión. 
+La CU5 procesa los datos fotométricos, es decir de los ya anteriormente mencionados espectros obtenidos por BP y RP (*Blue Photometer* y *Red Photometer*). En el último *release* de datos (número 3), la media de la data recogida los últimos 34 meses fue usada, ya que como hemos comentado anteriormente, el satélite toma datos del mismo cuerpo varias veces. Debida a la baja definición de los espectros BS/RS, se usan los *spectral-shape coefficients* (*SCP*), una derivación de los espectros BS/PS que permiten distribuir el flujo en bandas o rangos espectrales categorizados por el rango de nanómetros. <br>  
+
+El preprocesado de estos datos se puede dividir en varios pasos o puntos. Como el release más actualizado es el DR3, nos centraremos en las técnicas aplicadas en esta base. El proceso comienza con una reducción el ruido de fondo, como por ejemplo el causado por la luz solar o de otras estrellas. La complicación de este paso parte de que el ruido introducido no es completamente aleatorio, también dependerá de la posición actual del satélite respecto al Sol, añadiendo, por lo tanto, periodicidad a las fluctuaciones observadas. En este caso concreto, el ruido espacial puede llegar a ubicarse cerca de los 27 electrones/pixel/segundo, mientras que la media habitual, en condiciones estáticas del espacio, es de 0.2 electrones/pixel/segundo.<br>
+
+
+GAIA consta de diferentes *CCD*s (*Charge-Coupled Devices*), es decir, sensores que captan la luz y la convierten en una señal que se pueda digitalizar. Los espejos o lentes del satélite se encuentran en ángulos diferentes respecto a los detectores de señales CCD, y al mismo tiempo, como GAIA se encuentra en constante movimiento, obtenemos datos con diferentes posiciones *AL* (*Along Scan*), esto resulta en la obtención de datos del mismo cuerpo celeste pero con diferentes longitudes de onda y pequeñas desviaciones entre tomas. Por eso es necesario corregir los datos obtenidos a partir de dos procesos denominados correcciones diferenciales geométricas y de dispersión. 
 <!--(Sección 5.3.3) por si añadimos mas información--> 
-Por último, se lleva a cabo una Calibración, interna y externa, con la que se transforman a un sistema fotométrico común todos los datos captados con diferentes escenarios y, finalmente, se adecuan los datos a un flujo físico universal que pueda ser comparado con la información obtenida por otros satélites.  
+Por último, se lleva a cabo una Calibración, interna y externa, con la que se transforman a un sistema fotométrico común todos los datos captados con diferentes escenarios y, finalmente, se adecuan los datos a un flujo físico universal que pueda ser comparado con la información obtenida por otros satélites.
 
-El procesamiento espectroscópico de los datos de Gaia se llava a cabo en la CU6 a partir de la información recogida por el *RVS* (*Radial Velocity Spectometer*). Estos espectros de rango situado entre 845 a 872 nanómetros servirán para determinar la velocidad radial de las estrellas. Para aumentar la calidad y poder manejar la información, igual que en el caso anterior, se llevarán a cabo diferentes procesos de limpieza y corrección de dichos espectros. También se calibrarán y combinarán los diferentes valores captados por las diversas mediciones del mismo cuerpo celeste que Gaia recogió durante su misión. <br><br>  
+El procesamiento espectroscópico de los datos de Gaia se lleva a cabo en la CU6 a partir de la información recogida por el *RVS* (*Radial Velocity Spectometer*). Estos espectros de rango situado entre 845 a 872 nanómetros servirán para determinar la velocidad radial de las estrellas. Para aumentar la calidad y poder manejar la información, igual que en el caso anterior, se llevarán a cabo diferentes procesos de limpieza y corrección de dichos espectros. También se calibrarán y combinarán los diferentes valores captados por las diversas mediciones del mismo cuerpo celeste que Gaia recogió durante su misión. <br><br>  
 
-Finalmente, en la CU8, a partir de todos los datos procesados hasta el momento (astrométricos, fotométricos y espectroscópicos), se obtendrán parámetros astrofísicos como la temperatura o la fuerza gravitatoria en la superficie del cuerpo. De ahí la importancia de conseguir datos no sesgados y libres de ruido como resultado de las primeras unidades de procesamiento de la información. Las características con las que se definan los elementos observados van a depender directamente de como la data es tratada y de la calidad que esta presente.
+Finalmente, en la CU8, a partir de todos los datos procesados hasta el momento (astrométricos, fotométricos y espectroscópicos), se obtendrán parámetros astrofísicos como la temperatura o la fuerza gravitatoria en la superficie del cuerpo. De aquí la importancia de conseguir datos no sesgados y libres de ruido como resultado de las primeras unidades de procesamiento de la información: las características con las que se definan los elementos observados van a depender directamente de como la data es tratada y de la calidad que esta presente.
+
+En contraposición a Gaia, este trabajo también usará y analizará datos conseguidos gracias a Sloan, proyecto iniciado con el mismo objetivo que Gaia, crear un mapa tridimensional. En este caso, el mapa actual creado gracias a este *survey* contiene más de 930 000 galaxias y 120 000 cuásares. 
+La primera operación bajo el nombre SDSS comenzó en el año 2000, y sigue activo con su quinta fase SDSS-V, que tiene planteado llegar a su fin en 2027 [@SDSS_Main].
+
+El último *release* de SDSS, número 19[@sdsscollaboration2025nineteenthdatareleasesloan], incluye la información captada por esta quinta generación que anteriormente se mencionaba , dividiendo los datos recogidos principalmente en dos programas diferentes: *Milky Way Mapper* y *Black Hole Mapper*. En el primero, se recogieron los espectros ópticos e infrarojos de más de medio millón de estrellas, en el segundo se obtuvo el espectro óptico de 300 000 galaxias y quásares. También añadieron un nuevo catálogo basado en el medio interestelar local (*Local Volume Mapper*), que se seguirá desarrollando en futuros *releases*. 
+
+Aunque el *release* 19 es el más actual, tal y como hemos comentado anteriormente, durante el entrenamiento del modelo que diseñaremos se usarán datos del *data release* 13 [@DR13sdss]. Este bloque consta de los datos recolectados por la cuarta fase el proyecto Sloan.
+Igual que en la nueva generación de SDSS, en el *DR13* se diferenciaban 3 programas. Para este trabajo, cabe destacar el denominado *Mapping Nearby Galaxies at Apache Point Observatory* (MaNGA). En este se recopilan los espectros *Integral Field Unit* (IFU), que permiten obtener espectros por cada punto de la galaxia estudiado [@manga2015]. Este *release* fue importante porque inauguró el programa MaNGA.
+
+
+En los siguientes apartados del estudio, se compararán e intentará establecer una conexión entre los espectros BS/RS de Gaia y los ópticos que Sloan capta. 
+Como comentábamos, los espectros rojo y azul de Gaia trabajan en resoluciones bajas, los BS se ubican entre los 330 y 680 nm [@Gaia_DR3_Summary_2023], los RS en los 640 a 1050nm, mientras que el rango espectral aproximado de SDSS se mantiene entre los 360 y 1030 nm según podemos apreciar en el *paper* que describe como el programa MaNGa se desarrolla [@manga2015].
 
 
 ### Estado del arte
+
+En los últimos años, la astronomía se ha beneficiado de las técnicas de aprendizaje automático, principalmente en tareas tradicionales como clasificación y agrupamiento. Por ejemplo, @djorgovski2022applications señalan que "una amplia variedad de métodos de clasificación y agrupamiento se ha aplicado a estas tareas, y sigue siendo un área de investigación muy activa". En efecto, muchos esfuerzos han estado enfocados en reconocer tipos de estrellas o galaxias, identificar eventos transitorios, y diferenciar estrellas de galaxias, aprovechando catálogos masivos con miles de características. Estos enfoques basados en aprendizaje automático clásico han permitido lidiar con el flujo de datos de observaciones astronómicas mediante el uso de la clasificación supervisada o el agrupamiento no supervisado.
+
+#### Modelos generativos en Astronomía
+
+Paralelamente, ha crecido el interés en generar datos astronómicos sintéticos mediante modelos generativos. En particular, las _Generative Adversarial Networks_ (GANs) se han aplicado con éxito en algunos contextos. Por ejemplo, @garcia2022improving propusieron un método de *data augmentation* basado en GANs para generar curvas de luz sintéticas de estrellas variables
+y mostraron cómo su modelo GAN logra producir variaciones realistas de luminosidad, mejorando significativamente la precisión que alcanza la clasificación cuando se entrena con estos datos sintéticos adicionales. Esto ejemplifica cómo las GANs pueden crear nuevos ejemplos de baja complejidad (en este caso series temporales) para compensar la escasez de datos etiquetados.
+
+Asimismo, dada la enorme base de datos espectrales de baja resolución de la misión Gaia (más de 220 millones de espectros BP/RP en Gaia DR3), se han desarrollado modelos generativos específicos para estos datos. Laroche & Speagle (2025) introdujeron un autoencoder variacional generativo no supervisado que aprende directamente de los espectros Gaia sin necesidad de etiquetas estelares [@laroche2025closing]. Su modelo reproduce los espectros BP/RP y detecta patrones en áreas donde el aprendizaje supervisado falla debido a la falta de referencias. De hecho, antes de este trabajo la única aproximación generativa para los espectros Gaia era supervisada y basada en un conjunto reducido de estrellas cruzadas con observaciones terrestres (LAMOST) [@zhang2023parameters]. Estos desarrollos recientes demuestran que los modelos generativos pueden explorar el conjunto masivo de datos Gaia para *aproximar* datos de mayor resolución. 
+
+#### Aprendizaje profundo en Astrofísica
+
+A pesar de estos avances, el uso de redes neuronales profundas en astronomía sigue siendo relativamente reciente y sujeto a debate. @ting2025deep destaca que, aunque estas técnicas ofrecen *perspectivas diversas* y capacidades de modelar relaciones complejas, todavía enfrentan retos importantes. Según Ting, la astronomía ha entrado en una era de datos sin precedentes, lo que ha impulsado a muchos investigadores a adoptar métodos de aprendizaje profundo para procesar observaciones modernas. Sin embargo, las reacciones varían: algunos científicos ven estas redes profundas como herramientas transformadoras, mientras que otros se muestran escépticos sobre sus verdaderas ventajas. En este contexto, se advierte que aunque las arquitecturas neuronales pueden incorporar sesgos físicos (simetrías, leyes de conservación) en su diseño para generalizar mejor, sigue siendo necesario evaluar cuidadosamente sus resultados. En resumen, el aprendizaje profundo en astrofísica está emergiendo como una vía prometedora que aún se encuentra en una fase exploratoria y que requiere una validación rigurosa antes de tener una aceptación generalizada en este dominio. 
+
+El ejemplo más cercano al enfoque propuesto en este trabajo lo encontramos en un trabajo muy reciente de @haghjoo2026learning. En dicha propuesta, se usaron datos del *James Web Space Telescope (JWST)* emparejando las observaciones de los instrumentos de baja resolución con los de alta resolución mediante un modelo generativo. Dicho modelo aprendió a realzar características espectrales débiles (como líneas de emisión solapadas) que originalmente estaban fuera del alcance de la baja resolución. Aunque este ejemplo proviene de observaciones en el infrarrojo cercano, ilustra la factibilidad de entrenar redes con datos emparejados (baja vs. alta resolución) para recuperar detalles perdidos. De manera similar, el presente trabajo propone utilizar pares de espectros Gaia (baja resolución) y observaciones terrestres de alta resolución, buscando descubrir patrones ocultos que permitan aproximar los espectros Gaia a la alta resolución. Como se ha comentado, este tipo de enfoque es relativamente novedoso y es muy interesante explorar su potencial.
+
 <!-- IMPORTANTE ya se han comparado datos fotométricos con los de otros sistemas 
+
+JC: En este caso se tratan de filtros de mejora deterministas  y de calibración, no de modelos generativos. Lo dejo de momento por si puede ser útil mencionarlo, aunque quizá en otra sección.
 
 https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/cu5pho_sec_photSystem/cu5pho_ssec_photRelations.html
 
@@ -127,9 +174,18 @@ https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/
 -->
 ### Conclusiones
 
+La integración y estandarización de catálogos astronómicos masivos representa un desafío técnico fundamental, especialmente al trabajar con fuentes de naturalezas distintas como Gaia y SDSS (Sloan). Mientras que Gaia provee un volumen de datos astrométricos, fotométricos y espectroscópicos sin precedentes, sus espectros operan en bajas resoluciones y requieren complejos procesos de calibración para mitigar el ruido espacial y las fluctuaciones. En contraste, Sloan aporta espectros ópticos de mayor resolución. La necesidad de interconectar ambas misiones define el núcleo de este estudio: establecer una relación sólida capaz de traducir y equiparar los espectros de baja resolución de Gaia con los datos de alta fidelidad de SDSS.
+
+Para abordar este asunto, el análisis del estado del arte evidencia una transición desde el uso de estas herramientas únicamente para clasificación o agrupamiento clásico hacia el uso las GANs y autoencoders variacionales que recientemente han demostrado su utilidad para la generación de datos sintéticos realistas y se establecen ya como herramientas útiles para la calibración y otras áreas relevantes en el estudio astronómico.
+
+Avanzando aún más allá, el éxito reciente en la mejora de resolución de datos del telescopio JWST mediante modelos generativos muestra que la aplicación de estas técnicas representa una solución viable que puede ser también aplicada en el contexto del catálogo astronómico que ofrece Gaia.  
+
+El propósito de la propuesta planteada en este documento es profundizar en la aplicación de estas técnicas novedosas ofreciendo soluciones útiles que aporten mejoras tangibles en el ámbito de la astronomía, específicamente para la mejora de las señales contenidas en el amplio catálogo que Gaia nos ofrece.
+
 ## Objetivos concretos y metodología de trabajo
 
 ### Objetivo general
+
 
 ### Objetivos específicos
 
@@ -140,3 +196,9 @@ https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/
 ## Descripción de la herramienta software desarrollada
 
 ## Evaluación
+
+## Conclusiones y trabajo futuro
+
+### Conclusiones
+
+### Trabajo futuro
