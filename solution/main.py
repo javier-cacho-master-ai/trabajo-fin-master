@@ -10,20 +10,19 @@
 # 2. De SDSS, obtener la referencia de la tabla de SDSS con la espectrometría (SpecObj)
 # 3. De SDSS, seleccionar un ejemplo aleatorio
 # 4. De SDSS, obtener la espectrometría para el ejemplo obtenido en 3.
-# 5. De Gaia, obtener la espectrometría para la muestra seleccionada en 1.
-# 6. De Gaia, filtrar la espectrometría para el objeto obtenido en 3.
-# 7. De Gaia y SDSS, mostrar los gráficos para el objecto obtenido en 3
+# 5. De Gaia, obtener la espectrometría para el objeto obtenido en 3.
+# 6. De Gaia y SDSS, mostrar los gráficos para el objecto obtenido en 3
 
 # %% [markdown]
-# ## Extracción de los datos
-
-
-# %% [markdown]
-# ### Obtención de una muestra de objetos
+#  ## Extracción de los datos
 
 # %% [markdown]
-#  #### Crossmatches Gaia SDSS
-#  Se seleccionan aleatoriamente los mejores crossmatches entre Gaia y SDSS.
+#  ### Obtención de una muestra de objetos
+
+# %% [markdown]
+#   #### Crossmatches Gaia SDSS
+# 
+#   Se seleccionan aleatoriamente los mejores crossmatches entre Gaia y SDSS.
 
 # %%
 from pathlib import Path
@@ -40,8 +39,9 @@ gaia_job_results = gaia_query_job.get_results() or Table()
 
 display(gaia_job_results)
 
+
 # %% [markdown]
-#  #### SDSS - Datos de referencia de objetos
+#   #### SDSS - Datos de referencia de objetos
 
 # %%
 from astroquery.sdss import SDSS
@@ -62,11 +62,12 @@ sdss_query_result = SDSS.query_sql(sdss_query, data_release=13)
 display(sdss_query_result)
 
 
-# %% [markdown]
-#  ### Obtención de los datos de espectrometría
 
 # %% [markdown]
-#  #### SDSS - Selección ejemplo aleatorio
+#   ### Obtención de los datos de espectrometría
+
+# %% [markdown]
+#   #### SDSS - Selección ejemplo aleatorio
 
 # %%
 import random as rnd
@@ -75,8 +76,9 @@ sdss_sample_object = rnd.choice(sdss_query_result)
 
 display(sdss_sample_object)
 
+
 # %% [markdown]
-# #### SDSS - Espectrometría para el ejemplo
+#  #### SDSS - Espectrometría para el ejemplo
 
 # %%
 
@@ -102,47 +104,27 @@ sdss_spectra_data = sdss_spectra_hdu.data
 
 display(sdss_spectra_data)
 
-# %% [markdown]
-# #### Gaia - Espectrometría para la muestra
 
 # %% [markdown]
-#  Para los datos espectrales debemos usar el [DataLink service](https://astroquery.readthedocs.io/en/latest/gaia/gaia.html#datalink-service-public-and-authenticated)
+#  #### Gaia - Espectrometría para el ejemplo
+# 
+#  Obtenemos la referencia en Gaia para el objecto de muestra de SDSS
 
 # %%
-source_ids = ",".join(gaia_job_results["source_id"].astype(str))
-source_ids = "1265515347877933440"
-
-gaia_spectra_data = Gaia.load_data(
-    ids=source_ids,
-    data_release="Gaia DR3",
-    # retrieval_type="XP_SAMPLED",
-    retrieval_type="XP_CONTINUOUS",
-    data_structure="INDIVIDUAL",
-    format="votable",
-    dump_to_file=False,  # Datos en memoria
-)
-
-# %%
-# Grab the very first table from the nested structure
-table = list(gaia_spectra_data.values())[0][0].to_table()
-
-# The columns are right there
-print(table.colnames)
-
-# %% [markdown]
-# #### Gaia - Espectrometría para el ejemplo
-# Obtenemos la referencia en Gaia para el objecto de muestra de SDSS
-
-# %%
-gaia_sample_object_source_id = gaia_job_results[
+gaia_sample_object = gaia_job_results[
     gaia_job_results["original_ext_source_id"] == sdss_sample_object["bestObjID"]
-]["source_id"].item()
+]
+
+display(gaia_sample_object)
+
+gaia_sample_object_source_id = gaia_sample_object["source_id"].item()
 
 display(type(gaia_sample_object_source_id))
 display(gaia_sample_object_source_id)
 
+
 # %% [markdown]
-# Y obtenemos la espctrometría para esa referencia.
+#  Y obtenemos la espctrometría para esa referencia.
 
 # %%
 import gaiaxpy
@@ -163,11 +145,12 @@ gaia_object_spectrum = Spectrum(flux=flux_qty, spectral_axis=wavelength_qty)
 
 display(gaia_object_spectrum)
 
-# %% [markdown]
-# ### Gráficos comparativos
 
 # %% [markdown]
-# #### SDSS - Flujo y Longitud de Onda para una objeto
+#  ### Gráficos comparativos
+
+# %% [markdown]
+#  #### SDSS - Flujo y Longitud de Onda para una objeto
 
 # %%
 from services.sdss import parse_to_si
@@ -184,8 +167,9 @@ plot_physical_spectrum(
 )
 
 
+
 # %% [markdown]
-# #### Gaia - Flujo y Longitud de Onda para una objeto
+#  #### Gaia - Flujo y Longitud de Onda para una objeto
 
 # %%
 import services.plotting as spl
@@ -212,7 +196,4 @@ spl.plot_physical_spectrum(
 #     ignore_index=True,
 # )
 
-# sns.lineplot(data=df, x="wavelength", y="flux", hue="source")
-# plt.show()
 
-# %%
