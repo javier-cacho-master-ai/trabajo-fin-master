@@ -123,28 +123,30 @@ El satélite Gaia consta de 3 instrumentos para detectar la luz que recogen los 
 
 El satélite en cuestión se encuentra en una posición espacial conocida como L2, ubicada a 1,5 millones de kilómetros de la Tierra y donde las fuerzas gravitacionales del Sol, la Tierra y la Luna están en equilibrio. Por otro lado, el satélite, el Sol y la Tierra siempre van a permanecer alineados, impidiendo así que ninguno de los cuerpos celestes mencionados se interponga en el campo de visión de Gaia. 
 
-La espectrofotometría en la que nos basaremos durante el desarrollo de este trabajo es la BP/RP, también denominada Espectro XP, como hemos comentado, estos datos proceden del *Blue Photometer* y *Red Photometer*, lo que permite cubrir entre los 330 y 680 nm gracias al espectro azul y de los 640 a 1050 nm gracias al rojo [@zhang2023gaiaxp]. Estos datos se representan por aproximadamente 110 elementos efectivos de resolución, con un poder de solución variable según la longitud de onda de aproximadamente R $\approx$ 50 - 160. 
+La espectrofotometría en la que nos basaremos durante el desarrollo de este trabajo es la BP/RP, también denominada Espectro XP, como hemos comentado, estos datos proceden del *Blue Photometer* y *Red Photometer*, lo que permite cubrir entre los 330 y 680 nm gracias al espectro azul y de los 640 a 1050 nm gracias al rojo [@zhang2023gaiaxp]. Estos datos se representan por aproximadamente 110 elementos efectivos de resolución, con un poder de solución variable según la longitud de onda de aproximadamente R $\sim$ 50 - 160. 
 Este detalle conlleva que en la publicación de datos número 3 de Gaia no obtengamos directamente una tabla de relación flujo - longitud de onda, sino que los espectros vienen dados con coeficientes que deben transformarse con librerías como *GaiaXPy* [@deangeli2022gaiabprp].
 
 
 #### Datos espectrales de SDSS
-En contraposición a Gaia, este trabajo también usará y analizará datos conseguidos gracias a Sloan, proyecto iniciado con el mismo objetivo que Gaia, crear un mapa tridimensional. En este caso, el mapa actual creado gracias a este *survey* contiene más de 930 000 galaxias y 120 000 cuásares. 
-La primera operación bajo el nombre SDSS comenzó en el año 2000, y sigue activo con su quinta fase SDSS-V, que tiene planteado llegar a su fin en 2027 [@SDSS_Main].
+En contraposición a Gaia, este trabajo también usará y analizará datos conseguidos gracias a SDSS, proyecto iniciado con el mismo objetivo que Gaia, crear un mapa tridimensional. En este caso, el mapa actual creado gracias a este satélite contiene más de 930 000 galaxias.
 
-El último *release* de SDSS, número 19[@sdsscollaboration2025nineteenthdatareleasesloan], incluye la información captada por esta quinta generación que anteriormente se mencionaba , dividiendo los datos recogidos principalmente en dos programas diferentes: *Milky Way Mapper* y *Black Hole Mapper*. En el primero, se recogieron los espectros ópticos e infrarojos de más de medio millón de estrellas, en el segundo se obtuvo el espectro óptico de 300 000 galaxias y quásares. También añadieron un nuevo catálogo basado en el medio interestelar local (*Local Volume Mapper*), que se seguirá desarrollando en futuros *releases*. 
+La primera operación bajo el nombre SDSS comenzó en el año 2000, y sigue activo con su quinta fase SDSS-V, que tiene planteado llegar a su fin en 2027 [@sdsscollaboration2025nineteenthdatareleasesloan].
 
-Aunque el *release* 19 es el más actual, tal y como hemos comentado anteriormente, durante el entrenamiento del modelo que diseñaremos se usarán datos del *data release* 13 [@DR13sdss]. Este bloque consta de los datos recolectados por la cuarta fase el proyecto Sloan.
-Igual que en la nueva generación de SDSS, en el *DR13* se diferenciaban 3 programas. Para este trabajo, cabe destacar el denominado *Mapping Nearby Galaxies at Apache Point Observatory* (MaNGA). En este se recopilan los espectros *Integral Field Unit* (IFU), que permiten obtener espectros por cada punto de la galaxia estudiado [@manga2015]. Este *release* fue importante porque inauguró el programa MaNGA.
+Aunque la última publicación de datos de SDSS sea la número 19 [@sdsscollaboration2025nineteenthdatareleasesloan], tal y como hemos comentado anteriormente, dado que el análisis de cruce de datos de Gaia DR3 se ha llevado a cabo con el DR13 de SDSS. Esto nos permite conocer qué objetos han sido observados por ambos satélites, por lo que durante el entrenamiento del modelo se usará la base de datos del DR13 [@DR13sdss], los cuales fueron recolectados por la cuarta fase del proyecto.
 
+A diferencia de Gaia, SDSS proporciona directamente espectros ópticos en longitud de onda y flujo, distribuidos a lo largo de archivos FITS. Dentro de estos se pueden encontrar variables como por ejemplo la longitud de onda(expresada dentro de la variable *loglam*, pero teniendo que adaptarla, dado que longitud de onda $\lambda$ = $10^ {loglam}$) y el flujo espectral (*flux*). 
 
-En los siguientes apartados del estudio, se compararán e intentará establecer una conexión entre los espectros BS/RS de Gaia y los ópticos que Sloan capta. 
-Como comentábamos, los espectros rojo y azul de Gaia trabajan en resoluciones bajas, los BS se ubican entre los 330 y 680 nm [@Gaia_DR3_Summary_2023], los RS en los 640 a 1050nm, mientras que el rango espectral aproximado de SDSS se mantiene entre los 360 y 1030 nm según podemos apreciar en el *paper* que describe como el programa MaNGa se desarrolla [@manga2015].
-
-
-En primer lugar, la CU3 (*Coordination Unit*) se encarga del procesamiento astrométrico de Gaia, obteniendo, por lo tanto, datos acerca de los movimientos y posiciones de las estrellas. Estos datos los usaremos para definir que cuerpos celestes consideramos en el estudio, dado que debemos tener en cuenta su posición para estar seguros de que se comparan los mismos cuerpos celestes. Consideraremos una desviación de 0.02 grados<br><br> <!-- es el valor que queremos considerar? -->. 
+Dentro del proyecto de SDSS, el programa MaNGA (*Mapping Nearby Galaxies at Apache Point Observatory*) se encarga de procesar los datos con tal de crear el mapa estelar, en su *paper* original para SDSS-IV [@manga2015] encontramos que el rango espectral aproximado de SDSS se mantiene entre los 360 y 1030 nm y su resolución se encuentra en R $\sim$ 2000.
 
 #### Comparativa de los espectros de Gaia y SDSS
+Gaia y SDSS comparten gran parte de su rango óptico pero con datos captados con estrategias e instrumentos diferentes. Esto se enfatiza cuando comparamos los espectros captados por ambos satélites acerca del mismo cuerpo celeste. A continuación observamos un ejemplo aleatorio:
+![Espectro Gaia](_partials/assets/espectro_gaia_1.png){#fig_gaia_1}
+![Espectro SDSS](_partials/assets/espectro_sloan_1.png){#fig_sloan_1}
 
+Podemos observar como claramente el intervalo que SDSS observa es muy similar a Gaia, pero existe una gran diferencia en cuanto a la suavidad de las curvas representadas. Como vemos, SDSS incluye muchos más detalles que Gaia, su espectro tiene una calidad superior. 
+Por otro lado, si nos fijamos en los datos captados en los extremos de visión de Gaia, notamos la posibilidad de que en rangos inferiores a 400 nm estemos observando artefactos u obteniendo mediciones muy poco precisas.
+
+A lo largo del trabajo, para garantizar que los datos analizados correspondan al mismo objeto astronómico, se empleará la tabla de cruce oficial de DR3 denominada *gaiadr3.sdssdr13_best_neighbour*. Esta tabla contiene para cada cuerpo observado por Gaia, el vecino del DR13 de SDSS más cercano, es decir, el que cuenta con una mayor probabilidad de que estén describiendo el mismo cuerpo celeste. El procedimiento con el cual se establece esta vecindad se encuentra en el trabajo realizado por Torra et All [@gaia2021edr3]. Dentro de este conjunto, definiremos un umbral de aceptación dado por la distancia angular. <!-- Habría que poner aquí el valor que usaremos -->
 
 
 ### Estado del arte
