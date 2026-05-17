@@ -32,10 +32,10 @@ La propia agencia ESA describe en el reporte publicado en 2013 donde explicaban 
 
 Por este motivo, la misión principal de Gaia se puede considerar muy útil para continuar desarrollando estudios y conocimientos acerca del universo.  
 
-Más allá de este objetivo, Gaia ha podido aportar descubrimientos de objetos celestes que anteriormente no conocíamos [@ESA_Gaia_BR296_2013].
-Esta misión ha proporcionado uno de los catálogos más extensos y precisos hasta la fecha [[@Gaia_DR3_Documentation_2023]], no solo aportando datos astrométricos, sino que también fotométricos y espectrofotométricos. 
+Más allá de este objetivo, Gaia ha podido aportar descubrimientos de objetos celestes que anteriormente no conocíamos.
+Esta misión ha proporcionado uno de los catálogos más extensos y precisos hasta la fecha [[@Gaia_DR3_Summary_2023]], no solo aportando datos astrométricos, sino que también fotométricos y espectrofotométricos. 
 
-Otras misiones, como ahora la iniciada en el año 2000 con *Sloan Digital Sky Survey* (*SDSS*), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un alcance menor [@SDSS_Main].
+Otras misiones, como ahora la iniciada en el año 2000 con *Sloan Digital Sky Survey* (*SDSS*), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un alcance menor [@DR13sdss].
 De este hecho parte la idea del trabajo que se desarrolla a continuación.
 
 Si se pudiese definir una similitud entre los espectros obtenidos por Gaia y SDSS, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto al la calidad y detalle que SDSS conlleva. 
@@ -45,7 +45,7 @@ En este contexto, gracias a los avances constantes de la inteligencia artificial
 ### Motivación
 
 A lo largo de 2026 se publicarán los últimos datos recolectados por Gaia en un último DR4 y catálogo final DR5. Se calcula que a lo largo de la misión, unos 2 billiones de estrellas y otros objetos celestes fueron captados por el satélite. 
-Gracias a los datos recolectados, ha permitido disponer de una imagen reconstruida sobre cómo un observador vería nuestra galaxia desde el exterior de esta.[@Gaia_DR3_Summary_2023]. Esta hazaña se ha conseguido a base de un set de datos, donde la información del cuerpo celeste parte fundamentalmente de dos espectros de baja resolución. 
+Gracias a los datos recolectados, ha permitido disponer de una imagen reconstruida sobre cómo un observador vería nuestra galaxia desde el exterior de esta[@Gaia_DR3_Summary_2023]. Esta hazaña se ha conseguido a base de un set de datos, donde la información del cuerpo celeste parte fundamentalmente de dos espectros de baja resolución. 
 La espectroscopía es una de las herramientas principales de la astrofísica para extraer información acerca de los cuerpos astronómicos. Gracias a la distribución de la luz en función de la longitud de onda, se pueden conocer detalles clave acerca de los elementos estudiados, como por ejemplo su composición, la temperatura y la gravedad superficial. 
 
 A diferencia de Gaia, otros proyectos astronómicos como SDSS presentan una resolución mayor en sus espectrometrías, pero se han visto limitados por su ubicación, dado que SDSS depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@DR13sdss].
@@ -104,6 +104,7 @@ Buscar definición exacta de paralaje
 Todos estos datos se basan en mediciones de espectros de baja resolución como lo son los BP/RP (*Blue Photometer / Red Photometer*), a los cuales denominaremos a lo largo del trabajo como BS/RS (*Blue Spectrum / Red Spectrum*).  
 
  A partir de aquí todo menos lo que se indique explicitamente viene de aquí Gaia_DR3_Documentation_2023 -->
+Para el desarrollo de este trabajo, necesitamos comprender términos clave para analizar los datos. A continuación nos centraremos en los espectros estelares, su interpretación y como se obtienen de las bases de datos de cada satélite. 
 
 #### Espectros estelares
 Podemos definir un espectro estelar como la función que relaciona el flujo captado de una estrella en función de la longitud de onda. Gracias a dicha función, se obtiene la distribución de la energía que emite el cuerpo celeste según el rango óptico dado, lo que permite estudiar ciertas características del cuerpo. Por ejemplo, si nos centramos en los picos del gráfico resultante de su representación, se puede analizar la composición del cuerpo o metalicidad, dado que cada elemento emite o absorbe luz en diferentes rangos, de este dato también se puede estudiar la temperatura en la que se encuentra dicho elemento. 
@@ -123,7 +124,7 @@ El satélite Gaia consta de 3 instrumentos para detectar la luz que recogen los 
 
 El satélite en cuestión se encuentra en una posición espacial conocida como L2, ubicada a 1,5 millones de kilómetros de la Tierra y donde las fuerzas gravitacionales del Sol, la Tierra y la Luna están en equilibrio. Por otro lado, el satélite, el Sol y la Tierra siempre van a permanecer alineados, impidiendo así que ninguno de los cuerpos celestes mencionados se interponga en el campo de visión de Gaia. 
 
-La espectrofotometría en la que nos basaremos durante el desarrollo de este trabajo es la BP/RP, también denominada Espectro XP, como hemos comentado, estos datos proceden del *Blue Photometer* y *Red Photometer*, lo que permite cubrir entre los 330 y 680 nm gracias al espectro azul y de los 640 a 1050 nm gracias al rojo [@zhang2023gaiaxp]. Estos datos se representan por aproximadamente 110 elementos efectivos de resolución, con un poder de solución variable según la longitud de onda de aproximadamente R $\sim$ 50 - 160. 
+La espectrofotometría en la que nos basaremos durante el desarrollo de este trabajo es la BP/RP, también denominada Espectro XP, como hemos comentado, estos datos proceden del *Blue Photometer* y *Red Photometer*, lo que permite cubrir entre los 330 y 680 nm gracias al espectro azul y de los 640 a 1050 nm gracias al rojo [@zhang2023parameters]. Estos datos se representan por aproximadamente 110 elementos efectivos de resolución, con un poder de solución variable según la longitud de onda de aproximadamente R $\sim$ 50 - 160. 
 Este detalle conlleva que en la publicación de datos número 3 de Gaia no obtengamos directamente una tabla de relación flujo - longitud de onda, sino que los espectros vienen dados con coeficientes que deben transformarse con librerías como *GaiaXPy* [@deangeli2022gaiabprp].
 
 
@@ -186,11 +187,31 @@ Avanzando aún más allá, el éxito reciente en la mejora de resolución de dat
 El propósito de la propuesta planteada en este documento es profundizar en la aplicación de estas técnicas novedosas ofreciendo soluciones útiles que aporten mejoras tangibles en el ámbito de la astronomía, específicamente para la mejora de las señales contenidas en el amplio catálogo que Gaia nos ofrece.
 
 ## Objetivos concretos y metodología de trabajo
+A continuación desarrollaremos el objetivo a desarrollar durante este trabajo.
 
 ### Objetivo general
-
+El objetivo general de este trabajo consiste en desarrollar un modelo basado en aprendizaje automático que permita relacionar los coeficientes *XP_Continuous* del DR3 de Gaia y el espectro resultante de SDSS en su DR13. 
 
 ### Objetivos específicos
+Si nos centramos en los objetivos descritos paso a paso, el trabajo se desarrollará en la dirección comentada a continuación.
+
+#### Creación de la base de datos
+En primer lugar, deberemos construir una base de datos robusta y suficiente para el entrenamiento. Para conseguirla, se llevarán a cabo los siguientes pasos:
+
+1. A partir de Gaia DR3, obtendremos los mejores cruces de datos con SDSS DR13. De aquí sacaremos una lista de números de identificación de los cuerpos dentro de la base de datos de Gaia y el identificador externo, en este caso para SDSS.
+1. A partir de la lista de id de SDSS obtenidos en el paso anterior, cruzaremos con el DR13 de SDSS para encontrar aquellos que disponen de las tres variables necesarias para sacar el espectro de los archivos FITS, en este caso son necesarias las variables *plate*, *mjd* y *fiberID*.
+1. Con la función *get_spectra* y las variables mencionadas en el punto anterior, obtendremos los espectros de los cuerpos a estudiar.
+1. Una vez ya tenemos identificados que objetos si tienen disponible el espectro de SDSS, descargaremos los datos correspondientes para Gaia. 
+1. Para conseguir los coeficientes anteriormente mencionados de Gaia, accederemos a *gaiadr3.xp_continuous_mean_spectrum* y guardaremos las variables *bp_coefficients* y *rp_coefficients*. 
+1. De estos datos, crearemos una base de datos con las variables de entrada y objetivo. 
+
+Cabe destacar que este procedimiento deberá llevarse a cabo por lotes, dado que la base de datos de SDSS está limitada, y no permite una petición de datos masiva.
+
+#### Entrenamiento del modelo
+El siguiente paso será la creación del modelo de aprendizaje automático y su entreno.
+
+#### Validación del modelo
+
 
 ### Metodología de trabajo
 
