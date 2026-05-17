@@ -142,8 +142,10 @@ Dentro del proyecto de SDSS, el programa MaNGA (*Mapping Nearby Galaxies at Apac
 
 #### Comparativa de los espectros de Gaia y SDSS
 Gaia y SDSS comparten gran parte de su rango óptico pero con datos captados con estrategias e instrumentos diferentes. Esto se enfatiza cuando comparamos los espectros captados por ambos satélites acerca del mismo cuerpo celeste. A continuación observamos un ejemplo aleatorio:
-![Espectro Gaia](_partials/assets/espectro_gaia_1.png){#fig_gaia_1}
-![Espectro SDSS](_partials/assets/espectro_sloan_1.png){#fig_sloan_1}
+
+![Ejemplo de espectro aleatorio captado por Gaia](_partials/assets/espectro_gaia_1.png){#fig_gaia_1}
+
+![Espectro captado por SDSS del mismo cuerpo](_partials/assets/espectro_sloan_1.png){#fig_sloan_1}
 
 Podemos observar como claramente el intervalo que SDSS observa es muy similar a Gaia, pero existe una gran diferencia en cuanto a la suavidad de las curvas representadas. Como vemos, SDSS incluye muchos más detalles que Gaia, su espectro tiene una calidad superior. 
 Por otro lado, si nos fijamos en los datos captados en los extremos de visión de Gaia, notamos la posibilidad de que en rangos inferiores a 400 nm estemos observando artefactos u obteniendo mediciones muy poco precisas.
