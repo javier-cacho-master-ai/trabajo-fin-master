@@ -23,7 +23,7 @@ Ver figura @fig-ejemplo.
 
 ![Una figura de ejemplo](_partials/assets/logo_unir_1666x348.png){#fig-ejemplo}
 -->
-En diciembre de 2013 comenzó la misión GAIA [@Gaia_DR3_Documentation_2023] con el objetivo de crear un mapa que permita conocer más detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de ESA, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en el 1989 y finalizó en el 1993. Los datos que Gaia aporta son 200 veces más precisos que los obtenidos por dicho satélite, pero aun así, de menor calidad que los obtenidos por otros proyectos actuales [@ESA_Gaia_Overview].  
+En diciembre de 2013 comenzó la misión GAIA [@Gaia_DR3_Documentation_2023] con el objetivo de crear un mapa que permita conocer más detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de ESA, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en el 1989 y finalizó en el 1993. Los datos que Gaia aporta son 200 veces más precisos que los obtenidos por dicho satélite, pero aun así, de menor calidad que los obtenidos por otros proyectos actuales.  
 
 La propia agencia ESA describe en el reporte publicado en 2013 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto, pero sin un orden o punto de referencia, en sus propias palabras, describen lo siguiente:<br>
 
@@ -70,14 +70,15 @@ Para realizar este trabajo seleccionamos el conjunto de datos de Gaia como base 
 
 ### Estructura del trabajo
 
-La estructura propuesta para este trabajo es la siguiente:
-- Sección 1: Introducción.
+La estructura propuesta para este trabajo es la siguiente: 
 
+- Sección 1. Introducción: En este apartado se expone la idea general del trabajo, incluyendo que motivó su desarrollo, la importancia de los espectros y el gran interés en poder combinar y relacionar los datos de Gaia y SDSS.
 
-- Sección 2: 
+- Sección 2. Contexto y estado del arte: Durante esta sección se explican los fundamentos teóricos necesarios para entender la importancia de los espectros y las variables usadas en el modelo. También se aportarán datos acerca de estudios realizados previamente en campos similares al que acontece.
 
+- Sección 3. Objetivos concretos y metodología de trabajo: Se destacan los pasos a seguir durante el desarrollo del trabajo y al mismo tiempo como estos van a llevarse a cabo, aportando detalles acerca de los datos y librerías usadas.
 
-- Sección 3:
+- Sección 4. Identificación de requisitos:
 
 
 
@@ -203,7 +204,6 @@ En primer lugar, deberemos construir una base de datos robusta y suficiente para
 1. Una vez ya tenemos identificados que objetos si tienen disponible el espectro de SDSS, descargaremos los datos correspondientes para Gaia.  
 1. De estos datos, crearemos una base de datos con las variables de entrada (coeficientes de Gaia) y objetivo (espectro de SDSS). 
 
-Cabe destacar que este procedimiento deberá llevarse a cabo por lotes, dado que la base de datos de SDSS está limitada, y no permite una petición de datos masiva.
 
 #### Entrenamiento del modelo
 El siguiente objetivo constará de la creación de un modelo de aprendizaje automático y su entreno.
@@ -216,12 +216,15 @@ A continuación se encuentra una explicación detallada acerca de como se han re
 
 #### Creación de la base de datos
 
-1. A partir de Gaia DR3, obtendremos los mejores cruces de datos con SDSS DR13. De aquí sacaremos una lista de números de identificación de los cuerpos dentro de la base de datos de Gaia y el identificador externo, en este caso para SDSS.
-1. A partir de la lista de id de SDSS obtenidos en el paso anterior, cruzaremos con el DR13 de SDSS para encontrar aquellos que disponen de las tres variables necesarias para sacar el espectro de los archivos FITS, en este caso son necesarias las variables *plate*, *mjd* y *fiberID*.
-1. Con la función *get_spectra* y las variables mencionadas en el punto anterior, obtendremos los espectros de los cuerpos a estudiar.
-1. Una vez ya tenemos identificados que objetos si tienen disponible el espectro de SDSS, descargaremos los datos correspondientes para Gaia. 
-1. Para conseguir los coeficientes anteriormente mencionados de Gaia, accederemos a *gaiadr3.xp_continuous_mean_spectrum* y guardaremos las variables *bp_coefficients* y *rp_coefficients*. 
-1. De estos datos, crearemos una base de datos con las variables de entrada y objetivo. 
+En primer lugar, se realizó una consulta ADQL sobre la tabla *gaiadr3.gaia_source*, en concreto teniendo en cuenta *gaiadr3.sdssdr13_best_neighbour*. De aquí sacamos una base de datos con aquellas observaciones que tienen la variable *XP_continuous* y que la distancia angular respecto al cruce con SDSS es menor que 2. <!-- IMPORTANTE MODIFICARLO-->
+Cabe destacar que el procedimiento explicado se llevó a cabo por lotes, dado que la base de datos de SDSS está limitada y no permite una petición de datos masiva. Para controlar que los lotes no tomasen los mismos datos de referencia, se usó la variable *gaia.random_index*. Esta es una columna de la base de datos de Gaia que permite hacer selecciones aleatorias de forma reproducible, por lo que fue usada con diferentes intervalos en cada lote procesado.
+
+A partir de la lista de objetos obtenida, filtramos por aquellos en los que las tres variables necesarias para encontrar el espectro se encontraban disponibles. Para ser concretos, era indispensable que el objeto estudiado tuviese las variables *plate*, *mjd* y *fiberID* no nulas, dado que estas son las que se usarán para identificar la muestra del fichero FITS. 
+Con esta información y la función *get_spectra* de la librería *astroquery*, pudimos obtener los espectros observados por SDSS de los cuerpos a estudiar.
+
+Una vez ya están definidos la lista de cuerpos de lo que si se dispone información en ambos proyectos, recabamos la información de Gaia. Para conseguir los coeficientes anteriormente mencionados, accedimos a *gaiadr3.xp_continuous_mean_spectrum* y guardamos las variables *bp_coefficients* y *rp_coefficients* de los objetos definidos también en SDSS. 
+
+ 
 
 #### Entrenamiento del modelo
 
