@@ -24,7 +24,6 @@ def plot_physical_spectrum(spectrum: Spectrum, title: str = "Espectro"):
     plt.ylabel(f"Flujo ({spectrum.flux.unit})")
     plt.title(title)
 
-    plt.colorbar(lc, label=f"Flujo ({spectrum.spectral_axis.unit})")
     plt.xlim(x.min(), x.max())
     plt.ylim(y.min(), y.max() * 1.05)  # Add slight padding to the top
     plt.tight_layout()
