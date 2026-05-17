@@ -198,6 +198,24 @@ Si nos centramos en los objetivos descritos paso a paso, el trabajo se desarroll
 #### Creación de la base de datos
 En primer lugar, deberemos construir una base de datos robusta y suficiente para el entrenamiento. Para conseguirla, se llevarán a cabo los siguientes pasos:
 
+1. A partir de Gaia DR3, obtendremos los mejores cruces de datos con SDSS DR13. 
+1. A partir de la lista anterior, filtraremos por aquellos cuerpos que contienen toda la información suficiente para obtener espectros de SDSS.
+1. Una vez ya tenemos identificados que objetos si tienen disponible el espectro de SDSS, descargaremos los datos correspondientes para Gaia.  
+1. De estos datos, crearemos una base de datos con las variables de entrada (coeficientes de Gaia) y objetivo (espectro de SDSS). 
+
+Cabe destacar que este procedimiento deberá llevarse a cabo por lotes, dado que la base de datos de SDSS está limitada, y no permite una petición de datos masiva.
+
+#### Entrenamiento del modelo
+El siguiente objetivo constará de la creación de un modelo de aprendizaje automático y su entreno.
+
+#### Validación del modelo
+
+
+### Metodología de trabajo
+A continuación se encuentra una explicación detallada acerca de como se han realizado los objetivos anteriormente descritos.
+
+#### Creación de la base de datos
+
 1. A partir de Gaia DR3, obtendremos los mejores cruces de datos con SDSS DR13. De aquí sacaremos una lista de números de identificación de los cuerpos dentro de la base de datos de Gaia y el identificador externo, en este caso para SDSS.
 1. A partir de la lista de id de SDSS obtenidos en el paso anterior, cruzaremos con el DR13 de SDSS para encontrar aquellos que disponen de las tres variables necesarias para sacar el espectro de los archivos FITS, en este caso son necesarias las variables *plate*, *mjd* y *fiberID*.
 1. Con la función *get_spectra* y las variables mencionadas en el punto anterior, obtendremos los espectros de los cuerpos a estudiar.
@@ -205,15 +223,10 @@ En primer lugar, deberemos construir una base de datos robusta y suficiente para
 1. Para conseguir los coeficientes anteriormente mencionados de Gaia, accederemos a *gaiadr3.xp_continuous_mean_spectrum* y guardaremos las variables *bp_coefficients* y *rp_coefficients*. 
 1. De estos datos, crearemos una base de datos con las variables de entrada y objetivo. 
 
-Cabe destacar que este procedimiento deberá llevarse a cabo por lotes, dado que la base de datos de SDSS está limitada, y no permite una petición de datos masiva.
-
 #### Entrenamiento del modelo
-El siguiente paso será la creación del modelo de aprendizaje automático y su entreno.
+
 
 #### Validación del modelo
-
-
-### Metodología de trabajo
 
 ## Identificación de requisitos
 
