@@ -188,28 +188,55 @@ Avanzando aún más allá, el éxito reciente en la mejora de resolución de dat
 El propósito de la propuesta planteada en este documento es profundizar en la aplicación de estas técnicas novedosas ofreciendo soluciones útiles que aporten mejoras tangibles en el ámbito de la astronomía, específicamente para la mejora de las señales contenidas en el amplio catálogo que Gaia nos ofrece.
 
 ## Objetivos concretos y metodología de trabajo
-A continuación desarrollaremos el objetivo a desarrollar durante este trabajo.
+
+A continuación se detalla primeramente el objetivo principal de este trabajo y su desglose en objetivos más específicos para alcanzarlo.
+
+También se expone la metodología empleada para afrontar dichos objetivos en la sección
 
 ### Objetivo general
-El objetivo general de este trabajo consiste en desarrollar un modelo basado en aprendizaje automático que permita relacionar los coeficientes *XP_Continuous* del DR3 de Gaia y el espectro resultante de SDSS en su DR13. 
+El objetivo general de este trabajo consiste en desarrollar un modelo basado en aprendizaje automático que permita aproximar los coeficientes *XP_Continuous* de los fotómetros de baja resolución BP/RP del DR3 de Gaia a un espectro de resolución más alta, similar a la proporcionada por las observaciones de mayor calidad de SDSS en su DR13. 
 
 ### Objetivos específicos
-Si nos centramos en los objetivos descritos paso a paso, el trabajo se desarrollará en la dirección comentada a continuación.
+Para alcanzar el objetivo propuesto, primeramente se deben alcanzar los siguientes objetivos intermedios.
 
-#### Creación de la base de datos
-En primer lugar, deberemos construir una base de datos robusta y suficiente para el entrenamiento. Para conseguirla, se llevarán a cabo los siguientes pasos:
+#### Análisis exploratorio de los datos
 
-1. A partir de Gaia DR3, obtendremos los mejores cruces de datos con SDSS DR13. 
-1. A partir de la lista anterior, filtraremos por aquellos cuerpos que contienen toda la información suficiente para obtener espectros de SDSS.
-1. Una vez ya tenemos identificados que objetos si tienen disponible el espectro de SDSS, descargaremos los datos correspondientes para Gaia.  
-1. De estos datos, crearemos una base de datos con las variables de entrada (coeficientes de Gaia) y objetivo (espectro de SDSS). 
+El análisis y comprensión de las observaciones y la manera en la que están organizadas en los repositorios de Gaia y SDSS es fundamental para entender cuales son los datos relevantes a extraer.  
+
+Es también necesario comprender la relación entre las mediciones de ambos sondeos astronómicos para usar observaciones coincidentes, referidas los mismos objetos del catálogo de objetos celestes. 
+
+#### Preselección de los datos
+
+Una vez se ha ganado cierta comprensión de los datos, se puede hacer una valoración más precisa de cuál es la calidad de los mismos, y qué valores no reúnen los requisitos para incluirse en el conjunto de datos de entrenamiento. 
+
+Así, se deben definir unos parámetros para excluir los datos menos relevantes para el objetivo principal.
+
+#### Extracción de los datos
+
+Tras haber comprendido qué servicios se pueden usar para la extracción de los datos y haber reducido el conjunto de entrada atendiendo a su calidad, el siguiente paso consiste en la extracción de los mismos, usando métodos que optimicen la descarga de los datos orientados a minimizar el tiempo y los posibles errores que los servicios ofrecidos por los proyectos de Gaia y SDSS ofrecen.
+
+#### Preprocesado de los datos
+
+Una vez extraídos los datos, es necesario realizar cierto preprocesado de los mismos para mejorar el entrenamiento.
+
+Puesto que en la preselección de las observaciones se han tenido en cuenta criterios de calidad, y Gaia DR3 ofrece datos ya procesados y relaciones con SDSS, el preprocesado en este caso consiste en la reducción de la relación entre señal y ruido (_Signal Noise Rate, SRN_), aplicado a las observaciones de SDSS que tienen más variabilidad y pueden así aumentar la complejidad del entrenamiento.
+
+#### Preparación de los conjuntos de entrenamiento, test y validación.
+
+Una vez los datos están listos, es necesario realizar el reparto entre los distintos conjuntos de datos.
+
+#### Selección del sistema IA más adecuado
+
+Para el caso expuesto se considera que las redes neuronales pueden aportar una solución novedosa gracias a su no-linealidad.  
 
 
-#### Entrenamiento del modelo
-El siguiente objetivo constará de la creación de un modelo de aprendizaje automático y su entreno.
+#### Entrenamiento, refinamiento y validación del modelo
 
-#### Validación del modelo
+La red neuronal entrenada requerirá de un proceso de optimización y ajuste de los hiperparámetros para dar una solución satisfactoria.
 
+#### Puesta en servicio del modelo
+
+Una vez ajustado el modelo, el objetivo será proporcionar una manera sencilla e intuitiva de acceder a él. 
 
 ### Metodología de trabajo
 A continuación se encuentra una explicación detallada acerca de como se han realizado los objetivos anteriormente descritos.
@@ -224,10 +251,8 @@ Con esta información y la función *get_spectra* de la librería *astroquery*, 
 
 Una vez ya están definidos la lista de cuerpos de lo que si se dispone información en ambos proyectos, recabamos la información de Gaia. Para conseguir los coeficientes anteriormente mencionados, accedimos a *gaiadr3.xp_continuous_mean_spectrum* y guardamos las variables *bp_coefficients* y *rp_coefficients* de los objetos definidos también en SDSS. 
 
- 
 
 #### Entrenamiento del modelo
-
 
 #### Validación del modelo
 
