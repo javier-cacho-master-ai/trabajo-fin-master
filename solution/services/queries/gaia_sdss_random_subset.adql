@@ -1,15 +1,41 @@
 SELECT
-  gaia.source_id,
-  gaia.ra,
-  gaia.dec,
-  gaia.phot_bp_mean_mag,
-  gaia.phot_rp_mean_mag,
-  xmatch.original_ext_source_id,
-  xmatch.angular_distance
+  gaia.source_id
+  ,gaia.ra
+  ,gaia.dec
+  ,gaia.phot_bp_mean_mag
+  ,gaia.phot_rp_mean_mag
+
+  -- Razón Señal a Ruido -Signal to noise ratio in the mean RVS spectrum (float)
+  ,gaia.rvs_spec_sig_to_noise
+  -- Ruido
+  ,gaia.astrometric_excess_noise
+
+  -- Color
+  ,gaia.bp_rp
+
+  -- Temperatura -Effective temperature from GSP-Phot Aeneas best library using BP/RP spectra (float, Temperature[K])
+  ,gaia.teff_gspphot
+
+  -- Gravedad -Surface gravity from GSP-Phot Aeneas best library using BP/RP spectra (float, GravitySurface[log cgs])
+  ,gaia.logg_gspphot
+
+  --Metalicidad (Iron abundance from GSP-Phot Aeneas best library using BP/RP spectra)
+  ,gaia.mh_gspphot
+
+  --Relacionado con la macroturbulencia
+  ,gaia.vbroad
+
+  --Alfa -Median abundance of alpha-elements with respect to iron (assuming source is a single star)Median abundance of alpha-elements with respect to iron (assuming source is a single star)
+  ,ap.alphafe_gspspec 
+
+  ,xmatch.original_ext_source_id
+  ,xmatch.angular_distance
 FROM
   gaiadr3.gaia_source AS gaia
+  JOIN gaiadr3.astrophysical_parameters AS ap
+  ON gaia.source_id = ap.source_id
   JOIN gaiadr3.sdssdr13_best_neighbour AS xmatch
-    ON gaia.source_id = xmatch.source_id
+  ON gaia.source_id = xmatch.source_id
 WHERE
   1=1
   AND gaia.random_index BETWEEN {start_index} AND {end_index}
