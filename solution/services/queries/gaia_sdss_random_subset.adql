@@ -5,8 +5,10 @@ SELECT
   ,gaia.phot_bp_mean_mag
   ,gaia.phot_rp_mean_mag
 
-  -- Razón Señal a Ruido -Signal to noise ratio in the mean RVS spectrum (float)
-  ,gaia.rvs_spec_sig_to_noise
+  -- Razón Señal a Ruido BP/RP (flux/flux_error, proxy for SNR in BP and RP spectra)
+  ,gaia.phot_bp_mean_flux_over_error
+  ,gaia.phot_rp_mean_flux_over_error
+
   -- Ruido
   ,gaia.astrometric_excess_noise
 
@@ -39,6 +41,11 @@ FROM
 WHERE
   1=1
   AND gaia.random_index BETWEEN {start_index} AND {end_index}
-  AND gaia.has_xp_continuous = 'true' -- Inluye sólo los que tengan datos de espectrometría.
+  AND ap.alphafe_gspspec IS NOT NULL
+  AND gaia.teff_gspphot IS NOT NULL
+  AND gaia.logg_gspphot IS NOT NULL
+  AND gaia.mh_gspphot IS NOT NULL
+  -- AND gaia.has_xp_continuous = 'true' -- Inluye sólo los que tengan datos de espectrometría.
   -- AND gaia.phot_bp_mean_mag IS NOT NULL
-  AND xmatch.angular_distance <= 2
+  -- AND xmatch.angular_distance <= 6
+  
