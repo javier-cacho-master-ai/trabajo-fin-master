@@ -4,6 +4,9 @@
   subtitle: [$subtitle$],
   author: [$author$],
   director: [$director$],
+  degree: [$degree$],
+  city: [$city$],
+  date: [$date$],
 
   abstract_es: [$abstract_es$],
   abstract_en: [$abstract_en$],

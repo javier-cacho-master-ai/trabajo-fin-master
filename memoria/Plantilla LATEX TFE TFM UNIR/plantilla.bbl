@@ -1,0 +1,75 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+da S.~Bessa%
+, da Silva%
+, Frederico%
+\BCBL {}\ \BBA {} Ricarte%
+}{%
+da S.~Bessa%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2023}}%
+}]{%
+da_S_Bessa_2023}
+\APACinsertmetastar {%
+da_S_Bessa_2023}%
+\begin{APACrefauthors}%
+da S.~Bessa, J.%
+, da Silva, J\BPBI V.%
+, Frederico, M\BPBI N.%
+\BCBL {}\ \BBA {} Ricarte, G\BPBI C.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2023}{sep}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Sharp Hessian estimates for fully nonlinear elliptic
+  equations under relaxed convexity assumptions, oblique boundary conditions
+  and applications} {Sharp hessian estimates for fully nonlinear elliptic
+  equations under relaxed convexity assumptions, oblique boundary conditions
+  and applications}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of Differential Equations}{367}{}{451--493}.
+\newblock
+\begin{APACrefURL} \url{https://doi.org/10.1016%2Fj.jde.2023.05.006}
+  \end{APACrefURL}
+\newblock
+\begin{APACrefDOI} \doi{10.1016/j.jde.2023.05.006} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Pimentel%
+\ \BBA {} Teixeira%
+}{%
+Pimentel%
+\ \BBA {} Teixeira%
+}{%
+{\protect \APACyear {2016}}%
+}]{%
+PIMENTEL2016744}
+\APACinsertmetastar {%
+PIMENTEL2016744}%
+\begin{APACrefauthors}%
+Pimentel, E\BPBI A.%
+\BCBT {}\ \BBA {} Teixeira, E\BPBI V.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2016}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Sharp Hessian integrability estimates for nonlinear
+  elliptic equations: An asymptotic approach} {Sharp hessian integrability
+  estimates for nonlinear elliptic equations: An asymptotic approach}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal de Mathématiques Pures et
+  Appliquées}{106}{4}{744-767}.
+\newblock
+\begin{APACrefURL}
+  \url{https://www.sciencedirect.com/science/article/pii/S0021782416300101}
+  \end{APACrefURL}
+\newblock
+\begin{APACrefDOI} \doi{https://doi.org/10.1016/j.matpur.2016.03.010}
+  \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}

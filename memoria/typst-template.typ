@@ -10,11 +10,12 @@
   subtitle: none,
   author: none,
   director: none,
+  degree: none,
+  city: none,
+  date: none,
   abstract_es: none,
   abstract_en: none,
-  keywords: none,
-  faculty-color: rgb(32, 130, 192),
-  date: datetime.today(),
+  keywords: (),
   body,
 ) = {
   set page(..styles.page-config)
@@ -25,19 +26,26 @@
 
   cover(
     title: title,
+    degree: degree,
     author: author,
     director: director,
+    city: city,
+    date: date,
   )
+
+  // Front matter order as in the LaTeX template:
+  // indices first, then Resumen/Abstract, all with roman page numbers
+  table-of-contents()
 
   get-abstracts(
     abstract_es: abstract_es,
-    abstract_en: abstract_en
+    abstract_en: abstract_en,
+    keywords: keywords,
   )
 
-  table-of-contents()
-
   get-body(
-    header-text: [#author #title],
+    // \rhead{\theauthor\\\@titulacion}
+    header-text: [#author \ #degree],
     content: body,
   )
 }
