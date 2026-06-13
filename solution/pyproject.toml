@@ -3,7 +3,7 @@ name = "astronomical-signal-improvement"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
     "astropy>=7.2.0",
     "astroquery>=0.4.11",
@@ -15,4 +15,5 @@ dependencies = [
     "pandas>=3.0.2",
     "plotly-express>=0.4.1",
     "specutils>=2.3.0",
+    "h5py>=3.12.1",
 ]

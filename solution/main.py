@@ -197,3 +197,73 @@ spl.plot_physical_spectrum(
 # )
 
 
+# %% [markdown]
+# ## Comparación de espectros del pipeline
+#
+# Carga una pareja aleatoria Gaia-SDSS de los datos ya extraídos por el pipeline
+# y muestra ambos espectros lado a lado.
+
+# %%
+import random
+import h5py
+import numpy as np
+import astropy.units as u
+from pathlib import Path
+from specutils import Spectrum
+from services.plotting import plot_physical_spectrum
+
+_h5_path = Path("data") / "06_training_data" / "training.h5"
+
+with h5py.File(str(_h5_path), "r") as _f:
+    _i              = random.randrange(_f["gaia_source_id"].shape[0])
+    _gaia_source_id = int(_f["gaia_source_id"][_i])
+    _sdss_obj_id    = int(_f["sdss_obj_id"][_i])
+    _gaia_wave      = _f["gaia_wavelength_nm"][:]
+    _sdss_wave      = _f["sdss_wavelength_aa"][:]
+    _gaia_flux      = _f["X"][_i]
+    _sdss_flux      = _f["y"][_i]
+
+sdss_spectrum = Spectrum(
+    spectral_axis=_sdss_wave * u.AA
+  , flux=_sdss_flux * u.Unit("erg / (cm2 s AA)") * 1e-17
+)
+gaia_spectrum = Spectrum(
+    spectral_axis=_gaia_wave * u.nm
+  , flux=_gaia_flux * u.Unit("W / (m2 nm)")
+)
+
+plot_physical_spectrum(sdss_spectrum, title=f"SDSS  objID={_sdss_obj_id}")
+plot_physical_spectrum(gaia_spectrum, title=f"Gaia  source_id={_gaia_source_id}")
+
+# %% [markdown]
+# ### Comparación conjunta SDSS vs Gaia (mismo objeto, espectros superpuestos)
+
+# %%
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+
+sns.set_theme(style="ticks", rc={"axes.grid": True, "grid.linestyle": "--"})
+
+# Convert both spectra to Å and normalize flux to [0, 1] for overlay
+_sdss_wave_aa = sdss_spectrum.spectral_axis.to(u.AA).value
+_gaia_wave_aa = gaia_spectrum.spectral_axis.to(u.AA).value
+
+def _norm(y):
+    lo, hi = y.min(), y.max()
+    return (y - lo) / (hi - lo) if hi > lo else y - lo
+
+_sdss_flux_n = _norm(sdss_spectrum.flux.value)
+_gaia_flux_n = _norm(gaia_spectrum.flux.value)
+
+fig, ax = plt.subplots(figsize=(14, 5))
+ax.plot(_sdss_wave_aa, _sdss_flux_n, color="steelblue",  linewidth=0.9, label=f"SDSS  objID={_sdss_obj_id}")
+ax.plot(_gaia_wave_aa, _gaia_flux_n, color="darkorange", linewidth=0.9, label=f"Gaia  source_id={_gaia_source_id}")
+ax.set_xlabel("Longitud de onda (Å)")
+ax.set_ylabel("Flujo normalizado [0–1]")
+ax.set_title(f"Espectro SDSS vs Gaia — SDSS objID={_sdss_obj_id} / Gaia source_id={_gaia_source_id}")
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+# %%

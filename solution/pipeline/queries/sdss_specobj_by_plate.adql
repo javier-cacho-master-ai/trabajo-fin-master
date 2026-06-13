@@ -1,0 +1,15 @@
+SELECT TOP 250
+  s.bestObjID
+  ,s.specObjID
+  ,s.plate
+  ,s.mjd
+  ,s.fiberID
+  ,s.z AS redshift
+FROM
+  SpecObj AS s
+WHERE
+  s.sciencePrimary = 1
+  AND s.plate BETWEEN {plate_start} AND {plate_end}
+  AND s.specObjID > {min_id}
+ORDER BY
+  s.specObjID
