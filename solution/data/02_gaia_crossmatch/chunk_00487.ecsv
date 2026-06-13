@@ -1,0 +1,114 @@
+# %ECSV 1.0
+# ---
+# datatype:
+# - name: source_id
+#   datatype: int64
+#   description: Unique source identifier (unique within a particular Data Release)
+#   meta: !!omap
+#   - {ucd: meta.id}
+# - name: ra
+#   unit: deg
+#   datatype: float64
+#   description: Right ascension
+#   meta: !!omap
+#   - {ucd: pos.eq.ra;meta.main}
+#   - {utype: 'stc:AstroCoords.Position3D.Value3.C1'}
+# - name: dec
+#   unit: deg
+#   datatype: float64
+#   description: Declination
+#   meta: !!omap
+#   - {ucd: pos.eq.dec;meta.main}
+#   - {utype: 'stc:AstroCoords.Position3D.Value3.C2'}
+# - name: phot_bp_mean_mag
+#   unit: mag
+#   datatype: float32
+#   description: Integrated BP mean magnitude
+#   meta: !!omap
+#   - {ucd: phot.mag;em.opt.B}
+# - name: phot_rp_mean_mag
+#   unit: mag
+#   datatype: float32
+#   description: Integrated RP mean magnitude
+#   meta: !!omap
+#   - {ucd: phot.mag;em.opt.R}
+# - name: phot_bp_mean_flux_over_error
+#   datatype: float32
+#   description: Integrated BP mean flux divided by its error
+#   meta: !!omap
+#   - {ucd: stat.snr;phot.flux;em.opt.B}
+# - name: phot_rp_mean_flux_over_error
+#   datatype: float32
+#   description: Integrated RP mean flux divided by its error
+#   meta: !!omap
+#   - {ucd: stat.snr;phot.flux;em.opt.R}
+# - name: astrometric_excess_noise
+#   unit: mas
+#   datatype: float32
+#   description: Excess noise of the source
+#   meta: !!omap
+#   - {ucd: stat.value}
+# - name: bp_rp
+#   unit: mag
+#   datatype: float32
+#   description: BP - RP colour
+#   meta: !!omap
+#   - {ucd: phot.color;em.opt.B;em.opt.R}
+# - name: teff_gspphot
+#   unit: K
+#   datatype: float32
+#   description: Effective temperature from GSP-Phot Aeneas best library using BP/RP spectra
+#   meta: !!omap
+#   - {ucd: phys.temperature.effective}
+# - name: logg_gspphot
+#   unit: log(cm.s**-2)
+#   datatype: float32
+#   description: Surface gravity from GSP-Phot Aeneas best library using BP/RP spectra
+#   meta: !!omap
+#   - {ucd: phys.gravity}
+# - name: mh_gspphot
+#   unit: dex
+#   datatype: float32
+#   description: Iron abundance from GSP-Phot Aeneas best library using BP/RP spectra
+#   meta: !!omap
+#   - {ucd: phys.abund.Z}
+# - name: vbroad
+#   unit: km / s
+#   datatype: float32
+#   description: Spectral line broadening parameter
+#   meta: !!omap
+#   - {ucd: spect.dopplerVeloc.opt;em.opt.I}
+#   - {utype: 'stc:AstroCoords.Velocity3D.Value3.C3'}
+# - name: alphafe_gspspec
+#   unit: dex
+#   datatype: float32
+#   description: Abundance of alpha-elements [alpha/Fe] with respect to iron from GSP-Spec MatisseGauguin using RVS spectra and Monte
+#     Carlo realisations
+#   meta: !!omap
+#   - {ucd: phys.abund;stat.median}
+# - name: original_ext_source_id
+#   datatype: int64
+#   description: Original External Catalogue source identifier
+#   meta: !!omap
+#   - {ucd: meta.id.cross}
+# - name: angular_distance
+#   unit: arcsec
+#   datatype: float32
+#   description: Angular Distance between the two sources
+#   meta: !!omap
+#   - {ucd: pos.angDistance}
+# - {name: plate, datatype: int32}
+# - {name: mjd, datatype: int32}
+# - {name: fiberID, datatype: int32}
+# - {name: redshift, datatype: float32}
+# schema: astropy-2.0
+source_id ra dec phot_bp_mean_mag phot_rp_mean_mag phot_bp_mean_flux_over_error phot_rp_mean_flux_over_error astrometric_excess_noise bp_rp teff_gspphot logg_gspphot mh_gspphot vbroad alphafe_gspspec original_ext_source_id angular_distance plate mjd fiberID redshift
+1023670446724589568 137.6209605868234 54.455284621077446 18.546957 18.165686 42.54626 42.523228 0.2936611 0.38127136 7384.554 4.3969 -1.9721 "" "" 1237651190286254212 0.047875505 450 51908 44 0.5257142
+1023759713323725568 136.39952990327305 53.97494080371206 16.263988 15.4100485 60.35238 50.286667 0.38579056 0.85394 "" "" "" "" "" 1237651250413764705 0.23113748 450 51908 211 3.017513e-05
+1023779538893815040 136.27138811727522 54.275088165729734 15.503511 14.763371 705.4089 939.5026 0.0 0.74013996 6192.4873 4.5099 -0.439 "" "" 1237651190822797438 0.07285543 450 51908 213 0.0001431295
+1024039779552312448 138.8377988013844 54.998908385213305 16.833498 15.459505 91.24024 180.36705 5.4634533 1.3739929 "" "" "" "" "" 1237651190286647375 0.038639292 450 51908 70 0.02946406
+1023774728530431232 136.54217935112163 54.38976651891187 18.776163 18.298016 30.714737 51.199078 0.0 0.4781475 6779.1885 4.5943 -2.429 "" "" 1237651190822862906 0.06624628 450 51908 133 0.6272395
+1023878250125920768 137.23017933040248 54.78807866254404 18.983175 18.141193 34.93892 48.765293 0.0 0.8419819 5559.517 4.7459 -4.0669 "" "" 1237651190823125108 0.017741269 450 51908 143 1.61071
+1023791702241146496 136.2630257645866 54.513324961444575 17.046404 16.264267 233.39473 289.03516 0.0 0.7821369 5758.308 4.595 -0.6787 "" "" 1237651250950766733 0.048576973 450 51908 220 -0.0002194222
+1023904711421140480 137.50989528782867 54.98588627149037 17.831535 17.118662 146.283 180.23402 0.041416265 0.71287346 5978.323 4.6953 -1.5519 "" "" 1237651190823256112 0.040754072 450 51908 119 -0.0006010775
+1023943400486587648 136.3745654735718 55.00263691542296 16.510221 15.727006 275.7756 385.7167 0.0 0.7832155 5721.472 4.5123 -0.6989 "" "" 1237651191359930371 0.08148148 450 51908 161 -0.0001694392

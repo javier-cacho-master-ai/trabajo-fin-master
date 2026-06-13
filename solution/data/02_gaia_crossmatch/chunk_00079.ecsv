@@ -1,0 +1,118 @@
+# %ECSV 1.0
+# ---
+# datatype:
+# - name: source_id
+#   datatype: int64
+#   description: Unique source identifier (unique within a particular Data Release)
+#   meta: !!omap
+#   - {ucd: meta.id}
+# - name: ra
+#   unit: deg
+#   datatype: float64
+#   description: Right ascension
+#   meta: !!omap
+#   - {ucd: pos.eq.ra;meta.main}
+#   - {utype: 'stc:AstroCoords.Position3D.Value3.C1'}
+# - name: dec
+#   unit: deg
+#   datatype: float64
+#   description: Declination
+#   meta: !!omap
+#   - {ucd: pos.eq.dec;meta.main}
+#   - {utype: 'stc:AstroCoords.Position3D.Value3.C2'}
+# - name: phot_bp_mean_mag
+#   unit: mag
+#   datatype: float32
+#   description: Integrated BP mean magnitude
+#   meta: !!omap
+#   - {ucd: phot.mag;em.opt.B}
+# - name: phot_rp_mean_mag
+#   unit: mag
+#   datatype: float32
+#   description: Integrated RP mean magnitude
+#   meta: !!omap
+#   - {ucd: phot.mag;em.opt.R}
+# - name: phot_bp_mean_flux_over_error
+#   datatype: float32
+#   description: Integrated BP mean flux divided by its error
+#   meta: !!omap
+#   - {ucd: stat.snr;phot.flux;em.opt.B}
+# - name: phot_rp_mean_flux_over_error
+#   datatype: float32
+#   description: Integrated RP mean flux divided by its error
+#   meta: !!omap
+#   - {ucd: stat.snr;phot.flux;em.opt.R}
+# - name: astrometric_excess_noise
+#   unit: mas
+#   datatype: float32
+#   description: Excess noise of the source
+#   meta: !!omap
+#   - {ucd: stat.value}
+# - name: bp_rp
+#   unit: mag
+#   datatype: float32
+#   description: BP - RP colour
+#   meta: !!omap
+#   - {ucd: phot.color;em.opt.B;em.opt.R}
+# - name: teff_gspphot
+#   unit: K
+#   datatype: float32
+#   description: Effective temperature from GSP-Phot Aeneas best library using BP/RP spectra
+#   meta: !!omap
+#   - {ucd: phys.temperature.effective}
+# - name: logg_gspphot
+#   unit: log(cm.s**-2)
+#   datatype: float32
+#   description: Surface gravity from GSP-Phot Aeneas best library using BP/RP spectra
+#   meta: !!omap
+#   - {ucd: phys.gravity}
+# - name: mh_gspphot
+#   unit: dex
+#   datatype: float32
+#   description: Iron abundance from GSP-Phot Aeneas best library using BP/RP spectra
+#   meta: !!omap
+#   - {ucd: phys.abund.Z}
+# - name: vbroad
+#   unit: km / s
+#   datatype: float32
+#   description: Spectral line broadening parameter
+#   meta: !!omap
+#   - {ucd: spect.dopplerVeloc.opt;em.opt.I}
+#   - {utype: 'stc:AstroCoords.Velocity3D.Value3.C3'}
+# - name: alphafe_gspspec
+#   unit: dex
+#   datatype: float32
+#   description: Abundance of alpha-elements [alpha/Fe] with respect to iron from GSP-Spec MatisseGauguin using RVS spectra and Monte
+#     Carlo realisations
+#   meta: !!omap
+#   - {ucd: phys.abund;stat.median}
+# - name: original_ext_source_id
+#   datatype: int64
+#   description: Original External Catalogue source identifier
+#   meta: !!omap
+#   - {ucd: meta.id.cross}
+# - name: angular_distance
+#   unit: arcsec
+#   datatype: float32
+#   description: Angular Distance between the two sources
+#   meta: !!omap
+#   - {ucd: pos.angDistance}
+# - {name: plate, datatype: int32}
+# - {name: mjd, datatype: int32}
+# - {name: fiberID, datatype: int32}
+# - {name: redshift, datatype: float32}
+# schema: astropy-2.0
+source_id ra dec phot_bp_mean_mag phot_rp_mean_mag phot_bp_mean_flux_over_error phot_rp_mean_flux_over_error astrometric_excess_noise bp_rp teff_gspphot logg_gspphot mh_gspphot vbroad alphafe_gspspec original_ext_source_id angular_distance plate mjd fiberID redshift
+3683581351410102016 192.05906333771193 -1.1478132461305015 16.057283 15.507369 388.48508 367.21527 0.0 0.54991436 6767.5796 4.1089 -0.9226 "" "" 1237671763175473184 0.048102237 292 51609 254 0.000204698
+3689804342409542272 192.82953168285874 -0.06922459825611382 17.640972 16.878237 197.3928 186.64018 0.0 0.76273537 5806.6553 4.6263 -0.8307 "" "" 1237648721236328554 0.0393284 292 51609 156 -0.0001327198
+3683578808789495424 192.18908802747666 -1.177256287998962 16.789707 16.412249 73.498215 121.21806 0.11377795 0.37745857 7358.913 4.3001 -0.7495 "" "" 1237671264959332371 0.065885685 292 51609 210 0.0008136645
+3683565545930484096 192.2409754969243 -1.2582548505618423 18.095217 16.919058 105.738014 163.5772 0.0 1.1761589 4731.499 4.4972 -0.4795 "" "" 1237671264959267014 0.026718315 292 51609 202 8.812916e-05
+3689643744992450176 192.95124730127375 -0.35181581497482134 18.802433 18.231558 35.760998 38.311386 0.4641695 0.57087517 6795.1655 4.5889 -3.2913 "" "" 1237648704044400691 0.029096156 292 51609 157 0.4072759
+3683820765771292160 191.38485705806664 -0.7950441163557075 19.119173 18.553102 34.537994 35.28192 0.4252769 0.56607056 6432.7944 4.5877 -3.9331 "" "" 1237648703506808877 0.020702712 292 51609 293 2.006084
+3683814791473356800 191.51873461443162 -0.9477741814892707 18.588776 17.980162 50.70722 77.096016 0.31821957 0.60861397 6468.973 4.5852 -3.5031 "" "" 1237671763712409678 0.08008609 292 51609 287 1.733884
+3689645256821317888 192.31060838320693 -0.8237677521169288 17.04169 16.57454 32.80015 44.86052 0.0 0.46715164 7120.8433 4.3585 -1.8861 "" "" 1237648703507267591 0.10082779 292 51609 220 -4.973995e-05
+3683653193327242496 191.72561186022892 -0.844449817730056 17.835106 17.227552 97.59164 90.73026 0.0 0.6075535 6461.541 4.5291 -1.5408 "" "" 1237648720162127935 0.044172715 292 51609 284 0.0002658579
+3702076202141456640 191.57409774624284 0.8945571006565967 16.402756 15.665999 555.02295 379.00357 0.0 0.7367563 6019.7397 3.9849 -0.8076 "" "" 1237671763713196110 0.104326315 292 51609 324 -0.0001202598
+3689598974253603072 192.55101197674242 -0.8106494347403894 17.945757 17.16078 118.92193 118.25523 0.0 0.78497696 5736.821 4.6076 -1.2245 "" "" 1237648703507333163 0.051921155 292 51609 140 0.0001445014
+3683910036667389056 191.32868895305123 -0.5150134934604758 17.594835 16.885954 142.27452 173.79726 0.0 0.7088814 5967.758 4.5719 -1.1254 "" "" 1237648720698802248 0.019642023 292 51609 301 3.521494e-05
+3683627840135415808 191.95407827021086 -1.1869597868562465 16.961855 16.447649 174.29091 158.50983 0.0 0.51420593 "" "" "" "" "" 1237671763175473160 0.06101703 292 51609 281 0.0002335042
