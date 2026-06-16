@@ -10,8 +10,8 @@ class PipelineConfig:
 
     # Paso 1 – Catálogo espectroscópico SDSS
     # Las placas SDSS DR13 van de ~266 a ~9190; lotes de 50 ≈ 20 000 espectros por lote
-    sdss_plate_start:      int = 266
-    sdss_plate_end:        int = 766   # 500 placas ≈ 200 000 espectros
+    sdss_plate_start:      int = 767 
+    sdss_plate_end:        int = 1267   # 500 placas ≈ 200 000 espectros
     sdss_plate_batch_size: int = 50
 
     # Paso 1 y 2 – Parámetros compartidos SDSS / Gaia

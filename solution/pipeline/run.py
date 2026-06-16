@@ -107,48 +107,51 @@ def _setup_logging(log_path: Path) -> logging.Logger:
 
 
 def _parse_args() -> argparse.Namespace:
+    # Cargar la config para pasar los valores, en vez de meterlos hardcoded aquí.
+    d = PipelineConfig()
+
     p = argparse.ArgumentParser(
         description="Flujo de extracción de datos astronómicos."
       , formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     p.add_argument("--steps",    default="1,2,3,4,5,6", help="Números de paso separados por comas a ejecutar")
     p.add_argument("--force",    action="store_true",    help="Vuelve a ejecutar los pasos aunque sus salidas ya estén en disco")
-    p.add_argument("--data-dir", default="data",         help="Directorio raíz para todas las salidas de el flujo")
+    p.add_argument("--data-dir", default=str(d.data_dir), help="Directorio raíz para todas las salidas de el flujo")
 
     # Paso 1 – Catálogo espectroscópico SDSS
-    p.add_argument("--sdss-plate-start",      type=int, default=266)
-    p.add_argument("--sdss-plate-end",        type=int, default=766)
-    p.add_argument("--sdss-plate-batch-size", type=int, default=50)
-    p.add_argument("--sdss-workers",          type=int, default=1)
+    p.add_argument("--sdss-plate-start",      type=int, default=d.sdss_plate_start)
+    p.add_argument("--sdss-plate-end",        type=int, default=d.sdss_plate_end)
+    p.add_argument("--sdss-plate-batch-size", type=int, default=d.sdss_plate_batch_size)
+    p.add_argument("--sdss-workers",          type=int, default=d.sdss_max_workers)
 
     # Paso 2 – Cruce inverso Gaia
-    p.add_argument("--sdss-id-batch-size", type=int, default=200)
-    p.add_argument("--gaia-workers",       type=int, default=4)
+    p.add_argument("--sdss-id-batch-size", type=int, default=d.sdss_id_batch_size)
+    p.add_argument("--gaia-workers",       type=int, default=d.gaia_max_workers)
 
     # Paso 3 – Espectros SDSS
-    p.add_argument("--sdss-spectra-workers", type=int, default=4)
+    p.add_argument("--sdss-spectra-workers", type=int, default=d.sdss_spectra_max_workers)
 
     # Paso 5 – Espectros Gaia
-    p.add_argument("--gaia-spectra-batch-size", type=int, default=50)
-    p.add_argument("--gaia-spectra-workers",    type=int, default=2)
+    p.add_argument("--gaia-spectra-batch-size", type=int, default=d.gaia_spectra_batch_size)
+    p.add_argument("--gaia-spectra-workers",    type=int, default=d.gaia_spectra_max_workers)
 
     # Paso 6 – Datos de entrenamiento
     p.add_argument(
         "--sdss-wave-start"
       , type=float
-      , default=3_800.0
+      , default=d.sdss_interp_wavelength_start
       , help="Inicio de la rejilla SDSS interpolada en Ångströms"
     )
     p.add_argument(
         "--sdss-wave-end"
       , type=float
-      , default=9_200.0
+      , default=d.sdss_interp_wavelength_end
       , help="Fin de la rejilla SDSS interpolada en Ångströms"
     )
     p.add_argument(
         "--sdss-wave-n"
       , type=int
-      , default=3_600
+      , default=d.sdss_interp_n_points
       , help="Número de puntos en la rejilla SDSS interpolada"
     )
 
