@@ -4,6 +4,8 @@ author    : |
   Carla Sequero \
   J. Javier Cacho
 director  : "Dr. Guillermo Torralba Elipe"
+degree    : "Máster Universitario en Inteligencia Artificial"
+city      : ""
 date      : 2026-02-05
 keywords  : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
 ---

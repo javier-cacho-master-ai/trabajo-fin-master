@@ -1,0 +1,62 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: plantilla.aux
+The style file: apacite.bst
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: bibliografia.bib
+You're missing a field name---line 13 of file bibliografia.bib
+ : 
+ : % abstract = {We establish sharp W2,p regularity estimates for viscosity solutions of fully nonlinear elliptic equations under minimal, asymptotic assumptions on the governing operator F. By means of geometric tangential methods, we show that if the recession of the operator F – formally given by F⁎(M):=∞−1F(∞M) – is convex, then any viscosity solution to the original equation F(D2u)=f(x) is locally of class W2,p, provided f∈Lp, p>d, with appropriate universal estimates. Our result extends to operators with variable coefficients and in this setting they are new even under convexity of the frozen coefficient operator, M↦F(x0,M), as oscillation is measured only at the recession level. The methods further yield BMO regularity of the Hessian, provided the source lies in that space. As a final application, we establish the density of W2,p solutions within the class of all continuous viscosity solutions, for generic fully nonlinear operators F. This result gives an alternative tool for treating common issues often faced in the theory of viscosity solutions.
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+apacite.bst [2013/07/21 v6.03 APA bibliography style]
+You've used 2 entries,
+            6951 wiz_defined-function locations,
+            1289 strings with 11393 characters,
+and the built_in function-call counts, 5256 in all, are:
+= -- 625
+> -- 37
+< -- 310
++ -- 340
+- -- 4
+* -- 391
+:= -- 1119
+add.period$ -- 8
+call.type$ -- 2
+change.case$ -- 36
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 123
+empty$ -- 167
+format.name$ -- 65
+if$ -- 899
+int.to.chr$ -- 0
+int.to.str$ -- 6
+missing$ -- 0
+newline$ -- 64
+num.names$ -- 16
+pop$ -- 55
+preamble$ -- 1
+purify$ -- 10
+quote$ -- 0
+skip$ -- 271
+stack$ -- 0
+substring$ -- 362
+swap$ -- 71
+text.length$ -- 6
+text.prefix$ -- 0
+top$ -- 1
+type$ -- 160
+warning$ -- 0
+while$ -- 23
+width$ -- 0
+write$ -- 80
+(There was 1 error message)
