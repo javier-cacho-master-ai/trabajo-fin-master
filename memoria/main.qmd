@@ -353,6 +353,19 @@ Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el 
 
 Cabe destacar que las métricas calculadas anteriormente se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo entrenadas. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
+Para complementar toda la explicación dada, podemos observar las gráficas detalladas en la @fig-generado_15 y la @fig-generado_23. 
+
+![Ejemplo 1 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_generado_15.png){#fig-generado_15}
+
+![Ejemplo 2 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_generado_23.png){#fig-generado_23}
+
+En ellas observamos tres espectros. Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de SDSS una vez han sido recortados y agrupados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido escalados a la misma unidad que SDSS utiliza para poder representar ambos espectros en la misma escala, pero en el entrenamiento se usan escalas diferentes, las originales de cada conjunto de datos. 
+Finalmente, en naranja encontramos el espectro predicho por el modelo. 
+
+En gran parte de los gráficos observados, el modelo reproduce la morfología general del espectro, incluso modela gran parte de los picos más acentuados. 
+Si bien es cierto, hay puntos que el modelo no puede inferir debido a las estructuras detalladas de SDSS y la baja resolución inicial de Gaia. 
+
+
 
 ## Evaluación
 
