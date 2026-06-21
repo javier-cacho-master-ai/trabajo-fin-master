@@ -37,6 +37,9 @@ In this work we propose an innovative approach to improve the quality of the ast
 | SDSS | *Sloan Digital Sky Survey* |
 | SNR | *Signal-to-Noise Ratio* (relación señal-ruido) |
 | XP | Espectros conjuntos BP/RP de Gaia |
+| MAE | *Mean Absolute Error* |
+| MSE | *Mean Squared Error* |
+
 
 ## Introducción
  
@@ -229,7 +232,7 @@ En este capítulo se detalla el objetivo principal de este trabajo y su desglose
 También se expone la metodología empleada para afrontar dichos objetivos.
 
 ### Objetivo general
-El objetivo general de este trabajo consiste en desarrollar un modelo basado en aprendizaje automático que permita aproximar los coeficientes *XP_Continuous* de los fotómetros de baja resolución BP/RP de Gaia a un espectro de resolución más alta, similar al proporcionado por las observaciones de mayor calidad de SDSS.
+El objetivo general de este trabajo consiste en desarrollar un modelo basado en aprendizaje automático que permita aproximar el flujo calibrado captado por los fotómetros de baja resolución BP/RP de Gaia a un espectro de resolución más alta, similar al proporcionado por las observaciones de mayor calidad de SDSS.
 
 ### Objetivos específicos
 Para alcanzar el objetivo propuesto, se deben alcanzar previamente los siguientes objetivos intermedios.
@@ -314,8 +317,42 @@ Una vez ya estaba definida la lista de cuerpos de los que sí se dispone informa
 Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 30 000 pares de espectros emparejados de Gaia y SDSS.
 
 ### Entrenamiento del modelo
+Una vez se dispone de la base de datos con los pares de espectros de Gaia y SDSS, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
+El objetivo era conseguir un modelo que aprendiese una transformación entre los datos de entrada de Gaia y el espectro de SDSS asociado. Así pues, el modelo planteado recibe como entrada un vector con el flujo de Gaia y recibe un vector con el flujo correspondiente al espectro de SDSS.
+
+
+En primer lugar, cabe destacar que restringimos el intervalo de entrenamiento entre los 500 y 900 nm dado que es el rango común entre los dos satélites en el que no se observan alteraciones debido a posibles artefactos y se evitan zonas en las que la generación de los datos de salida se vería afectada por la falta de solapamiento entre ambas observaciones.
+
+Además, se eliminaron aquellos pares de espectros en los que encontrábamos valores no definidos o los cuales constaban de comportamientos anómalos, como por ejemplo escalas de flujo cercanas a cero, espectros constantes o rangos dinámicos extremos. Para conseguirlo, se usaron medidas basadas en percentiles de flujo, teniendo en cuenta medidas acerca del 95 o 99. Este filtrado consiguió eliminar efectos adversos en el modelo causados por datos no representativos de la muestra extraída.
+
+También tuvimos en cuenta la relación de escala entre los espectros de Gaia y SDSS. En algunos casos observábamos que los pares diferían exageradamente sobre la escala usada, por lo que usando el mismo criterio de los percentiles nombrado anteriormente, los casos más extremos fueron eliminados. De esta forma mantuvimos los pares en los que la relación entre la entrada y la salida fuese coherente.
+
+Finalmente, tuvimos que reducir la dimensionalidad del espectro de SDSS mediante una agrupación de bines consecutivos. SDSS contaba inicialmente con 3600 observaciones por espectro, mientras que Gaia tan solo 343. Esta diferencia suponía una dificultad añadida para el modelo, así que para abordar el problema aplicamos una función de agrupación, la cual sustituía por un único valor promedio cada bloque de n valores consecutivos del flujo de SDSS. Tras valorar los beneficios y desventajas de esta agrupación, se consideró una agrupación en conjuntos de 7 bines, reduciendo la dimensión de SDSS a 380 puntos. Este valor suponía el equilibrio entre la pérdida de información debido a la reducción de puntos y la mejora del problema de regresión del modelo.  
+
+
+De cara a la preparación de la base para el entrenamiento del modelo, definimos 3 subconjuntos: entrenamiento, test y validación. 
+Los datos de test se formaron con un 20% del conjunto global y fueron usados para evaluar el modelo, por lo que no fue usado durante su entrenamiento. El 80% restante se separó de forma aleatoria entre las parejas que forman la base de entrenamiento del modelo y de validación.  
+
+
+Una vez definida la partición de los datos, aplicamos una normalización a través de la media y desviación típica de los datos del conjunto de entrenamiento. Gracias a este paso, se facilitó el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas comparables.
+
+Después de un procedimiento de prueba y error, el modelo final corresponde a una red neuronal densa, formada por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de SDSS a predecir.
+Además, probamos diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos. En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
+
+La función de pérdida definida fue Huber, que combina el error cuadrático medio para errores pequeños, y el error absoluto medio para errores más grandes. Esto permite rebajar la penalización en aquellos casos en los que los espectros tengan desviaciones anómalas que no deban definir el comportamiento del modelo. 
+Se definió el optimizador Adam con una tasa de aprendizaje de 0.0001 y un recorte de gradiente con clipnorm = 1.0 para evitar las actualizaciones excesivas.
+
+El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de EarlyStopping que monitorea la pérdida del set de validación y detiene el entrenamiento si después de 5 épocas no ha mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de ReduceLROnPlateau que reducía la tasa de aprendizaje cuando la variable controlada se estabilizaba. 
 
 ### Validación del modelo
+Durante el entrenamiento del modelo se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. 
+En la última época llevada a cabo, se obtuvo una pérdida de entrenamiento de 0.0064, un error absoluto medio de 0.0629 y un error cuadrático medio de 0.0141.
+En el conjunto de validación las métricas obtenidas fueron muy cercanas, siendo un 0.0076 de pérdida, un MAE de 0.0659 y MSE de 0.0168. Esta similitud indica que el modelo no presenta un sobreajuste destacable, lo que conlleva que el modelo puede generalizarse de forma adecuada a datos no vistos durante su entrenamiento. 
+
+Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test, formado por unos 5500 pares de datos. Los valores obtenidos en este conjunto tuvieron una pérdida de 0.007, MAE de 0.0653 y MSE de 0.0146. Estos datos son cercanos a los obtenidos en la muestra de validación, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos anteriormente. 
+
+Cabe destacar que las métricas calculadas anteriormente se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo entrenadas. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
+
 
 ## Evaluación
 
