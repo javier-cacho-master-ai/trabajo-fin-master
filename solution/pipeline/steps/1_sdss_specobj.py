@@ -12,12 +12,11 @@ reanuda desde el primer lote ausente.
 
 from __future__ import annotations
 
-from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path
 
-from astropy.table import Table, vstack
+from astropy.table import Table
 from astroquery.sdss import SDSS
 
 from pipeline._retry import retry
@@ -25,7 +24,6 @@ from pipeline.config import PipelineConfig
 from services.querying import sanitize_adql
 
 _QUERIES_DIR = Path(__file__).parent.parent / "queries"
-_PAGE_SIZE   = 250   # SDSS SQL endpoint hard limit per request
 
 
 # ---------------------------------------------------------------------------
@@ -52,40 +50,15 @@ def _is_pending(output_dir: Path, batch: tuple[int, int]) -> bool:
 
 
 @retry()
-def _fetch_page(query: str, data_release: int) -> Table:
-    result = SDSS.query_sql(query, data_release=data_release)
-    return result if result is not None else Table()
-
-
-def _iter_pages(
-    query_template: str
-  , data_release: int
-  , s: int
-  , e: int
-  , min_id: int = 0
-) -> Iterator[Table]:
-    page = _fetch_page(
-        query_template.format(plate_start=s, plate_end=e, min_id=min_id)
-      , data_release
-    )
-    match len(page):
-        case 0:
-            return
-        case full if full == _PAGE_SIZE:
-            yield page
-            yield from _iter_pages(query_template, data_release, s, e, int(page["specObjID"][-1]))  # type: ignore[index]
-        case _:
-            yield page
-
-
 def _fetch_batch(
     query_template: str
   , data_release: int
   , batch: tuple[int, int]
 ) -> Table:
-    s, e  = batch
-    pages = list(_iter_pages(query_template, data_release, s, e))
-    return vstack(pages) if pages else Table()
+    s, e   = batch
+    query  = query_template.format(plate_start=s, plate_end=e)
+    result = SDSS.query_sql(query, data_release=data_release)
+    return result if result is not None else Table()
 
 
 def _fetch_and_save(
