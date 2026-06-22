@@ -1,4 +1,4 @@
-SELECT TOP 250
+SELECT
   s.bestObjID
   ,s.specObjID
   ,s.plate
@@ -10,6 +10,5 @@ FROM
 WHERE
   s.sciencePrimary = 1
   AND s.plate BETWEEN {plate_start} AND {plate_end}
-  AND s.specObjID > {min_id}
 ORDER BY
   s.specObjID

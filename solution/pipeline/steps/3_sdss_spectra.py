@@ -8,6 +8,7 @@ descarga; una ejecución fallida reanuda desde el primer espectro ausente.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path
@@ -63,6 +64,13 @@ def _is_pending(output_dir: Path, req: _SpecRequest) -> bool:
     return not _spectrum_path(output_dir, req).exists()
 
 
+def _unique_by_obj(requests: Iterable[_SpecRequest]) -> list[_SpecRequest]:
+    """Conserva una sola petición por objID; el fichero de salida se nombra sólo
+    por objID, de modo que los duplicados del cruce competirían por el mismo
+    fichero (PermissionError en Windows al escribir en paralelo)."""
+    return list({req.obj_id: req for req in requests}.values())
+
+
 # ---------------------------------------------------------------------------
 # Con efectos – E/S en el límite
 # ---------------------------------------------------------------------------
@@ -110,7 +118,7 @@ def run(config: PipelineConfig, crossmatch_dir: Path | None = None) -> list[Path
     output_dir.mkdir(parents=True, exist_ok=True)
 
     table        = _load_tables(crossmatch_dir, "chunk_*.ecsv")
-    all_requests = list(map(_to_request, table))
+    all_requests = _unique_by_obj(map(_to_request, table))
 
     pending = list(filter(partial(_is_pending, output_dir), all_requests))
     cached  = [_spectrum_path(output_dir, r) for r in all_requests if not _is_pending(output_dir, r)]
