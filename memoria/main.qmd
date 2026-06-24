@@ -318,7 +318,7 @@ Cada muestra usada debe contener el identificador de este objeto dentro de su ba
 
 El conjunto de datos original, deberá ser almacenado en un formato que sea eficiente para su uso en el modelo. En este trabajo se consideró el formato HDF5.
 
-Una vez extraido el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento. Además, se recortarán los rangos de longitud de onda a aquellos que se sobrepongan entre ambas muestras y que no incluyan anomalías de forma generalizada. 
+Una vez extraído el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento. Además, se recortarán los rangos de longitud de onda a aquellos que se sobrepongan entre ambas muestras y que no incluyan anomalías de forma generalizada. 
 
 ### Requisitos del modelo
 
