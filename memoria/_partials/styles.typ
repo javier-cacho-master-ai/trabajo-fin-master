@@ -27,10 +27,8 @@
     },
     body-paragraph-config: (
       justify: true,
-      // \renewcommand{\baselinestretch}{1.5} at 11pt
       leading: 0.8em,
-      // book class: no extra space between paragraphs, first line indented
-      spacing: 0.8em,
+      spacing: 1.6em,
       first-line-indent: 1.5em,
     ),
   )
