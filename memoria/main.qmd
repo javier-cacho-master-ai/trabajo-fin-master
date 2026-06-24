@@ -314,7 +314,7 @@ Con esta información y la función *get_spectra* de la librería *astroquery*, 
 
 Una vez ya estaba definida la lista de cuerpos de los que sí se dispone información en ambos proyectos, recabamos la información de Gaia. Para conseguir los coeficientes anteriormente mencionados, accedimos a *gaiadr3.xp_continuous_mean_spectrum* y guardamos las variables *bp_coefficients* y *rp_coefficients* de los objetos listados.
 
-Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 30 000 pares de espectros emparejados de Gaia y SDSS.
+Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 50 000 pares de espectros emparejados de Gaia y SDSS.
 
 ### Entrenamiento del modelo
 Una vez se dispone de la base de datos con los pares de espectros de Gaia y SDSS, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
@@ -346,18 +346,18 @@ El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas
 
 ### Validación del modelo
 Durante el entrenamiento del modelo se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. 
-En la última época llevada a cabo, se obtuvo una pérdida de entrenamiento de 0.0064, un error absoluto medio de 0.0629 y un error cuadrático medio de 0.0141.
-En el conjunto de validación las métricas obtenidas fueron muy cercanas, siendo un 0.0076 de pérdida, un MAE de 0.0659 y MSE de 0.0168. Esta similitud indica que el modelo no presenta un sobreajuste destacable, lo que conlleva que el modelo puede generalizarse de forma adecuada a datos no vistos durante su entrenamiento. 
+En la última época llevada a cabo, se obtuvo una pérdida de entrenamiento de 0.0073, un error absoluto medio de 0.0670 y un error cuadrático medio de 0.0153.
+En el conjunto de validación las métricas obtenidas fueron muy cercanas, siendo un 0.0074 de pérdida, un MAE de 0.0676 y MSE de 0.0152. Esta similitud indica que el modelo no presenta un sobreajuste destacable, lo que conlleva que el modelo puede generalizarse de forma adecuada a datos no vistos durante su entrenamiento. 
 
-Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test, formado por unos 5500 pares de datos. Los valores obtenidos en este conjunto tuvieron una pérdida de 0.007, MAE de 0.0653 y MSE de 0.0146. Estos datos son cercanos a los obtenidos en la muestra de validación, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos anteriormente. 
+Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test, formado por unos 5500 pares de datos. Los valores obtenidos en este conjunto tuvieron una pérdida de 0.0081, MAE de 0.0697 y MSE de 0.0168. Estos datos son cercanos a los obtenidos en la muestra de validación, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos anteriormente. 
 
 Cabe destacar que las métricas calculadas anteriormente se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo entrenadas. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
-Para complementar toda la explicación dada, podemos observar las gráficas detalladas en la @fig-generado_15 y la @fig-generado_23. 
+Para complementar toda la explicación dada, podemos observar las gráficas detalladas en la @fig-generado_123 y la @fig-generado_178. 
 
-![Ejemplo 1 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_generado_15.png){#fig-generado_15}
+![Ejemplo 1 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_generado_123.png){#fig-generado_123}
 
-![Ejemplo 2 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_generado_23.png){#fig-generado_23}
+![Ejemplo 2 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_generado_178.png){#fig-generado_178}
 
 En ellas observamos tres espectros. Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de SDSS una vez han sido recortados y agrupados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido escalados a la misma unidad que SDSS utiliza para poder representar ambos espectros en la misma escala, pero en el entrenamiento se usan escalas diferentes, las originales de cada conjunto de datos. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
@@ -365,12 +365,27 @@ Finalmente, en naranja encontramos el espectro predicho por el modelo.
 En gran parte de los gráficos observados, el modelo reproduce la morfología general del espectro, incluso modela gran parte de los picos más acentuados. 
 Si bien es cierto, hay puntos que el modelo no puede inferir debido a las estructuras detalladas de SDSS y la baja resolución inicial de Gaia. 
 
-
-
 ## Evaluación
 
 ## Conclusiones y trabajo futuro
 
+En este capítulo se incluyen las conclusiones obtenidas tras el desarrollo del trabajo y comentarios acerca de posibles trabajos futuros partiendo de los resultados obtenidos.
+
 ### Conclusiones
 
+A lo largo del trabajo hemos llevado a cabo todo el desarrollo necesario para poder entrenar un modelo de redes neuronales, partiendo desde la creación de la base de datos de espectros de Gaia y SDSS hasta su uso para la validación del modelo generado. 
+
+En primer lugar, la creación de la base de datos resultó no ser algo trivial. Diseñamos un proceso por etapas que nos permitió obtener a partir de espectros y datos de SDSS las observaciones de Gaia que esta categorizaba como su vecino más cercano. Se observaron diversas limitaciones en este proceso, debido a la estructura y capacidad de los servicios de consulta que disponen ambos satélites. Por este motivo, una parte importante del trabajo se basó en conseguir un método robusto y reproducible que nos permitiese crear la base de datos necesaria. 
+Al mismo tiempo, la calidad de los pares de espectros también influyó en el estudio, se tuvieron que descartar algunos datos debido a escalas incompatibles, artefactos o espectros con un claro error en la captación de datos, como por ejemplo con valores constantes o nulos a lo largo de la longitud de onda observada.
+
+En cuanto al modelo neuronal, planteamos un problema de regresión multivariante, cuya red recibe como entrada un espectro de Gaia y tiene el objetivo de predecir como salida un espectro de SDSS. 
+Cabe destacar que la gran diferencia de resolución entre Gaia y SDSS implica que el modelo no sea capaz de aprender información espectral muy detallada de SDSS, es decir, no puede reconstruir de forma eficaz las estructuras finas que SDSS produce. Por este motivo, la dimensión de salida de SDSS se redujo mediante una agrupación de bines, permitiéndonos mejorar la calidad de los resultados sin perder la información básica del espectro de SDSS. 
+
+Se evaluaron diferentes arquitecturas de modelo y preprocesamientos de la base de datos, considerando definitivas las versiones que se pueden encontrar detalladas en este trabajo. 
+De dicho proceso de prueba y error, obtuvimos resultados que demuestran que el modelo es capaz de predecir la forma general de los espectros de SDSS en gran parte de los casos. Asimismo, la comparación de las métricas de entrenamiento, validación y test permiten asegurar que el modelo no se ha sobreajustado a los datos observados durante el entrenamiento, sino que presenta capacidad para generalizar su uso sobre datos no observados. 
+
+En resumen, podemos concluir que este trabajo demuestra que es posible diseñar un modelo de redes neuronales que permita aproximar espectros captados por Gaia a una reconstrucción con menor grado de detalle de los observados por SDSS. Este hecho permite dejar una puerta abierta a varias líneas de mejora, las cuales serán comentadas en el siguiente apartado. 
+
+
 ### Trabajo futuro
+
