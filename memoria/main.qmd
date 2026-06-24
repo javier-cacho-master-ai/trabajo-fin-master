@@ -310,15 +310,15 @@ Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha
 
 Para un correcto desarrollo del proyecto, es necesario garantizar una serie de requisitos mínimos. Estos se describen a continuación según el ámbito al que hacen referencia.
 
-### Requisitos de la base de datos
+### Requisitos del conjunto de datos
 
-La base de datos usada para el entrenamiento del modelo debe estar formada por pares de espectros de Gaia y SDSS que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos.
+El conjunto de datos usado para el entrenamiento del modelo debe estar formada por pares de espectros de Gaia y SDSS que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos.
 
 Cada muestra usada debe contener el identificador de este objeto dentro de su base de datos, el espectro, la malla de longitud de onda correspondiente y la relación señal-ruido del espectro. 
 
 El conjunto de datos original, deberá ser almacenado en un formato que sea eficiente para su uso en el modelo. En este trabajo se consideró el formato HDF5.
 
-Una vez construida la base de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento. Además, se recortarán los rangos de longitud de onda a aquellos que se sobrepongan entre ambas muestras y que no incluyan anomalías de forma generalizada. 
+Una vez extraido el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento. Además, se recortarán los rangos de longitud de onda a aquellos que se sobrepongan entre ambas muestras y que no incluyan anomalías de forma generalizada. 
 
 ### Requisitos del modelo
 
@@ -338,19 +338,38 @@ El modelo deberá evaluarse con métricas cuantitativas apropiadas al tipo de da
 
 En este capítulo se describe el trabajo realizado en cada una de las etapas definidas en la metodología, junto con la herramienta *software* desarrollada.
 
-### Creación de la base de datos
+### Preparación del conjunto de datos
 
-Para obtener la base de datos de entrenamiento del modelo, en primer lugar, se realizó una consulta ADQL sobre la tabla *gaiadr3.gaia_source*, en concreto teniendo en cuenta *gaiadr3.sdssdr13_best_neighbour*. De aquí sacamos una base de datos con aquellas observaciones que tienen la variable *XP_continuous* y cuya distancia angular respecto al cruce con SDSS es menor que 2 segundos de arco.
-Cabe destacar que el procedimiento explicado se llevó a cabo por lotes, dado que la base de datos de SDSS está limitada y no permite una petición de datos masiva. Para controlar que los lotes no tomasen los mismos datos de referencia, se usó la variable *gaia.random_index*. Esta es una columna de la base de datos de Gaia que permite hacer selecciones aleatorias de forma reproducible, por lo que fue usada con diferentes intervalos en cada lote procesado.
+La construcción del conjunto de datos de entrenamiento se ha automatizado mediante un flujo  reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consume el resultado de la anterior y guarda su salida en disco de inmediato, de manera que una ejecución interrumpida puede reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. A grandes rasgos dicho flujo obtiene la referencia de los objectos con espectro en SDSS, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objectos referenciados de SDSS, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal.
 
-A partir de la lista de objetos obtenida, filtramos por aquellos en los que las tres variables necesarias para encontrar el espectro se encontraban disponibles. Para ser concretos, era indispensable que el objeto estudiado tuviese las variables *plate*, *mjd* y *fiberID* no nulas, dado que estas son las que se usarán para identificar la muestra del fichero FITS.
-Con esta información y la función *get_spectra* de la librería *astroquery*, pudimos obtener los espectros observados por SDSS de los cuerpos a estudiar.
+#### Obtención de los objectos con espectro de SDSS
 
-Una vez ya estaba definida la lista de cuerpos de los que sí se dispone información en ambos proyectos, recabamos la información de Gaia. Para conseguir los coeficientes anteriormente mencionados, accedimos a *gaiadr3.xp_continuous_mean_spectrum* y guardamos las variables *bp_coefficients* y *rp_coefficients* de los objetos listados.
+La primera etapa parte del catálogo espectroscópico de SDSS y recopila los metadatos de todos sus espectros primarios. Comenzar por este catálogo garantiza que cada objeto considerado dispone realmente de una observación espectral de SDSS, lo que evita la enorme pérdida de muestras que se produciría al partir del cruce fotométrico en sentido contrario. El resultado es la lista de candidatos con espectro de SDSS confirmado.
 
-Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 50 000 pares de espectros emparejados de Gaia y SDSS.
+#### Cruce inverso con Gaia
+
+A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de SDSS busca la fuente equivalente en Gaia que además disponga de espectro BP/RP. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
+
+#### Descarga de los espectros de SDSS.
+
+La tercera etapa descarga el espectro de SDSS para cada objeto emparejado. Las descargas se realizan en paralelo y cada espectro se almacena en cuanto se obtiene, de modo que el proceso es robusto frente a las interrupciones y a las limitaciones de los servicios públicos de consulta.
+
+#### Depuración de referencias
+
+Como no todas las descargas culminan con éxito, la cuarta etapa depura el listado de pares y conserva exclusivamente aquellos cuyo espectro de SDSS se ha obtenido correctamente. El resultado es la tabla de referencia definitiva que vincula cada objeto entre ambos sistemas.
+
+#### Espectros calibrados de Gaia
+
+La quinta etapa recupera los espectros de Gaia de los objetos ya depurados. Dado que Gaia no proporciona directamente la relación entre flujo y longitud de onda, sino una representación mediante coeficientes, en esta etapa dichos espectros se calibran para obtener el flujo continuo equivalente.
+
+#### Transformación a datos de entrenamiento
+
+Finalmente, la sexta etapa homogeneiza y combina ambas fuentes: los espectros de SDSS se remuestrean a una rejilla común de longitudes de onda y se guardan junto a los de Gaia correspondientes en un único fichero con un formato optimizado HDF5. Este fichero es además acumulativo, de forma que sucesivas ejecuciones incorporan los pares nuevos sin descartar los ya almacenados.
+
+Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 55 000 pares de espectros emparejados de Gaia y SDSS.
 
 ### Entrenamiento del modelo
+
 Una vez se dispone de la base de datos con los pares de espectros de Gaia y SDSS, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
 El objetivo era conseguir un modelo que aprendiese una transformación entre los datos de entrada de Gaia y el espectro de SDSS asociado. Así pues, el modelo planteado recibe como entrada un vector con el flujo de Gaia y obtiene como salida un vector con una aproximación del flujo correspondiente al espectro de SDSS.
 
