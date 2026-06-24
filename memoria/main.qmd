@@ -265,7 +265,7 @@ Una vez los datos están listos, es necesario realizar el reparto entre los dist
 
 #### Selección del modelo de redes neuronales más adecuado
 
-Para el caso expuesto se considera que las redes neuronales pueden aportar una solución novedosa gracias a su no-linealidad. Será necesario un proceso de prueba y error para encontrar y definir una estructura con buenos resultados. 
+Para el caso expuesto se considera que las redes neuronales pueden aportar una solución novedosa gracias a su no-linealidad.
 
 
 #### Entrenamiento, refinamiento y validación del modelo
