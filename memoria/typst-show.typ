@@ -4,6 +4,7 @@
   subtitle: [$subtitle$],
   author: [$author$],
   director: [$director$],
+  work_type: [$work_type$],
   degree: [$degree$],
   city: [$city$],
   date: [$date$],

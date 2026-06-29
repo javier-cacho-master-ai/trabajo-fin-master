@@ -10,6 +10,7 @@
   subtitle: none,
   author: none,
   director: none,
+  work_type: none,
   degree: none,
   city: none,
   date: none,
@@ -29,6 +30,7 @@
     degree: degree,
     author: author,
     director: director,
+    work_type: work_type,
     city: city,
     date: date,
   )
