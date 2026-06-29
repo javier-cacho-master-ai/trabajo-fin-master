@@ -1,0 +1,70 @@
+# Fuente única de acrónimos. La lee la plantilla Typst (`_partials/acronyms.typ`)
+# para generar tanto el "Índice de acrónimos" como las menciones en el texto
+# (primera aparición en formato APA 7.ª, siguientes solo la sigla).
+#
+# Campos por acrónimo:
+#   key          Identificador para referenciar en el texto con [KEY]{.acr}.
+#   shortname    Sigla mostrada.
+#   longname     Desarrollo en su idioma original, en texto plano.
+#   translation  Traducción al español (opcional). Aparece en la primera mención
+#                APA «longname (SIGLA; translation)» y en el índice.
+#   italic       Si el desarrollo va en cursiva en el índice (true por defecto;
+#                false para términos ya en español, como IA o XP).
+acronyms:
+  - key: ADQL
+    shortname: ADQL
+    longname: Astronomical Data Query Language
+  - key: BP/RP
+    shortname: BP/RP
+    longname: Blue Photometer / Red Photometer
+  - key: DR
+    shortname: DR
+    longname: Data Release
+    translation: liberación de datos
+  - key: ELBO
+    shortname: ELBO
+    longname: Evidence Lower Bound
+  - key: ESA
+    shortname: ESA
+    longname: European Space Agency
+    translation: Agencia Espacial Europea
+  - key: FITS
+    shortname: FITS
+    longname: Flexible Image Transport System
+  - key: GAN
+    shortname: GAN
+    longname: Generative Adversarial Network
+    translation: red generativa antagónica
+  - key: IA
+    shortname: IA
+    longname: Inteligencia Artificial
+    italic: false
+  - key: JADES
+    shortname: JADES
+    longname: JWST Advanced Deep Extragalactic Survey
+  - key: JWST
+    shortname: JWST
+    longname: James Webb Space Telescope
+  - key: MAE
+    shortname: MAE
+    longname: Mean Absolute Error
+  - key: MSE
+    shortname: MSE
+    longname: Mean Squared Error
+  - key: MANGA
+    shortname: MaNGA
+    longname: Mapping Nearby Galaxies at Apache Point Observatory
+  - key: RVS
+    shortname: RVS
+    longname: Radial Velocity Spectrometer
+  - key: SDSS
+    shortname: SDSS
+    longname: Sloan Digital Sky Survey
+  - key: SNR
+    shortname: SNR
+    longname: Signal-to-Noise Ratio
+    translation: relación señal-ruido
+  - key: XP
+    shortname: XP
+    longname: Espectros conjuntos BP/RP de Gaia
+    italic: false

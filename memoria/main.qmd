@@ -17,41 +17,21 @@ En este trabajo proponemos un enfoque innovador para mejorar la calidad de las s
 
 In this work we propose an innovative approach to improve the quality of the astronomical signals captured by the blue and red photometers (BP/RP) of the Gaia satellite. By training a model from the huge amount of low resolution data collected by the Gaia mission and the cross matched best high resolution ground based observations we expect to find hidden patterns that can be applied to allow the usage of these low resolution spectrum as proxy for high resolution ones. We evaluate our method on several benchmark subsets of the original dataset by comparing it with the real observations from high resolution sources.
 
-## Índice de acrónimos
-
-<!-- TODO: la plantilla debería incluir también índices de figuras y tablas (anotación del director) -->
-
-| Acrónimo | Significado |
-|----------|-------------|
-| ADQL | *Astronomical Data Query Language* |
-| BP/RP | *Blue Photometer / Red Photometer* |
-| DR | *Data Release* (liberación de datos) |
-| ELBO | *Evidence Lower Bound* |
-| ESA | *European Space Agency* (Agencia Espacial Europea) |
-| FITS | *Flexible Image Transport System* |
-| GAN | *Generative Adversarial Network* (red generativa antagónica) |
-| IA | Inteligencia Artificial |
-| JADES | *JWST Advanced Deep Extragalactic Survey* |
-| JWST | *James Webb Space Telescope* |
-| MaNGA | *Mapping Nearby Galaxies at Apache Point Observatory* |
-| RVS | *Radial Velocity Spectrometer* |
-| SDSS | *Sloan Digital Sky Survey* |
-| SNR | *Signal-to-Noise Ratio* (relación señal-ruido) |
-| XP | Espectros conjuntos BP/RP de Gaia |
-| MAE | *Mean Absolute Error* |
-| MSE | *Mean Squared Error* |
-
+<!--
+El "Índice de acrónimos" se genera en las páginas preliminares (tras el Índice
+de Tablas), desde `_partials/acronyms.typ`, leyendo `_acronyms.yml`.
+Para referenciar un acrónimo en el texto: [ESA]{.acr}
+La primera aparición se expande en formato APA 7.ª
+—p. ej. «European Space Agency (ESA; Agencia Espacial Europea)»—
+y las siguientes muestran solo la sigla.
+-->
 
 ## Introducción
  
- <!--
-Ver figura @fig-ejemplo.
 
-![Una figura de ejemplo](_partials/assets/logo_unir_1666x348.png){#fig-ejemplo}
--->
-En diciembre de 2013 comenzó la misión Gaia [@gaiaDR1] con el objetivo de crear un mapa que permita conocer más detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de ESA, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en el 1989 y finalizó en el 1993. Los datos que Gaia aporta son 200 veces más precisos que los obtenidos por dicho satélite, pero aun así, de menor calidad que los obtenidos por otros proyectos actuales.  
+En diciembre de 2013 comenzó la misión Gaia [@gaiaDR1] con el objetivo de crear un mapa que permita conocer más detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de [ESA]{.acr}, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en el 1989 y finalizó en el 1993. Los datos que Gaia aporta son 200 veces más precisos que los obtenidos por dicho satélite, pero aun así, de menor calidad que los obtenidos por otros proyectos actuales.  
 
-La propia agencia ESA describe en el reporte publicado en 2013 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto, pero sin un orden o punto de referencia, en sus propias palabras, describen lo siguiente:<br>
+La propia agencia [ESA]{.acr} describe en el reporte publicado en 2013 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto, pero sin un orden o punto de referencia, en sus propias palabras, describen lo siguiente:<br>
 
 >"Antes de que los astrónomos puedan estudiar un objeto celeste, deben saber dónde encontrarlo. Sin este conocimiento, los astrónomos vagarían en vano en lo que Galileo alguna vez llamó un oscuro laberinto"
 <br>
@@ -61,11 +41,11 @@ Por este motivo, la misión principal de Gaia se puede considerar muy útil para
 Más allá de este objetivo, Gaia ha podido aportar descubrimientos de objetos celestes que anteriormente no conocíamos.
 Esta misión ha proporcionado uno de los catálogos más extensos y precisos hasta la fecha [@Gaia_DR3_Summary_2023], no solo aportando datos astrométricos, sino que también fotométricos y espectrofotométricos.
 
-Otras misiones, como ahora la iniciada en el año 2000 con *Sloan Digital Sky Survey* (SDSS), son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un número de objetos observados y una cobertura del cielo mucho menores [@SDSS_release1].
+Otras misiones, como ahora la iniciada en el año 2000 con [SDSS]{.acr}, son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un número de objetos observados y una cobertura del cielo mucho menores [@SDSS_release1].
 De este hecho parte la idea del trabajo que se desarrolla a continuación.
 
-Si se pudiese definir una similitud entre los espectros obtenidos por Gaia y SDSS, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto al la calidad y detalle que SDSS conlleva. 
-En este contexto, gracias a los avances constantes de la inteligencia artificial, en este trabajo proponemos explorar técnicas que nos permitan llevar a cabo este objetivo; convertir espectros de Gaia en su equivalente SDSS.
+Si se pudiese definir una similitud entre los espectros obtenidos por Gaia y [SDSS]{.acr}, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto al la calidad y detalle que [SDSS]{.acr} conlleva. 
+En este contexto, gracias a los avances constantes de la inteligencia artificial, en este trabajo proponemos explorar técnicas que nos permitan llevar a cabo este objetivo; convertir espectros de Gaia en su equivalente [SDSS]{.acr}.
 
 
 ### Motivación
@@ -74,9 +54,9 @@ A lo largo de 2026 se publicarán los últimos datos recolectados por Gaia en un
 Gracias a los datos recolectados, se dispone de una imagen reconstruida sobre cómo un observador vería nuestra galaxia desde el exterior de esta. Esta hazaña se ha conseguido a base de un conjunto de datos donde la información del cuerpo celeste parte fundamentalmente de dos espectros de baja resolución.
 La espectroscopía es una de las herramientas principales de la astrofísica para extraer información acerca de los cuerpos astronómicos. Gracias a la distribución de la luz en función de la longitud de onda, se pueden conocer detalles clave acerca de los objetos estudiados, como por ejemplo su composición, la temperatura y la gravedad superficial. 
 
-A diferencia de Gaia, otros proyectos astronómicos como SDSS presentan una resolución espectral mayor en gran parte del rango de longitudes de onda que ambos comparten (en el resto del rango, simplemente no disponen de datos). Como contrapartida, al tratarse de un sondeo terrestre que depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@DR13sdss], el número de objetos que SDSS puede observar es muy inferior al de Gaia.
+A diferencia de Gaia, otros proyectos astronómicos como [SDSS]{.acr} presentan una resolución espectral mayor en gran parte del rango de longitudes de onda que ambos comparten (en el resto del rango, simplemente no disponen de datos). Como contrapartida, al tratarse de un sondeo terrestre que depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@DR13sdss], el número de objetos que [SDSS]{.acr} puede observar es muy inferior al de Gaia.
 
-La motivación de este trabajo parte de explorar si técnicas de aprendizaje automático pueden aprender a relacionar la gran cantidad de datos captados por Gaia y los espectros de mayor calidad de SDSS. Si se modela la relación entre ambos datos, se conseguiría mejorar la información obtenida a partir de los datos recolectados por Gaia. 
+La motivación de este trabajo parte de explorar si técnicas de aprendizaje automático pueden aprender a relacionar la gran cantidad de datos captados por Gaia y los espectros de mayor calidad de [SDSS]{.acr}. Si se modela la relación entre ambos datos, se conseguiría mejorar la información obtenida a partir de los datos recolectados por Gaia. 
 
 
 <!--
@@ -86,11 +66,11 @@ Misiones anteriores a Gaia de la ESA:
 
 
 ### Planteamiento del trabajo
-El objetivo principal del trabajo que se desarrolla a continuación es diseñar un modelo basado en redes neuronales que consiga convertir espectros de Gaia en espectros equivalentes a los de SDSS. De esta forma conseguiríamos encontrar un modelo que relacione los datos captados por ambos proyectos.
+El objetivo principal del trabajo que se desarrolla a continuación es diseñar un modelo basado en redes neuronales que consiga convertir espectros de Gaia en espectros equivalentes a los de [SDSS]{.acr}. De esta forma conseguiríamos encontrar un modelo que relacione los datos captados por ambos proyectos.
 
 Para llevarlo a cabo, primero debemos entender las características de ambas fuentes de información, dado que los datos que usaremos deben estar correlacionados entre ambos conjuntos de datos. 
-En concreto nos centraremos en la tercera liberación de datos de Gaia (Gaia DR3) [@Gaia_DR3_Summary_2023] y la decimotercera de SDSS (DR13) [@DR13sdss], debido a que estos son los que en el DR3 de Gaia ya encontramos semi comparados, o por lo menos las asociaciones de vecindad hechas.
-Para ser exactos, trataremos de relacionar los espectros de baja resolución XP de Gaia DR3 (constituidos por los espectros azul y rojo) y los espectros ópticos de SDSS DR13.
+En concreto nos centraremos en la tercera liberación de datos de Gaia (Gaia DR3) [@Gaia_DR3_Summary_2023] y la decimotercera de [SDSS]{.acr} (DR13) [@DR13sdss], debido a que estos son los que en el DR3 de Gaia ya encontramos semi comparados, o por lo menos las asociaciones de vecindad hechas.
+Para ser exactos, trataremos de relacionar los espectros de baja resolución XP de Gaia DR3 (constituidos por los espectros azul y rojo) y los espectros ópticos de [SDSS]{.acr} DR13.
 
 Para realizar este trabajo seleccionamos el conjunto de datos de Gaia como base de estudio por diferentes motivos, por un lado, estas observaciones son parte de un estudio actual y al mismo tiempo la forma de acceder a los datos es relativamente sencilla, pero por otro, es muy destacable la gran cantidad de información y cuerpos observados que Gaia dispone. Esto nos permite tener una buena base para tratar de sacar comparaciones con otros satélites y al mismo tiempo justifica la magnitud del efecto que tendría su mejora.
 
@@ -106,7 +86,7 @@ En el Capítulo 4 se identifican los requisitos del sistema desarrollado.
 
 En el Capítulo 5 se describe el proyecto piloto desarrollado: el trabajo realizado en cada etapa de la metodología y la herramienta *software* construida para la extracción de los datos, el entrenamiento del modelo y su puesta en servicio.
 
-En el Capítulo 6 se evalúan los resultados obtenidos por el modelo frente a las observaciones reales de SDSS.
+En el Capítulo 6 se evalúan los resultados obtenidos por el modelo frente a las observaciones reales de [SDSS]{.acr}.
 
 Finalmente, en el Capítulo 7 se recogen las conclusiones del trabajo y se proponen posibles líneas de trabajo futuro.
 
@@ -140,15 +120,15 @@ A continuación nos centraremos en desarrollar términos relativos a los espectr
 #### Espectros estelares
 Podemos definir un espectro estelar como la función que relaciona el flujo captado de una estrella en función de la longitud de onda. Gracias a dicha función, se obtiene la distribución de la energía que emite el cuerpo celeste según el rango óptico dado, lo que permite estudiar ciertas características del cuerpo. Por ejemplo, si nos centramos en los picos del gráfico resultante de su representación, se puede analizar la composición del cuerpo o metalicidad, dado que cada elemento emite o absorbe luz en diferentes rangos. Al mismo tiempo, de este dato también se puede estudiar la temperatura en la que se encuentra dicho elemento. 
 Por otro lado, si nos centramos en la anchura de las líneas, hablaríamos de datos como la gravedad superficial.
-En la @fig-espectro-ejemplo se muestra un ejemplo de espectro estelar observado por SDSS, donde se pueden apreciar las líneas de absorción y emisión mencionadas.
+En la @fig-espectro-ejemplo se muestra un ejemplo de espectro estelar observado por [SDSS]{.acr}, donde se pueden apreciar las líneas de absorción y emisión mencionadas.
 
-![Ejemplo de espectro estelar observado por SDSS](_partials/assets/espectro_sloan_1.png){#fig-espectro-ejemplo}
+![Ejemplo de espectro estelar observado por [SDSS]{.acr}](_partials/assets/espectro_sloan_1.png){#fig-espectro-ejemplo}
 
-Hay estudios existentes que desarrollan la conexión entre los espectros y las variables anteriormente mencionadas, por ejemplo @lee2008segue trataron los datos de SDSS en su sexta liberación de datos para tratar de crear herramientas automatizadas que estableciesen dicha relación.
+Hay estudios existentes que desarrollan la conexión entre los espectros y las variables anteriormente mencionadas, por ejemplo @lee2008segue trataron los datos de [SDSS]{.acr} en su sexta liberación de datos para tratar de crear herramientas automatizadas que estableciesen dicha relación.
 
 Paralelamente, en la unidad de control número 8 de Gaia se trata de establecer la misma relación, como se puede observar en el trabajo llevado a cabo por @witten2023bprp, donde llegaron a identificar de manera detallada la proporción de composición metálica de las estrellas observadas.
 
-En los siguientes apartados comentaremos los datos espectrales de Gaia y SDSS.
+En los siguientes apartados comentaremos los datos espectrales de Gaia y [SDSS]{.acr}.
 
 #### Datos espectrales de Gaia
 
@@ -161,27 +141,27 @@ Estos datos se representan por aproximadamente 110 elementos efectivos de resolu
 Este detalle conlleva que en la tercera liberación de datos de Gaia (DR3) no obtengamos directamente una tabla de relación flujo - longitud de onda, sino que los espectros vienen dados por coeficientes que deben transformarse con ayuda de librerías como *GaiaXPy* o su correspondiente desarrollo con funciones lineales [@deangeli2022gaiabprp].
 
 
-#### Datos espectrales de SDSS
-En contraposición a Gaia, este trabajo también usará y analizará datos conseguidos gracias a SDSS, proyecto iniciado con el mismo objetivo que Gaia, crear un mapa tridimensional, pero, a diferencia de este, basado en observaciones terrestres. En este caso, el mapa actual creado gracias a este sondeo contiene más de 930 000 galaxias.
+#### Datos espectrales de [SDSS]{.acr}
+En contraposición a Gaia, este trabajo también usará y analizará datos conseguidos gracias a [SDSS]{.acr}, proyecto iniciado con el mismo objetivo que Gaia, crear un mapa tridimensional, pero, a diferencia de este, basado en observaciones terrestres. En este caso, el mapa actual creado gracias a este sondeo contiene más de 930 000 galaxias.
 
-La primera operación bajo el nombre SDSS comenzó en el año 2000, y sigue activo con su quinta fase SDSS-V, que tiene planteado llegar a su fin en 2027 [@sdsscollaboration2025nineteenthdatareleasesloan].
+La primera operación bajo el nombre [SDSS]{.acr} comenzó en el año 2000, y sigue activo con su quinta fase [SDSS]{.acr}-V, que tiene planteado llegar a su fin en 2027 [@sdsscollaboration2025nineteenthdatareleasesloan].
 
-Aunque la última publicación de datos de SDSS sea la número 19, tal y como hemos comentado anteriormente, dado que el análisis de cruce de datos de Gaia DR3 se ha llevado a cabo con el DR13 de SDSS, este será usado durante el estudio aunque no pertenezca a la fase más avanzada del proyecto sino a la cuarta. 
+Aunque la última publicación de datos de [SDSS]{.acr} sea la número 19, tal y como hemos comentado anteriormente, dado que el análisis de cruce de datos de Gaia DR3 se ha llevado a cabo con el DR13 de [SDSS]{.acr}, este será usado durante el estudio aunque no pertenezca a la fase más avanzada del proyecto sino a la cuarta. 
 
-A diferencia de Gaia, SDSS proporciona directamente espectros ópticos en longitud de onda y flujo, y estos datos se almacenan distribuidos a lo largo de archivos FITS. En esta base se pueden encontrar variables como la longitud de onda y el flujo espectral.
+A diferencia de Gaia, [SDSS]{.acr} proporciona directamente espectros ópticos en longitud de onda y flujo, y estos datos se almacenan distribuidos a lo largo de archivos FITS. En esta base se pueden encontrar variables como la longitud de onda y el flujo espectral.
 
-Dentro del proyecto de SDSS, el programa MaNGA (*Mapping Nearby Galaxies at Apache Point Observatory*) se encarga de procesar los datos con tal de crear el mapa estelar, en su artículo original para SDSS-IV [@manga2015] encontramos que el rango espectral aproximado de SDSS se mantiene entre los 360 y 1030 nm y su resolución se encuentra en R $\sim$ 2000.
+Dentro del proyecto de [SDSS]{.acr}, el programa MaNGA (*Mapping Nearby Galaxies at Apache Point Observatory*) se encarga de procesar los datos con tal de crear el mapa estelar, en su artículo original para [SDSS]{.acr}-IV [@manga2015] encontramos que el rango espectral aproximado de [SDSS]{.acr} se mantiene entre los 360 y 1030 nm y su resolución se encuentra en R $\sim$ 2000.
 
-#### Comparativa de los espectros de Gaia y SDSS
-Gaia y SDSS comparten gran parte de su rango óptico pero con datos captados con estrategias e instrumentos diferentes. Esto se enfatiza cuando comparamos los espectros observados por cada proyecto acerca del mismo cuerpo celeste. En la @fig-gaia-sdss se muestra un ejemplo aleatorio.
+#### Comparativa de los espectros de Gaia y [SDSS]{.acr}
+Gaia y [SDSS]{.acr} comparten gran parte de su rango óptico pero con datos captados con estrategias e instrumentos diferentes. Esto se enfatiza cuando comparamos los espectros observados por cada proyecto acerca del mismo cuerpo celeste. En la @fig-gaia-sdss se muestra un ejemplo aleatorio.
 
 <!-- TODO: indicar el SNR de cada espectro en la figura o en su pie (anotación del director) -->
-![Ejemplo aleatorio del espectro captado de un mismo cuerpo por Gaia y SDSS](_partials/assets/espectro_gaia_sloan.png){#fig-gaia-sdss}
+![Ejemplo aleatorio del espectro captado de un mismo cuerpo por Gaia y [SDSS]{.acr}](_partials/assets/espectro_gaia_sloan.png){#fig-gaia-sdss}
 
-Podemos observar como claramente el intervalo que SDSS cubre es muy similar a Gaia, pero existe una gran diferencia en cuanto a la suavidad de las curvas representadas. Como vemos, SDSS incluye muchos más detalles que Gaia, su espectro tiene una calidad superior. 
+Podemos observar como claramente el intervalo que [SDSS]{.acr} cubre es muy similar a Gaia, pero existe una gran diferencia en cuanto a la suavidad de las curvas representadas. Como vemos, [SDSS]{.acr} incluye muchos más detalles que Gaia, su espectro tiene una calidad superior. 
 Por otro lado, si nos fijamos en los datos captados en los extremos de visión de Gaia, notamos la posibilidad de que en rangos inferiores a 400 nm estemos observando artefactos u obteniendo mediciones muy poco precisas. Lo mismo sucede en valores superiores a 950 nm.
 
-A lo largo del trabajo, para garantizar que los datos analizados correspondan al mismo objeto astronómico, se empleará la tabla de cruce oficial de DR3 denominada *gaiadr3.sdssdr13_best_neighbour* que se puede consultar en el archivo de Gaia [@gaiaDR3sdssBestNeighbourDataset]. Esta tabla contiene para cada cuerpo observado por Gaia, el vecino más cercano en SDSS DR13, es decir, el que cuenta con una mayor probabilidad de que estén describiendo el mismo cuerpo celeste. El procedimiento con el cual se establece esta vecindad se encuentra descrito en la documentación oficial de Gaia DR3 [@Gaia_DR3_Documentation_2023], que puede consultarse en el propio archivo de Gaia. Dentro de este conjunto, definiremos un umbral de aceptación dado por la distancia angular, fijado en 2 segundos de arco.
+A lo largo del trabajo, para garantizar que los datos analizados correspondan al mismo objeto astronómico, se empleará la tabla de cruce oficial de DR3 denominada *gaiadr3.sdssdr13_best_neighbour* que se puede consultar en el archivo de Gaia [@gaiaDR3sdssBestNeighbourDataset]. Esta tabla contiene para cada cuerpo observado por Gaia, el vecino más cercano en [SDSS]{.acr} DR13, es decir, el que cuenta con una mayor probabilidad de que estén describiendo el mismo cuerpo celeste. El procedimiento con el cual se establece esta vecindad se encuentra descrito en la documentación oficial de Gaia DR3 [@Gaia_DR3_Documentation_2023], que puede consultarse en el propio archivo de Gaia. Dentro de este conjunto, definiremos un umbral de aceptación dado por la distancia angular, fijado en 2 segundos de arco.
 
 
 ### Estado del arte
@@ -218,7 +198,7 @@ https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/
 -->
 ### Conclusiones
 
-La integración y estandarización de catálogos astronómicos masivos representa un desafío técnico fundamental, especialmente al trabajar con fuentes de naturalezas distintas como Gaia y SDSS. Mientras que Gaia provee un volumen de datos astrométricos, fotométricos y espectroscópicos sin precedentes, sus espectros BP/RP operan en resoluciones bajas y requieren complejos procesos de calibración para mitigar el ruido espacial y las fluctuaciones. Cabe matizar que el espectrómetro RVS de Gaia alcanza una resolución incluso mayor que la de SDSS, pero al requerir estrellas más brillantes dispone de muchas menos fuentes observadas. En contraste, SDSS aporta espectros ópticos de mayor resolución que los BP/RP. La necesidad de interconectar ambas misiones define el núcleo de este estudio: establecer una relación sólida capaz de traducir y equiparar los espectros de baja resolución de Gaia con los espectros de mayor resolución de SDSS.
+La integración y estandarización de catálogos astronómicos masivos representa un desafío técnico fundamental, especialmente al trabajar con fuentes de naturalezas distintas como Gaia y [SDSS]{.acr}. Mientras que Gaia provee un volumen de datos astrométricos, fotométricos y espectroscópicos sin precedentes, sus espectros BP/RP operan en resoluciones bajas y requieren complejos procesos de calibración para mitigar el ruido espacial y las fluctuaciones. Cabe matizar que el espectrómetro RVS de Gaia alcanza una resolución incluso mayor que la de [SDSS]{.acr}, pero al requerir estrellas más brillantes dispone de muchas menos fuentes observadas. En contraste, [SDSS]{.acr} aporta espectros ópticos de mayor resolución que los BP/RP. La necesidad de interconectar ambas misiones define el núcleo de este estudio: establecer una relación sólida capaz de traducir y equiparar los espectros de baja resolución de Gaia con los espectros de mayor resolución de [SDSS]{.acr}.
 
 Para abordar este asunto, el análisis del estado del arte evidencia una transición desde el uso de estas herramientas únicamente para clasificación o agrupamiento clásico hacia el uso de las GAN y los *autoencoders* variacionales, que recientemente han demostrado su utilidad para la generación de datos sintéticos realistas y se establecen ya como herramientas útiles para la calibración y otras áreas relevantes en el estudio astronómico.
 
@@ -233,14 +213,14 @@ En este capítulo se detalla el objetivo principal de este trabajo y su desglose
 También se expone la metodología empleada para afrontar dichos objetivos.
 
 ### Objetivo general
-El objetivo general de este trabajo consiste en desarrollar un modelo basado en aprendizaje automático que permita aproximar el flujo calibrado captado por los fotómetros de baja resolución BP/RP de Gaia a un espectro de resolución más alta, similar al proporcionado por las observaciones de mayor calidad de SDSS.
+El objetivo general de este trabajo consiste en desarrollar un modelo basado en aprendizaje automático que permita aproximar el flujo calibrado captado por los fotómetros de baja resolución BP/RP de Gaia a un espectro de resolución más alta, similar al proporcionado por las observaciones de mayor calidad de [SDSS]{.acr}.
 
 ### Objetivos específicos
 Para alcanzar el objetivo propuesto, se deben alcanzar previamente los siguientes objetivos intermedios.
 
 #### Análisis exploratorio de los datos
 
-El análisis y comprensión de las observaciones y la manera en la que están organizadas en los repositorios de Gaia y SDSS es fundamental para entender cuales son los datos relevantes a extraer.  
+El análisis y comprensión de las observaciones y la manera en la que están organizadas en los repositorios de Gaia y [SDSS]{.acr} es fundamental para entender cuales son los datos relevantes a extraer.  
 
 Es también necesario comprender la relación entre las mediciones de ambos sondeos astronómicos para usar observaciones coincidentes, referidas a los mismos objetos del catálogo de objetos celestes.
 
@@ -252,13 +232,13 @@ Así, se deben definir unos parámetros para excluir los datos menos relevantes 
 
 #### Extracción de los datos
 
-Tras haber comprendido qué servicios se pueden usar para la extracción de los datos y haber reducido el conjunto de entrada atendiendo a su calidad, el siguiente paso consiste en la extracción de los mismos, usando métodos que optimicen la descarga de los datos orientados a minimizar el tiempo y los posibles errores que los servicios ofrecidos por los proyectos de Gaia y SDSS ofrecen.
+Tras haber comprendido qué servicios se pueden usar para la extracción de los datos y haber reducido el conjunto de entrada atendiendo a su calidad, el siguiente paso consiste en la extracción de los mismos, usando métodos que optimicen la descarga de los datos orientados a minimizar el tiempo y los posibles errores que los servicios ofrecidos por los proyectos de Gaia y [SDSS]{.acr} ofrecen.
 
 #### Preprocesado de los datos
 
 Una vez extraídos los datos, es necesario realizar cierto preprocesado de los mismos para mejorar el entrenamiento.
 
-Puesto que en la preselección de las observaciones se han tenido en cuenta criterios de calidad, y Gaia DR3 ofrece datos ya procesados y relaciones con SDSS, el preprocesado en este caso consiste en la reducción del ruido, mejorando así la relación señal-ruido (*Signal-to-Noise Ratio*, SNR), aplicada a las observaciones de SDSS, que tienen más variabilidad y pueden así aumentar la complejidad del entrenamiento.
+Puesto que en la preselección de las observaciones se han tenido en cuenta criterios de calidad, y Gaia DR3 ofrece datos ya procesados y relaciones con [SDSS]{.acr}, el preprocesado en este caso consiste en la reducción del ruido, mejorando así la relación señal-ruido (*Signal-to-Noise Ratio*, SNR), aplicada a las observaciones de [SDSS]{.acr}, que tienen más variabilidad y pueden así aumentar la complejidad del entrenamiento.
 
 #### Preparación de los conjuntos de entrenamiento, test y validación
 
@@ -281,7 +261,7 @@ Una vez ajustado el modelo, el objetivo será proporcionar una manera sencilla e
 
 De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar este trabajo se estructura en las siguientes etapas. Las particularidades y la implementación concreta de cada una de ellas se recogen en el Capítulo 5.
 
-1. Análisis exploratorio de los datos: mediante cuadernos *Jupyter* colaborativos se estudia la organización de los repositorios de Gaia y SDSS, los servicios disponibles para su consulta y la manera de emparejar las observaciones de ambos proyectos referidas a un mismo objeto celeste.
+1. Análisis exploratorio de los datos: mediante cuadernos *Jupyter* colaborativos se estudia la organización de los repositorios de Gaia y [SDSS]{.acr}, los servicios disponibles para su consulta y la manera de emparejar las observaciones de ambos proyectos referidas a un mismo objeto celeste.
 
 2. Preselección de los datos: a partir del análisis previo se definen filtros de calidad sobre el cruce de catálogos, con el objetivo de maximizar la fiabilidad de los pares de espectros utilizados.
 
@@ -298,7 +278,7 @@ De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar 
 Este trabajo ha sido desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se han mantenido reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se ha empleado un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se han integrado mediante revisiones cruzadas.
 
 <!-- TODO: detallar el reparto concreto de tareas entre Carla y Javier (la plantilla requiere describir el trabajo grupal) -->
-En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación de la base de datos usada para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y SDSS y su descarga. 
+En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación de la base de datos usada para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
 En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de la red neuronal, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. 
 
 Por otro lado, la elaboración de la memoria también se repartió entre los dos autores. Carla desarrolló los apartados de introducción, contexto y conclusiones. Mientras que Javier trabajó en el estado del arte, metodología y objetivos. 
@@ -313,7 +293,7 @@ Para un correcto desarrollo del proyecto, es necesario garantizar una serie de r
 
 ### Requisitos del conjunto de datos
 
-El conjunto de datos usado para el entrenamiento del modelo debe estar formada por pares de espectros de Gaia y SDSS que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos.
+El conjunto de datos usado para el entrenamiento del modelo debe estar formada por pares de espectros de Gaia y [SDSS]{.acr} que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos.
 
 Cada muestra usada debe contener el identificador de este objeto dentro de su base de datos, el espectro, la malla de longitud de onda correspondiente y la relación señal-ruido del espectro. 
 
@@ -323,7 +303,7 @@ Una vez extraído el conjunto de datos inicial, las parejas de espectros deberá
 
 ### Requisitos del modelo
 
-El modelo basado en redes neuronales debe resolver un problema de regresión multivariante, en el que la entrada sea un vector de flujo de Gaia y la salida se corresponda con el espectro de SDSS. 
+El modelo basado en redes neuronales debe resolver un problema de regresión multivariante, en el que la entrada sea un vector de flujo de Gaia y la salida se corresponda con el espectro de [SDSS]{.acr}. 
 
 Para mejorar la estabilidad del entrenamiento, el modelo debe trabajar con datos normalizados tanto de entrada como de salida. 
 La normalización será aplicada teniendo en cuenta solo los datos de entrenamiento. Los de validación y test no deben ser usados para entrenar el modelo, con la finalidad de que sean observaciones completamente nuevas para evaluarlo.
@@ -341,23 +321,23 @@ En este capítulo se describe el trabajo realizado en cada una de las etapas def
 
 ### Preparación del conjunto de datos
 
-La construcción del conjunto de datos de entrenamiento se ha automatizado mediante un flujo  reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consume el resultado de la anterior y guarda su salida en disco de inmediato, de manera que una ejecución interrumpida puede reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. A grandes rasgos dicho flujo obtiene la referencia de los objectos con espectro en SDSS, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objectos referenciados de SDSS, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal.
+La construcción del conjunto de datos de entrenamiento se ha automatizado mediante un flujo  reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consume el resultado de la anterior y guarda su salida en disco de inmediato, de manera que una ejecución interrumpida puede reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. A grandes rasgos dicho flujo obtiene la referencia de los objectos con espectro en [SDSS]{.acr}, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objectos referenciados de [SDSS]{.acr}, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal.
 
-#### Obtención de los objectos con espectro de SDSS
+#### Obtención de los objectos con espectro de [SDSS]{.acr}
 
-La primera etapa parte del catálogo espectroscópico de SDSS y recopila los metadatos de todos sus espectros primarios. Comenzar por este catálogo garantiza que cada objeto considerado dispone realmente de una observación espectral de SDSS, lo que evita la enorme pérdida de muestras que se produciría al partir del cruce fotométrico en sentido contrario. El resultado es la lista de candidatos con espectro de SDSS confirmado.
+La primera etapa parte del catálogo espectroscópico de [SDSS]{.acr} y recopila los metadatos de todos sus espectros primarios. Comenzar por este catálogo garantiza que cada objeto considerado dispone realmente de una observación espectral de [SDSS]{.acr}, lo que evita la enorme pérdida de muestras que se produciría al partir del cruce fotométrico en sentido contrario. El resultado es la lista de candidatos con espectro de [SDSS]{.acr} confirmado.
 
 #### Cruce inverso con Gaia
 
-A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de SDSS busca la fuente equivalente en Gaia que además disponga de espectro BP/RP. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
+A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} busca la fuente equivalente en Gaia que además disponga de espectro BP/RP. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
 
-#### Descarga de los espectros de SDSS.
+#### Descarga de los espectros de [SDSS]{.acr}.
 
-La tercera etapa descarga el espectro de SDSS para cada objeto emparejado. Las descargas se realizan en paralelo y cada espectro se almacena en cuanto se obtiene, de modo que el proceso es robusto frente a las interrupciones y a las limitaciones de los servicios públicos de consulta.
+La tercera etapa descarga el espectro de [SDSS]{.acr} para cada objeto emparejado. Las descargas se realizan en paralelo y cada espectro se almacena en cuanto se obtiene, de modo que el proceso es robusto frente a las interrupciones y a las limitaciones de los servicios públicos de consulta.
 
 #### Depuración de referencias
 
-Como no todas las descargas culminan con éxito, la cuarta etapa depura el listado de pares y conserva exclusivamente aquellos cuyo espectro de SDSS se ha obtenido correctamente. El resultado es la tabla de referencia definitiva que vincula cada objeto entre ambos sistemas.
+Como no todas las descargas culminan con éxito, la cuarta etapa depura el listado de pares y conserva exclusivamente aquellos cuyo espectro de [SDSS]{.acr} se ha obtenido correctamente. El resultado es la tabla de referencia definitiva que vincula cada objeto entre ambos sistemas.
 
 #### Espectros calibrados de Gaia
 
@@ -365,25 +345,25 @@ La quinta etapa recupera los espectros de Gaia de los objetos ya depurados. Dado
 
 #### Transformación a datos de entrenamiento
 
-Finalmente, la sexta etapa homogeneiza y combina ambas fuentes: los espectros de SDSS se remuestrean a una rejilla común de longitudes de onda y se guardan junto a los de Gaia correspondientes en un único fichero con un formato optimizado HDF5. Este fichero es además acumulativo, de forma que sucesivas ejecuciones incorporan los pares nuevos sin descartar los ya almacenados.
+Finalmente, la sexta etapa homogeneiza y combina ambas fuentes: los espectros de [SDSS]{.acr} se remuestrean a una rejilla común de longitudes de onda y se guardan junto a los de Gaia correspondientes en un único fichero con un formato optimizado HDF5. Este fichero es además acumulativo, de forma que sucesivas ejecuciones incorporan los pares nuevos sin descartar los ya almacenados.
 
-Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 55 000 pares de espectros emparejados de Gaia y SDSS.
+Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 55 000 pares de espectros emparejados de Gaia y [SDSS]{.acr}.
 
 ### Entrenamiento del modelo
 
-Una vez se dispone de la base de datos con los pares de espectros de Gaia y SDSS, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
-El objetivo era conseguir un modelo que aprendiese una transformación entre los datos de entrada de Gaia y el espectro de SDSS asociado. Así pues, el modelo planteado recibe como entrada un vector con el flujo de Gaia y obtiene como salida un vector con una aproximación del flujo correspondiente al espectro de SDSS.
+Una vez se dispone de la base de datos con los pares de espectros de Gaia y [SDSS]{.acr}, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
+El objetivo era conseguir un modelo que aprendiese una transformación entre los datos de entrada de Gaia y el espectro de [SDSS]{.acr} asociado. Así pues, el modelo planteado recibe como entrada un vector con el flujo de Gaia y obtiene como salida un vector con una aproximación del flujo correspondiente al espectro de [SDSS]{.acr}.
 
 En primer lugar, cabe destacar que restringimos el intervalo de entrenamiento entre los 500 y 900 nm dado que es el rango común entre los dos catálogos en el que no se observan alteraciones debido a posibles artefactos. Al mismo tiempo, con este recorte se evitan zonas en las que la generación de los datos de salida se vería afectada por la falta de datos del conjunto de entrada.
 
 Además, se eliminaron aquellos pares de espectros en los que encontrábamos valores no definidos o los cuales constaban de comportamientos anómalos, como por ejemplo escalas de flujo cercanas a cero o espectros constantes. Para conseguirlo, se usaron medidas basadas en percentiles, recortando los valores extremos considerando porcentajes cerca del 95 o 99. Este filtrado consiguió eliminar efectos adversos en el modelo causados por datos no representativos de la muestra extraída.
 
-También tuvimos en cuenta la relación de escala entre los espectros de Gaia y SDSS. En algunos casos observábamos que los pares diferían exageradamente en la escala usada, por lo que con el mismo criterio de los percentiles nombrados anteriormente, los casos más extremos fueron eliminados. De esta forma mantuvimos los pares en los que la relación entre la entrada y la salida fuese coherente.
+También tuvimos en cuenta la relación de escala entre los espectros de Gaia y [SDSS]{.acr}. En algunos casos observábamos que los pares diferían exageradamente en la escala usada, por lo que con el mismo criterio de los percentiles nombrados anteriormente, los casos más extremos fueron eliminados. De esta forma mantuvimos los pares en los que la relación entre la entrada y la salida fuese coherente.
 
-Para obtener un correcto funcionamiento del modelo, tuvimos que reducir la dimensionalidad del espectro de SDSS mediante una agrupación de bines consecutivos. SDSS contaba inicialmente con 3600 observaciones por espectro, mientras que Gaia tan solo 343. Esta diferencia suponía una dificultad añadida para el modelo, así que aplicamos una función de agrupación, la cual sustituía por un único valor promedio cada bloque de n valores consecutivos del flujo de SDSS. Tras valorar los beneficios y desventajas de esta agrupación, se consideró una agrupación en conjuntos de 7 bines, reduciendo la dimensión de SDSS a 380 puntos. Este valor suponía el equilibrio entre la pérdida de información debido a la reducción de puntos y la mejora del problema de regresión del modelo.  
+Para obtener un correcto funcionamiento del modelo, tuvimos que reducir la dimensionalidad del espectro de [SDSS]{.acr} mediante una agrupación de bines consecutivos. [SDSS]{.acr} contaba inicialmente con 3600 observaciones por espectro, mientras que Gaia tan solo 343. Esta diferencia suponía una dificultad añadida para el modelo, así que aplicamos una función de agrupación, la cual sustituía por un único valor promedio cada bloque de n valores consecutivos del flujo de [SDSS]{.acr}. Tras valorar los beneficios y desventajas de esta agrupación, se consideró una agrupación en conjuntos de 7 bines, reduciendo la dimensión de [SDSS]{.acr} a 380 puntos. Este valor suponía el equilibrio entre la pérdida de información debido a la reducción de puntos y la mejora del problema de regresión del modelo.  
 
 Finalmente, aplicamos limitaciones en cuanto a la calidad de los espectros. A partir de la relación señal-ruido de cada observación, descartamos aquellas con los valores de SNR más bajos con la intención de impedir el uso de parejas de espectros con SNR muy diferentes. 
-Gaia y SDSS observan los objetos de formas diferentes y no bajo las mismas condiciones, lo que implica que las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste. Para evitar que esto afecte a la calidad del modelo, las parejas con peor calidad fueron descartadas, reduciendo la posibilidad de que el modelo aprenda relaciones influenciadas mayormente por ruido.
+Gaia y [SDSS]{.acr} observan los objetos de formas diferentes y no bajo las mismas condiciones, lo que implica que las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste. Para evitar que esto afecte a la calidad del modelo, las parejas con peor calidad fueron descartadas, reduciendo la posibilidad de que el modelo aprenda relaciones influenciadas mayormente por ruido.
 
 De cara a la preparación de la base para el entrenamiento del modelo, definimos 3 subconjuntos: entrenamiento, test y validación. 
 Los datos de test se formaron con un 20% del conjunto global y fueron empleados para evaluar el modelo, por lo que no fueron usados durante su entrenamiento. El 80% restante se separó de forma aleatoria entre las parejas que forman la base de entrenamiento del modelo y la de validación.  
@@ -392,7 +372,7 @@ Los datos de test se formaron con un 20% del conjunto global y fueron empleados 
 Una vez definida la partición de los datos, aplicamos una normalización a través de la media y desviación típica de los datos del conjunto de entrenamiento. Gracias a este paso, se facilitó el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares.
 Probamos también la adición de los datos de la relación señal-ruido que Gaia contiene en su catálogo como parte del conjunto de entrada. En este caso, los resultados obtenidos fueron muy similares a sin su uso, así que no fueron considerados durante el entrenamiento.
 
-Después de un procedimiento de prueba y error, el modelo final corresponde a una red neuronal densa, formada por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de SDSS a predecir.
+Después de un procedimiento de prueba y error, el modelo final corresponde a una red neuronal densa, formada por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
 Además, probamos diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos. En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
 
 La función de pérdida definida fue Huber, que combina el error cuadrático medio para errores pequeños, y el error absoluto medio para errores más grandes. Esto permite rebajar la penalización en aquellos casos en los que los espectros tengan desviaciones anómalas que no deban definir el comportamiento del modelo. 
@@ -411,15 +391,15 @@ Cabe destacar que las métricas calculadas anteriormente se definen sobre espect
 
 Para complementar toda la explicación dada, podemos observar las gráficas detalladas en la @fig-generado_123 y la @fig-generado_178. 
 
-![Ejemplo 1 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_generado_123.png){#fig-generado_123}
+![Ejemplo 1 del espectro generado por el modelo y los de Gaia y [SDSS]{.acr} originales](_partials/assets/espectro_generado_123.png){#fig-generado_123}
 
-![Ejemplo 2 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_generado_178.png){#fig-generado_178}
+![Ejemplo 2 del espectro generado por el modelo y los de Gaia y [SDSS]{.acr} originales](_partials/assets/espectro_generado_178.png){#fig-generado_178}
 
-En ellas observamos tres espectros. Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de SDSS una vez han sido recortados y agrupados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido escalados a la misma unidad que SDSS para poder representar ambos espectros en la misma escala, pero en los datos originales, se usan escalas diferentes. 
+En ellas observamos tres espectros. Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de [SDSS]{.acr} una vez han sido recortados y agrupados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido escalados a la misma unidad que [SDSS]{.acr} para poder representar ambos espectros en la misma escala, pero en los datos originales, se usan escalas diferentes. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
 
 En gran parte de los gráficos observados, el modelo reproduce la morfología general del espectro, incluso modela gran parte de los picos más acentuados. 
-Si bien es cierto, hay puntos que el modelo no puede inferir debido a las estructuras detalladas de SDSS y la baja resolución inicial de Gaia. 
+Si bien es cierto, hay puntos que el modelo no puede inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
 
 ## Evaluación
 
@@ -429,31 +409,31 @@ En este capítulo se incluyen las conclusiones obtenidas tras el desarrollo del 
 
 ### Conclusiones
 
-A lo largo del trabajo hemos llevado a cabo todo el desarrollo necesario para poder entrenar un modelo de redes neuronales, partiendo desde la creación de la base de datos de espectros de Gaia y SDSS hasta su uso para la validación del modelo generado. 
+A lo largo del trabajo hemos llevado a cabo todo el desarrollo necesario para poder entrenar un modelo de redes neuronales, partiendo desde la creación de la base de datos de espectros de Gaia y [SDSS]{.acr} hasta su uso para la validación del modelo generado. 
 
-En primer lugar, la creación de la base de datos resultó no ser algo trivial. Diseñamos un proceso por etapas que nos permitió obtener a partir de espectros y datos de SDSS, la información captada por Gaia del cuerpo que categorizaba como el vecino más cercano. Se observaron diversas limitaciones en este proceso, en gran medida debido a la estructura y capacidad de los servicios de consulta que disponen ambos instrumentos. Por este motivo, una parte importante del trabajo se basó en conseguir un método robusto y reproducible que nos permitiese crear la base de datos inicial. 
+En primer lugar, la creación de la base de datos resultó no ser algo trivial. Diseñamos un proceso por etapas que nos permitió obtener a partir de espectros y datos de [SDSS]{.acr}, la información captada por Gaia del cuerpo que categorizaba como el vecino más cercano. Se observaron diversas limitaciones en este proceso, en gran medida debido a la estructura y capacidad de los servicios de consulta que disponen ambos instrumentos. Por este motivo, una parte importante del trabajo se basó en conseguir un método robusto y reproducible que nos permitiese crear la base de datos inicial. 
 Al mismo tiempo, la calidad de los pares de espectros también influyó en el estudio, se tuvieron que descartar algunos datos debido a escalas incompatibles, artefactos, relaciones señal-ruido de mala calidad o valores completamente anómalos, como por ejemplo con espectros constantes o nulos a lo largo de la longitud de onda observada.
 
-En cuanto al modelo neuronal, planteamos un problema de regresión multivariante, cuya red recibe como entrada un espectro de Gaia y tiene el objetivo de predecir como salida un espectro de SDSS. 
-Cabe destacar que la gran diferencia de resolución entre Gaia y SDSS implica que el modelo no sea capaz de aprender información espectral muy detallada de SDSS, es decir, no puede reconstruir de forma eficaz las estructuras finas que SDSS produce. Por este motivo, la dimensión de salida de SDSS se redujo mediante una agrupación de bines, permitiéndonos mejorar la calidad de los resultados sin perder la información básica del espectro de mayor calidad. 
+En cuanto al modelo neuronal, planteamos un problema de regresión multivariante, cuya red recibe como entrada un espectro de Gaia y tiene el objetivo de predecir como salida un espectro de [SDSS]{.acr}. 
+Cabe destacar que la gran diferencia de resolución entre Gaia y [SDSS]{.acr} implica que el modelo no sea capaz de aprender información espectral muy detallada de [SDSS]{.acr}, es decir, no puede reconstruir de forma eficaz las estructuras finas que [SDSS]{.acr} produce. Por este motivo, la dimensión de salida de [SDSS]{.acr} se redujo mediante una agrupación de bines, permitiéndonos mejorar la calidad de los resultados sin perder la información básica del espectro de mayor calidad. 
 
 Se evaluaron diferentes arquitecturas de modelo y preprocesamientos de la base de datos, considerando definitivas las versiones que se pueden encontrar detalladas en este trabajo. 
-De dicho proceso de prueba y error, obtuvimos resultados que demuestran que el modelo es capaz de predecir la forma general de los espectros de SDSS en gran parte de los casos. Asimismo, la comparación de las métricas de entrenamiento, validación y test permiten asegurar que el modelo no se ha sobreajustado a los datos usados durante el entrenamiento, sino que presenta capacidad para generalizar su uso sobre datos no observados. 
+De dicho proceso de prueba y error, obtuvimos resultados que demuestran que el modelo es capaz de predecir la forma general de los espectros de [SDSS]{.acr} en gran parte de los casos. Asimismo, la comparación de las métricas de entrenamiento, validación y test permiten asegurar que el modelo no se ha sobreajustado a los datos usados durante el entrenamiento, sino que presenta capacidad para generalizar su uso sobre datos no observados. 
 
-En resumen, podemos concluir que este trabajo demuestra la viabilidad de diseñar un modelo de redes neuronales capaz de aproximar espectros captados por Gaia a una representación similar a los observados por SDSS. Aunque los espectros generados tienen menor nivel de detalle que los espectros originales de SDSS, si presentan una mayor resolución que los datos de entrada de Gaia. Este hecho permite dejar una puerta abierta a varias líneas de mejora, las cuales serán comentadas en el siguiente apartado. 
+En resumen, podemos concluir que este trabajo demuestra la viabilidad de diseñar un modelo de redes neuronales capaz de aproximar espectros captados por Gaia a una representación similar a los observados por [SDSS]{.acr}. Aunque los espectros generados tienen menor nivel de detalle que los espectros originales de [SDSS]{.acr}, si presentan una mayor resolución que los datos de entrada de Gaia. Este hecho permite dejar una puerta abierta a varias líneas de mejora, las cuales serán comentadas en el siguiente apartado. 
 
 
 ### Trabajo futuro
 
 Los resultados obtenidos en este estudio constituyen un punto de partida para diversas líneas de mejora. 
-Por ejemplo, una primera opción sería refinar y ampliar la base de datos de entrenamiento. En este trabajo hemos conseguido construir un conjunto de 50 000 parejas de espectros Gaia-SDSS, pero como el rendimiento y la calidad del modelo dependen directamente de dicha base, cuanta mejor selección e investigación de los datos usados, mejores resultados se obtendrían.
+Por ejemplo, una primera opción sería refinar y ampliar la base de datos de entrenamiento. En este trabajo hemos conseguido construir un conjunto de 50 000 parejas de espectros Gaia-[SDSS]{.acr}, pero como el rendimiento y la calidad del modelo dependen directamente de dicha base, cuanta mejor selección e investigación de los datos usados, mejores resultados se obtendrían.
 
 Otra opción consistiría en entrenar modelos especializados para distintos tipos de objetos o rangos de parámetros físicos. En este estudio se ha empleado un único modelo global que debía aprender relaciones espectrales para todos los objetos incluidos en el conjunto de datos. Sin embargo, si la base de datos se separase tratando de agrupar aquellos espectros más similares en diversos subconjuntos, la calidad del modelo final podría aumentar dado que facilitaríamos su aprendizaje. 
 
-Durante el trabajo se consideró la posibilidad de incluir la relación señal ruido como uno de los parámetros de entrada del modelo. Si bien es cierto, este hecho no produjo mejoras significativas a los resultados obtenidos, pero es una opción a tener en cuenta como posible línea de exploración. Añadiendo esta información se podría valorar la exactitud de cada punto de los espectros observados por Gaia y SDSS, lo que permitiría valorar de forma más precisa el error cometido por el modelo. 
+Durante el trabajo se consideró la posibilidad de incluir la relación señal ruido como uno de los parámetros de entrada del modelo. Si bien es cierto, este hecho no produjo mejoras significativas a los resultados obtenidos, pero es una opción a tener en cuenta como posible línea de exploración. Añadiendo esta información se podría valorar la exactitud de cada punto de los espectros observados por Gaia y [SDSS]{.acr}, lo que permitiría valorar de forma más precisa el error cometido por el modelo. 
 Asimismo, también cabe la opción de estudiar el uso de redes convolucionales de una dimensión. Los resultados obtenidos con su aplicación durante este trabajo no representaban una mejora significativa del modelo, por lo que fueron descartadas, pero su efectividad podría explorarse a partir de una estructura de modelo nueva.
 
-Finalmente, la idea de este estudio podría extenderse a otros conjuntos de datos astronómicos. Este proyecto se centró en la liberación de datos número tres de Gaia y la treceava de SDSS debido a sus plataformas y el cruce de datos previamente existente, pero la metodología desarrollada podría aplicarse de forma general a otros catálogos de datos astronómicos. 
-En este trabajo, el objetivo principal era conseguir mejorar la calidad de los datos captados por Gaia, a partir de una herramienta que los aproximase a las observaciones de SDSS. Esto podría generalizarse a otros satélites o telescopios que presenten el mismo problema que nuestro conjunto de datos de entrada, una baja resolución. 
-Generalizando los resultados obtenidos, el modelo no solo transformaría Gaia en SDSS, sino que podría servir como base para mejorar las observaciones precedentes instrumentos astronómicos. 
+Finalmente, la idea de este estudio podría extenderse a otros conjuntos de datos astronómicos. Este proyecto se centró en la liberación de datos número tres de Gaia y la treceava de [SDSS]{.acr} debido a sus plataformas y el cruce de datos previamente existente, pero la metodología desarrollada podría aplicarse de forma general a otros catálogos de datos astronómicos. 
+En este trabajo, el objetivo principal era conseguir mejorar la calidad de los datos captados por Gaia, a partir de una herramienta que los aproximase a las observaciones de [SDSS]{.acr}. Esto podría generalizarse a otros satélites o telescopios que presenten el mismo problema que nuestro conjunto de datos de entrada, una baja resolución. 
+Generalizando los resultados obtenidos, el modelo no solo transformaría Gaia en [SDSS]{.acr}, sino que podría servir como base para mejorar las observaciones precedentes instrumentos astronómicos. 
 
