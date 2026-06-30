@@ -15,6 +15,7 @@ Estructura del fichero HDF5 de salida
   /X                       (N, W_g)   flujo Gaia calibrado  ← entrada del modelo
   /X_err                   (N, W_g)   incertidumbre del flujo Gaia
   /y                       (N, W_s)   flujo SDSS remuestreado ← objetivo del modelo
+  /y_ivar                  (N, W_s)   varianza inversa SDSS remuestreada (peso del objetivo)
 """
 
 from __future__ import annotations
@@ -43,6 +44,7 @@ class _SpecPair(NamedTuple):
     gaia_flux: np.ndarray
     gaia_flux_err: np.ndarray
     sdss_flux: np.ndarray
+    sdss_ivar: np.ndarray
 
 
 # ---------------------------------------------------------------------------
@@ -74,14 +76,19 @@ def _make_id_index(source_ids: np.ndarray) -> dict[int, int]:
 # ---------------------------------------------------------------------------
 
 
-def _load_sdss_flux(spectra_dir: Path, sdss_grid: np.ndarray, sdss_id: int) -> np.ndarray:
-    """Lee un fichero FITS SDSS y remuestrea el flujo a la rejilla fija indicada."""
+def _load_sdss_flux(
+    spectra_dir: Path, sdss_grid: np.ndarray, sdss_id: int
+) -> tuple[np.ndarray, np.ndarray]:
+    """Lee un fichero FITS SDSS y remuestrea flujo y varianza inversa a la rejilla fija."""
     with fits.open(str(spectra_dir / f"{sdss_id}.fits")) as hdul:
         data   = hdul[1].data
         loglam = data["loglam"].astype(np.float64)
         flux   = data["flux"].astype(np.float64)
+        ivar   = data["ivar"].astype(np.float64)
     wavelength = 10.0 ** loglam
-    return np.interp(sdss_grid, wavelength, flux).astype(np.float32)
+    flux_grid  = np.interp(sdss_grid, wavelength, flux).astype(np.float32)
+    ivar_grid  = np.interp(sdss_grid, wavelength, ivar).astype(np.float32)
+    return flux_grid, ivar_grid
 
 
 def _build_pair(
@@ -95,8 +102,8 @@ def _build_pair(
     source_id = int(xref_row["source_id"])
     sdss_id   = int(xref_row["original_ext_source_id"])
     idx       = id_to_idx[source_id]
-    sdss_flux = _load_sdss_flux(spectra_dir, sdss_grid, sdss_id)
-    return _SpecPair(source_id, sdss_id, flux_matrix[idx], err_matrix[idx], sdss_flux)
+    sdss_flux, sdss_ivar = _load_sdss_flux(spectra_dir, sdss_grid, sdss_id)
+    return _SpecPair(source_id, sdss_id, flux_matrix[idx], err_matrix[idx], sdss_flux, sdss_ivar)
 
 
 def _write_hdf5(
@@ -114,6 +121,7 @@ def _write_hdf5(
         f.create_dataset("X",                  data=np.vstack([p.gaia_flux     for p in pairs]))
         f.create_dataset("X_err",              data=np.vstack([p.gaia_flux_err for p in pairs]))
         f.create_dataset("y",                  data=np.vstack([p.sdss_flux     for p in pairs]))
+        f.create_dataset("y_ivar",             data=np.vstack([p.sdss_ivar     for p in pairs]))
     tmp.rename(output_path)
 
 
