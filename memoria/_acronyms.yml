@@ -24,6 +24,7 @@ acronyms:
   - key: ELBO
     shortname: ELBO
     longname: Evidence Lower Bound
+    translation: cota inferior de la evidencia
   - key: ESA
     shortname: ESA
     longname: European Space Agency
