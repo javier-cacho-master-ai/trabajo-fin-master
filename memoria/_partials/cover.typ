@@ -6,6 +6,7 @@
   degree: none,
   author: none,
   director: none,
+  work_type: none,
   city: none,
   date: none,
 ) = {
@@ -48,6 +49,8 @@
       #par[#strong[presentado por:] #author]
       #v(0.1cm)
       #par[#strong[Dirigido por:] #director]
+      #v(0.1cm)
+      #par[#strong[Tipo de Trabajo:] #work_type]
     ]
 
     #v(2.5cm)

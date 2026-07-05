@@ -2,6 +2,7 @@
 #import "_partials/cover.typ": cover
 #import "_partials/abstracts.typ": get-abstracts
 #import "_partials/table-of-contents.typ": table-of-contents
+#import "_partials/acronyms.typ": acr, get-acronyms-index
 #import "_partials/body.typ": get-body
 
 #let unir_master-ia_tfe_template(
@@ -10,6 +11,7 @@
   subtitle: none,
   author: none,
   director: none,
+  work_type: none,
   degree: none,
   city: none,
   date: none,
@@ -29,6 +31,7 @@
     degree: degree,
     author: author,
     director: director,
+    work_type: work_type,
     city: city,
     date: date,
   )
@@ -36,6 +39,9 @@
   // Front matter order as in the LaTeX template:
   // indices first, then Resumen/Abstract, all with roman page numbers
   table-of-contents()
+
+  // Índice de acrónimos, right after the Índice de Tablas (last index above).
+  get-acronyms-index()
 
   get-abstracts(
     abstract_es: abstract_es,

@@ -22,14 +22,14 @@
         // Sections/subsections: bold black, LaTeX \Large / \large sizes
         let size = if it.level == 2 { 14pt } else { 12pt }
         set text(size: size, weight: "bold")
-        block(above: 2em, below: 1em)[#it]
+        block(above: 2em, below: 1.5em)[#it]
       }
     },
     body-paragraph-config: (
       justify: true,
       leading: 0.8em,
       spacing: 1.6em,
-      first-line-indent: 1.5em,
+      // first-line-indent: 1.5em,
     ),
   )
 }

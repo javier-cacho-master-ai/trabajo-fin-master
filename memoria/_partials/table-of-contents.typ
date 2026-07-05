@@ -17,7 +17,7 @@
     }
 
     #index-heading[Índice de Contenidos]
-    #outline(title: none, depth: 3)
+    #outline(title: none, depth: 1)
 
     #pagebreak(weak: true)
     #index-heading[Índice de Ilustraciones]
