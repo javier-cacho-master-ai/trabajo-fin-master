@@ -349,6 +349,22 @@ Finalmente, la sexta etapa homogeneiza y combina ambas fuentes: los espectros de
 
 Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 55 000 pares de espectros emparejados de Gaia y [SDSS]{.acr}.
 
+#### Análisis visual de los datos obtenidos
+
+Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usó una representación del diagrama HR ( Hertzsprung-Russell, ). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
+
+En concreto, para estudiar los cuerpos celestes usados en este ttrabajo, se usó la fuente de datos de Gaia presente en la base de datos usada en el modelo de redes neuronales que comentaremos en el siguiente apartado. En el eje horizontal se considera la variable bp_rp, que corresponde con el índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente sería la estrella, mientras que los valores mayores representan estrellas rojas y frías.
+
+En el eje vertical encontraremmos la vairable phot_g_mean_mag, la magnitud aparente media en la banda G, que nos indica lo brillante que observamos la estrella a partir de las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertir todos los valores a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
+Tras esta modificación, aquellas estrellas mas luminosas, presentarán valores negativos, mientras que las más luminosas se mantienen en valores mayores. 
+
+El diagrama de los datos usados en este estudio es el que se observa en la @fig-HR-diagram:
+![Diagrama HR de las observaciones de Gaia contenidas en la base de datos](_partials/assets/DiagramaHR.png){#fig-HR-diagram}
+
+En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que encontramos objetos con propiedades físicas diferentes. Si bien es cierto, encontramos un grupo mayoritario de observaciones tal y como se aprecia en la parte superior izquierda del gráfico. 
+Debido a esta diversidad, el modelo debe adaptarse a fuentes de distintas características, con lo que no es un entrenamiento especializado en un solo tipo de estrella. 
+Al mismo tiempo, se observan algunos datos mas dispersos y distantes de las regiones mas ocupadas, los cuales podrían considerarse outliers para el modelo a entrenar.
+
 ### Entrenamiento del modelo
 
 Una vez se dispone de la base de datos con los pares de espectros de Gaia y [SDSS]{.acr}, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
