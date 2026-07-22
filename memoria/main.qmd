@@ -358,7 +358,7 @@ Este proceso de extracción ha permitido reunir hasta el momento un conjunto de 
 
 Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usó una representación del diagrama HR ( Hertzsprung-Russell, ). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
 
-En concreto, para estudiar los cuerpos celestes usados en este ttrabajo, se usó la fuente de datos de Gaia presente en la base de datos usada en el modelo de redes neuronales que comentaremos en el siguiente apartado. En el eje horizontal se considera la variable bp_rp, que corresponde con el índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente sería la estrella, mientras que los valores mayores representan estrellas rojas y frías.
+En concreto, para estudiar los cuerpos celestes usados en este trabajo, se usó la fuente de datos de Gaia presente en la base de datos usada en el modelo de redes neuronales que comentaremos en el siguiente apartado. En el eje horizontal se considera la variable bp_rp, que corresponde con el índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente sería la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
 En el eje vertical encontraremmos la vairable phot_g_mean_mag, la magnitud aparente media en la banda G, que nos indica lo brillante que observamos la estrella a partir de las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertir todos los valores a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
 Tras esta modificación, aquellas estrellas mas luminosas, presentarán valores negativos, mientras que las más luminosas se mantienen en valores mayores. 
@@ -435,7 +435,7 @@ En las gráficas detalladas de la @fig-generado_123 y la @fig-generado_191, se m
 
 ![Ejemplo 1 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_predicho_123_full.png){#fig-generado_123}
 
-![Ejemplo 2 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/eespectro_predicho_191_full.png){#fig-generado_191}
+![Ejemplo 2 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_predicho_191_full.png){#fig-generado_191}
 
 Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de [SDSS]{.acr} una vez han sido recortados y agrupados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usan escalas diferentes. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
