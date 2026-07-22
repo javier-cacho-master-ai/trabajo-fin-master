@@ -126,6 +126,7 @@ Estas relaciones han sido estudiadas por muchos científicos a lo largo de los a
 En la @fig-espectro-ejemplo se muestra un ejemplo de espectro estelar observado por [SDSS]{.acr}, donde se pueden apreciar las líneas de absorción mencionadas.
 
 ![Ejemplo de espectro estelar observado por SDSS](_partials/assets/espectro_sloan_1.png){#fig-espectro-ejemplo}
+
 <!--
 Hay estudios existentes que desarrollan la conexión entre los espectros y las variables anteriormente mencionadas, por ejemplo @lee2008segue trataron los datos de [SDSS]{.acr} en su sexta liberación de datos para tratar de crear herramientas automatizadas que estableciesen dicha relación.-->
 Algunos estudios trataron de crear herramientas automatizadas para la obtención de los datos anteriormente mencionados. Por ejemplo @lee2008segue lo intentó con la sexta liberación datos de [SDSS]{.acr}.
@@ -223,42 +224,42 @@ El objetivo general de este trabajo consiste en desarrollar un modelo basado en 
 Para alcanzar el objetivo propuesto, se deben alcanzar previamente los siguientes objetivos intermedios.
 
 
-- Análisis estructural de la base de datos de Gaia y SDSS
+- Análisis estructural de la base de datos de Gaia y SDSS:
 
 El análisis y comprensión de las observaciones y la manera en la que están organizadas en los repositorios de Gaia y [SDSS]{.acr} es fundamental para entender cuales son los datos relevantes a extraer.  
 
 Es también necesario comprender la relación entre las mediciones de ambos sondeos astronómicos para usar observaciones coincidentes, referidas a los mismos objetos del catálogo de objetos celestes.
 
-- Preselección de los datos
+- Preselección de los datos:
 
 Una vez se ha ganado cierta comprensión de los datos, se puede hacer una valoración más precisa de cuál es la calidad de los mismos, y qué valores no reúnen los requisitos para incluirse en el conjunto de datos de entrenamiento. 
 
 Así, se deben definir unos parámetros para excluir los datos menos relevantes para el objetivo principal.
 
-- Extracción de los datos
+- Extracción de los datos:
 
 Tras haber comprendido qué servicios se pueden usar para la extracción de los datos y haber reducido el conjunto de entrada atendiendo a su calidad, el siguiente paso consiste en la extracción de los mismos, usando métodos que optimicen la descarga de los datos orientados a minimizar el tiempo y los posibles errores que los servicios ofrecidos por los proyectos de Gaia y [SDSS]{.acr} ofrecen.
 
-- Preprocesado de los datos
+- Preprocesado de los datos:
 
 Una vez extraídos los datos, es necesario realizar cierto preprocesado de los mismos para mejorar el entrenamiento.
 
 Puesto que en la preselección de las observaciones se han tenido en cuenta criterios de calidad, y Gaia DR3 ofrece datos ya procesados y relaciones con [SDSS]{.acr}, el preprocesado en este caso consiste en la reducción del ruido, mejorando así la [SNR]{.acr}, aplicada a las observaciones de [SDSS]{.acr}, que tienen más variabilidad y pueden así aumentar la complejidad del entrenamiento.
 
-- Preparación de los conjuntos de entrenamiento, test y validación
+- Preparación de los conjuntos de entrenamiento, test y validación:
 
 Una vez los datos están listos, es necesario realizar el reparto entre los distintos conjuntos de datos. En concreto se necesitará un conjunto de entrenamiento para encontrar los mejores parámetros de los modelos propuestos, un conjunto de validación para seleccionar el modelo con mejores resultados y tener indicativos en caso de sobreajuste y, finalmente, un conjunto de test con el que estimar la calidad del modelo seleccionado a partir de datos no observados previamente.
 
-- Selección del modelo de redes neuronales más adecuado
+- Selección del modelo de redes neuronales más adecuado:
 
 Para el caso expuesto se considera que las redes neuronales pueden aportar una solución novedosa gracias a su no-linealidad.
 
 
-- Entrenamiento, refinamiento y validación del modelo
+- Entrenamiento, refinamiento y validación del modelo:
 
 La red neuronal entrenada requerirá de un proceso de optimización y ajuste de los hiperparámetros para dar una solución satisfactoria. Asimismo, se llevará un proceso de validación de los resultados a partir del conjunto de datos creado.
 
-- Puesta en servicio del modelo
+- Puesta en servicio del modelo:
 
 Una vez ajustado el modelo, el objetivo será proporcionar una manera sencilla e intuitiva de acceder a él. 
 
@@ -278,11 +279,12 @@ De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar 
 
 6. Entrenamiento, refinamiento y validación del modelo: proceso iterativo de optimización y ajuste de hiperparámetros, evaluando el modelo sobre el conjunto de validación y reservando el conjunto de test para la evaluación final.
 
+<!--
 ### Organización del trabajo en grupo
 
 Este trabajo ha sido desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se han mantenido reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se ha empleado un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se han integrado mediante revisiones cruzadas.
 
-<!-- TODO: detallar el reparto concreto de tareas entre Carla y Javier (la plantilla requiere describir el trabajo grupal) -->
+<!-- TODO: detallar el reparto concreto de tareas entre Carla y Javier (la plantilla requiere describir el trabajo grupal)
 En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación de la base de datos usada para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
 En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de la red neuronal, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. 
 
@@ -291,6 +293,7 @@ Por otro lado, la elaboración de la memoria también se repartió entre los dos
 El capítulo 6, llamado *Proyecto piloto*, fue redactado por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
 
 Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha llevado a cabo de forma completamente independiente. Tanto la memoria como el código utilizado han sido revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes hayan sido desarrolladas únicamente por esa persona. Gracias a las revisiones se han detectado errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
+--> 
 
 ## Identificación de requisitos
 
@@ -304,7 +307,8 @@ Cada muestra usada debe contener el identificador de este objeto dentro de su ba
 
 El conjunto de datos original deberá ser almacenado en un formato que sea eficiente para su uso en el modelo. En este trabajo se consideró el formato HDF5.
 
-Una vez extraído el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento, por ejemplo se descartarán aquellos que presenten posibles anomalías o estén faltos de variabilidad en el flujo, pudiendo indicar un error en el espectro. Además, se recortarán los rangos de longitud de onda a aquellos que se sobrepongan entre ambas muestras y que no incluyan anomalías de forma generalizada. 
+Una vez extraído el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento, por ejemplo se descartarán aquellos que presenten posibles anomalías o estén faltos de variabilidad en el flujo, pudiendo indicar un error en el espectro. Estos descartes de datos se describen en profundidad en la sección 5.
+Además, se recortarán los rangos de longitud de onda a aquellos que se sobrepongan entre ambas muestras y que no incluyan anomalías de forma generalizada. 
 
 ### Requisitos del modelo
 
@@ -356,19 +360,21 @@ Este proceso de extracción ha permitido reunir hasta el momento un conjunto de 
 
 #### Análisis visual de los datos obtenidos
 
-Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usó una representación del diagrama HR ( Hertzsprung-Russell, ). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
+Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usa una representación del diagrama HR ( Hertzsprung-Russell, ). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
 
-En concreto, para estudiar los cuerpos celestes usados en este trabajo, se usó la fuente de datos de Gaia presente en la base de datos usada en el modelo de redes neuronales que comentaremos en el siguiente apartado. En el eje horizontal se considera la variable bp_rp, que corresponde con el índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente sería la estrella, mientras que los valores mayores representan estrellas rojas y frías.
+En concreto, para estudiar los cuerpos celestes usados en este trabajo, se considera la fuente de datos de Gaia. En el eje horizontal se considera la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
-En el eje vertical encontraremmos la vairable phot_g_mean_mag, la magnitud aparente media en la banda G, que nos indica lo brillante que observamos la estrella a partir de las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertir todos los valores a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
-Tras esta modificación, aquellas estrellas mas luminosas, presentarán valores negativos, mientras que las más luminosas se mantienen en valores mayores. 
+En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud aparente media en la banda G, que nos indica lo brillante que se aprecia la estrella a partir en las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertir todos los valores a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
+Tras esta modificación, aquellas estrellas más luminosas, presentan valores negativos, mientras que las más luminosas se mantienen en valores positivos. 
 
 El diagrama de los datos usados en este estudio es el que se observa en la @fig-HR-diagram:
+
 ![Diagrama HR de las observaciones de Gaia contenidas en la base de datos](_partials/assets/DiagramaHR.png){#fig-HR-diagram}
 
-En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que encontramos objetos con propiedades físicas diferentes. Si bien es cierto, encontramos un grupo mayoritario de observaciones tal y como se aprecia en la parte superior izquierda del gráfico. 
+
+En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que encontramos objetos con propiedades físicas diferentes. Si bien es cierto, encontramos un grupo mayoritario de observaciones tal y como se aprecia en la parte media izquierda del gráfico. 
 Debido a esta diversidad, el modelo debe adaptarse a fuentes de distintas características, con lo que no es un entrenamiento especializado en un solo tipo de estrella. 
-Al mismo tiempo, se observan algunos datos mas dispersos y distantes de las regiones mas ocupadas, los cuales podrían considerarse outliers para el modelo a entrenar.
+Al mismo tiempo, se observan algunos datos dispersos y distantes de las regiones más ocupadas, los cuales podrían considerarse anomalías para el modelo a entrenar.
 
 ### Entrenamiento del modelo
 
@@ -379,16 +385,16 @@ En primer lugar, cabe destacar que restringimos el intervalo de entrenamiento en
 
 Además, se eliminaron aquellos pares de espectros en los que se encontraron valores no definidos o los cuales constaban de comportamientos anómalos, como por ejemplo escalas de flujo cercanas a cero o espectros constantes. Para conseguirlo, se usaron medidas basadas en percentiles, recortando los valores extremos considerando porcentajes cerca del 95 o 99. Este filtrado consiguió eliminar efectos adversos en el modelo causados por datos no representativos de la muestra extraída.
 
-También tuvimos en cuenta la relación de escala entre el flujo de Gaia y [SDSS]{.acr}.  Con el mismo criterio de los percentiles nombrados anteriormente, los casos más extremos en los que la relación entre ambos flujos no era cercana a uno, fueron eliminados. De esta forma mantuvimos los pares en los que la relación entre la entrada y la salida fuese coherente.
+También tuvimos en cuenta la relación de escala entre el flujo de Gaia y [SDSS]{.acr}. Con el mismo criterio de los percentiles nombrados anteriormente, los casos más extremos en los que la relación entre ambos flujos no era cercana a uno, fueron eliminados. De esta forma mantuvimos los pares en los que la relación entre la entrada y la salida fuese coherente.
 <!--
 Para obtener un correcto funcionamiento del modelo, tuvimos que reducir la dimensionalidad del espectro de [SDSS]{.acr} mediante una agrupación de bines consecutivos. [SDSS]{.acr} contaba inicialmente con 3600 observaciones por espectro, mientras que Gaia tan solo 343. Esta diferencia suponía una dificultad añadida para el modelo, así que aplicamos una función de agrupación, la cual sustituía por un único valor promedio cada bloque de n valores consecutivos del flujo de [SDSS]{.acr}. Tras valorar los beneficios y desventajas de esta agrupación, se consideró una agrupación en conjuntos de 7 bines, reduciendo la dimensión de [SDSS]{.acr} a 380 puntos. Este valor suponía el equilibrio entre la pérdida de información debido a la reducción de puntos y la mejora del problema de regresión del modelo.  
 -->
 
-Finalmente, aplicamos limitaciones en cuanto a la calidad de los espectros. A partir de la relación señal-ruido de cada observación, descartamos aquellas con los valores de [SNR]{.acr} más bajos con la intención de impedir el uso de parejas de espectros con [SNR]{.acr} muy diferentes. Para hacerlo, descartamos los valores mas extremos a partir del percentil 95.
+Finalmente, aplicamos limitaciones en cuanto a la calidad de los espectros. A partir de la relación señal-ruido de cada observación, descartamos aquellas con los valores de [SNR]{.acr} más bajos con la intención de impedir el uso de parejas de espectros con [SNR]{.acr} muy diferentes. Para hacerlo, descartamos los valores más extremos a partir del percentil 95.
 Gaia y [SDSS]{.acr} observan los objetos de formas diferentes y no bajo las mismas condiciones, lo que implica que las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste. Para evitar que esto afecte a la calidad del modelo, las parejas con peor calidad fueron descartadas, reduciendo la posibilidad de que el modelo aprenda relaciones influenciadas mayormente por ruido.
 
 De cara a la preparación de la base para el entrenamiento del modelo, definimos 3 subconjuntos: entrenamiento, test y validación. 
-Los datos de test se formaron con un 20% del conjunto global y fueron empleados para evaluar el modelo, por lo que no fueron usados durante su entrenamiento. El 80% restante se separó de forma aleatoria entre las parejas que forman la base de entrenamiento del modelo, a partir de un 80% de lo restante, y la de validación, el 20% final.  
+Los datos de test se formaron con un 20% del conjunto global y fueron empleados para evaluar el modelo, por lo que no fueron usados durante su entrenamiento. El 80% restante se separó de forma aleatoria entre las parejas que forman la base de entrenamiento del modelo, un 80% de lo restante, y la de validación, el 20% final.  
 
 
 Una vez definida la partición de los datos, aplicamos una normalización a través de la media y desviación típica de los datos del conjunto de entrenamiento. Gracias a este paso, se facilitó el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares.
@@ -404,10 +410,10 @@ $$L_{\delta}(a)=
 \delta \left(|a|-\frac{1}{2}\delta\right), & \text{si } |a| > \delta
 \end{cases}$$
 
-En esta *a* representa el error entre el valor real y pedicho, y $\delta$ define el valor frontera en el que la función deja de estar definida como [MSE]{.acr} y pasa a ser mas similar a [MAE]{.acr}.
+En esta *a* representa el error entre el valor real y predicho, y $\delta$ define el valor frontera en el que la función deja de estar definida como [MSE]{.acr} y pasa a ser más similar a [MAE]{.acr}. En este caso, se definió $\delta$ como 1.
 
 Este comportamiento permite rebajar la penalización en aquellos casos en los que los espectros tengan desviaciones anómalas que no deban definir el comportamiento del modelo. 
-Se consideró el optimizador Adam[@kingma2014adam] con una tasa de aprendizaje de 0.0001 y una limitación a 1 en la norma de los gradientes con el objetivo de evitar las actualizaciones excesivas.
+Se consideró el optimizador Adam [@kingma2014adam] con una tasa de aprendizaje de 0.0001 y una limitación a 1 en la norma de los gradientes con el objetivo de evitar las actualizaciones excesivas.
 
 El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana <!--EarlyStopping--> que monitorea la pérdida del set de validación y detiene el entrenamiento si después de 5 épocas no ha mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estanca. 
 <!--
@@ -418,16 +424,18 @@ El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas
 Falta añadir otros modelos, incluidos los de convolucionales y los que consideran el ruido-->
 
 ## Evaluación
-Durante el entrenamiento del modelo se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-loss_evolution, @fig-mse-evolution y @fig-mae-evolution .
+Durante el entrenamiento del modelo se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-loss-evolution, @fig-mse-evolution y @fig-mae-evolution .
 
 ![Gráfica de la evolución de la función de pérdida](_partials/assets/loss_function_evolution.png){#fig-loss-evolution}
+
 ![Gráfica de la evolución del MSE](_partials/assets/mse_evolution.png){#fig-mse-evolution}
+
 ![Gráfica de la evolución del MAE](_partials/assets/mae_evolution.png){#fig-mae-evolution}
 
-En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento de 0.0073, un error absoluto medio de 0.0670 y un error cuadrático medio de 0.0153.
-En el conjunto de validación las métricas obtenidas fueron muy cercanas, siendo un 0.0074 de pérdida, un [MAE]{.acr} de 0.0676 y [MSE]{.acr} de 0.0152. 
+En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento de 0.0084, un error absoluto medio de 0.0726 y un error cuadrático medio de 0.0189.
+En el conjunto de validación las métricas obtenidas fueron muy cercanas, siendo un 0.0083 de pérdida, un [MAE]{.acr} de 0.0729 y [MSE]{.acr} de 0.0173. 
 
-Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos en este conjunto tuvieron una pérdida de 0.0081, [MAE]{.acr} de 0.0697 y [MSE]{.acr} de 0.0168. Estos datos son cercanos a los obtenidos en la muestra de validación y entrenamiento, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos anteriormente. 
+Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos en este conjunto tuvieron una pérdida de 0.0087, [MAE]{.acr} de 0.0734 y [MSE]{.acr} de 0.0187. Estos datos son cercanos a los obtenidos en la muestra de validación y entrenamiento, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos anteriormente. 
 
 Cabe destacar que las métricas calculadas anteriormente se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
