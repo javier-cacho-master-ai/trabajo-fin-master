@@ -499,7 +499,7 @@ En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta 
 
 | Normalización | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
 |---|---:|---:|---:|
-| Media del conjunto de entrenamiento | 0.0086 | 0.0735 | 0.0181 |
+| Mediana del conjunto de entrenamiento | 0.0086 | 0.0735 | 0.0181 |
 | Por mediana de cada espectro | 0.0046 | 0.0496 | 0.0129 |
 | Por máximo de cada espectro | 0.0050 | 0.0666 | 0.0100 |
 
