@@ -325,9 +325,9 @@ Para descartar aquellas muestras que no sean coherentes, se comparará la media 
 
 En gran parte de los descartes que se realizarán, se usarán los percentiles 95 o 99 para establecer los límites tolerables. Al establecerlos de esta forma, no estableceremos un valor arbitrario fijo, sino que se tendrá en cuenta el comportamiento estadístico de la muestra, permitiendo extender su uso en casos futuros.
 
-Asimismo, deberá tenerse en cuenta la [SNR]{.acr} de las observaciones. Este dato informa de la calidad de la señal respecto al ruido, por lo que si este valor es muy bajo, la información del espectro asociado es poco fiable. Respecto a esto, se impondrán dos criterios: por un lado, se descartarán aquellos datos con los valores de [SNR]{.acr} por debajo del percentil 1, y por otro, dado que el modelo tratará de aprender la correspondencia entre las observaciones de Gaia y [SDSS]{.acr}, se descartarán aquellos pares con relación entre la media de [SNR]{.acr} mayores al percentil 95 o inferiores al 5.
+Asimismo, deberá tenerse en cuenta la [SNR]{.acr} de las observaciones. Este dato indica la calidad de la señal respecto al ruido, por lo que si este valor es muy bajo, la información del espectro asociado es poco fiable. Respecto a esto, se impondrán dos criterios: por un lado, se descartarán aquellos datos con los valores de [SNR]{.acr} por debajo del percentil 1. Por otro, dado que el modelo tratará de aprender la correspondencia entre las observaciones de Gaia y [SDSS]{.acr} y estos observan los objetos de formas diferentes y no bajo las mismas condiciones, lo que implica que las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste, se descartarán aquellos pares en los que la relación entre la media de [SNR]{.acr} de ambos instrumentos sean mayores al percentil 95 o inferiores al 5.
 
-Finalmente, los espectros se recortarán a los rangos de longitud de onda comunes entre Gaia y [SDSS]{.acr} y, al mismo tiempo, se descartarán los intervalos iniciales y finales del rango espectral, ya que en estas zonas suelen aparecer con mayor frecuencia anomalías u observaciones de artefactos.
+Finalmente, los espectros se recortarán a los rangos de longitud de onda comunes entre Gaia y [SDSS]{.acr} y así evitar que la generación de datos de salida se vea afectada por la falta de datos de entrada. Al mismo tiempo, se descartarán los intervalos iniciales y finales del rango espectral, ya que en estas zonas suelen aparecer con mayor frecuencia anomalías u observaciones de artefactos. En concreto, se restringirá el intervalo de entrenamiento entre los 500 y 900 nm. 
 
 ### Requisitos del modelo
 
@@ -379,7 +379,7 @@ Este proceso de extracción ha permitido reunir hasta el momento un conjunto de 
 
 #### Análisis visual de los datos obtenidos
 
-Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usa una representación del diagrama HR (Hertzsprung-Russell, ). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
+Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usa una representación del diagrama [HR]{.acr} (Hertzsprung-Russell, @hertzsprung1911wellenlaengen y @russell1914spectra). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
 
 En concreto, para estudiar los cuerpos celestes usados en este trabajo, se considera la fuente de datos de Gaia. En el eje horizontal se considera la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
@@ -400,26 +400,19 @@ Al mismo tiempo, se observan algunos datos dispersos y distantes de las regiones
 Una vez se dispone de la base de datos con los pares de espectros de Gaia y [SDSS]{.acr}, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
 El objetivo es conseguir un modelo que aprenda una transformación entre los datos de entrada de Gaia y el espectro de [SDSS]{.acr} asociado. Así pues, el modelo planteado recibe como entrada un vector con el flujo de Gaia y obtiene como salida un vector con una aproximación del flujo correspondiente al espectro de [SDSS]{.acr}.
 
-En primer lugar, cabe destacar que restringimos el intervalo de entrenamiento entre los 500 y 900 nm dado que es el rango común entre los dos catálogos en el que no se observan alteraciones debido a posibles artefactos. Al mismo tiempo, con este recorte se evitan zonas en las que la generación de los datos de salida se vería afectada por la falta de datos del conjunto de entrada.
-
-Además, se eliminaron aquellos pares de espectros en los que se encontraron valores no definidos o los cuales constaban de comportamientos anómalos, como por ejemplo escalas de flujo cercanas a cero o espectros constantes. Para conseguirlo, se usaron medidas basadas en percentiles, recortando los valores extremos considerando porcentajes cerca del 95 o 99. Este filtrado consiguió eliminar efectos adversos en el modelo causados por datos no representativos de la muestra extraída.
-
-También tuvimos en cuenta la relación de escala entre el flujo de Gaia y [SDSS]{.acr}. Con el mismo criterio de los percentiles nombrados anteriormente, los casos más extremos en los que la relación entre ambos flujos no era cercana a uno, fueron eliminados. De esta forma mantuvimos los pares en los que la relación entre la entrada y la salida fuese coherente.
-<!--
-Para obtener un correcto funcionamiento del modelo, tuvimos que reducir la dimensionalidad del espectro de [SDSS]{.acr} mediante una agrupación de bines consecutivos. [SDSS]{.acr} contaba inicialmente con 3600 observaciones por espectro, mientras que Gaia tan solo 343. Esta diferencia suponía una dificultad añadida para el modelo, así que aplicamos una función de agrupación, la cual sustituía por un único valor promedio cada bloque de n valores consecutivos del flujo de [SDSS]{.acr}. Tras valorar los beneficios y desventajas de esta agrupación, se consideró una agrupación en conjuntos de 7 bines, reduciendo la dimensión de [SDSS]{.acr} a 380 puntos. Este valor suponía el equilibrio entre la pérdida de información debido a la reducción de puntos y la mejora del problema de regresión del modelo.  
--->
-
-Finalmente, aplicamos limitaciones en cuanto a la calidad de los espectros. A partir de la relación señal-ruido de cada observación, descartamos aquellas con los valores de [SNR]{.acr} más bajos con la intención de impedir el uso de parejas de espectros con [SNR]{.acr} muy diferentes. Para hacerlo, descartamos los valores más extremos a partir del percentil 95.
-Gaia y [SDSS]{.acr} observan los objetos de formas diferentes y no bajo las mismas condiciones, lo que implica que las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste. Para evitar que esto afecte a la calidad del modelo, las parejas con peor calidad fueron descartadas, reduciendo la posibilidad de que el modelo aprenda relaciones influenciadas mayormente por ruido.
-
-De cara a la preparación de la base para el entrenamiento del modelo, definimos 3 subconjuntos: entrenamiento, test y validación. 
+De cara a la preparación de la base para el entrenamiento del modelo, se definieron 3 subconjuntos: entrenamiento, test y validación. 
 Los datos de test se formaron con un 20% del conjunto global y fueron empleados para evaluar el modelo, por lo que no fueron usados durante su entrenamiento. El 80% restante se separó de forma aleatoria entre las parejas que forman la base de entrenamiento del modelo, un 80% de lo restante, y la de validación, el 20% final.  
 
+#### Planteamiento general del entrenamiento
+Una vez definida la partición de los datos, se realizaron diversas pruebas con tal de analizar como afectaban al rendimiento del modelo. 
+En primer lugar, se probaron diferentes funciones de normalización, dado que este paso facilitaba el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares y las funciones de pérdida se ubicaban en valores significativos de cara a su futura interpretación.
+Como punto de partida, se aplicó una normalización a través de la media y desviación típica de los datos del conjunto de entrenamiento. Esta opción no proporcionó malos resultados (tal y como podremos observar en los próximos apartados) y tenía la ventaja de que se podía deshacer la normalización sin necesidad de conocer los valores del conjunto de test, pero al tratarse de un proceso demasiado generalizado para la variabilidad de valores de los espectros, se probaron otros enfoques. Por ejemplo, se consideró la normalización espectro a espectro, en el que cada flujo se normaliza en su propia escala con la mediana de sus datos. 
 
-Una vez definida la partición de los datos, aplicamos una normalización a través de la media y desviación típica de los datos del conjunto de entrenamiento. Gracias a este paso, se facilitó el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares.
-Probamos también la adición de los datos de la relación señal-ruido que Gaia contiene en su catálogo como parte del conjunto de entrada. En este caso, los resultados obtenidos no mejoraron significativamente, por lo que se continuó el estudio sin este dato de entrada.
 
-Después de un procedimiento de prueba y error, el modelo final corresponde a una red neuronal densa, formada por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
+Probamos también la adición de los datos de la relación señal-ruido que Gaia contiene en su catálogo como parte del conjunto de entrada. En este caso, los resultados obtenidos no mejoraron significativamente, por lo que se descartó y continuó el estudio sin este dato de entrada.
+
+#### Modelo base: red neuronal densa
+Después de un procedimiento de prueba y error, el modelo que mejores resultados obtuvo dentro de la categoría de red neuronal densa, estuvo formado por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
 Además, probamos diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos. En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
 
 La función de pérdida definida fue Huber [@huber1964robust], que combina el error cuadrático medio para errores pequeños, y el error absoluto medio para errores más grandes. La función matemática que la define es la siguiente:
@@ -429,12 +422,18 @@ $$L_{\delta}(a)=
 \delta \left(|a|-\frac{1}{2}\delta\right), & \text{si } |a| > \delta
 \end{cases}$$
 
-En esta *a* representa el error entre el valor real y predicho, y $\delta$ define el valor frontera en el que la función deja de estar definida como [MSE]{.acr} y pasa a ser más similar a [MAE]{.acr}. En este caso, se definió $\delta$ como 1.
+En esta, *a* representa el error entre el valor real y predicho, y $\delta$ define el valor frontera en el que la función deja de estar definida como [MSE]{.acr} y pasa a ser más similar a [MAE]{.acr}. En este caso, se definió $\delta$ como 1.
 
 Este comportamiento permite rebajar la penalización en aquellos casos en los que los espectros tengan desviaciones anómalas que no deban definir el comportamiento del modelo. 
 Se consideró el optimizador Adam [@kingma2014adam] con una tasa de aprendizaje de 0.0001 y una limitación a 1 en la norma de los gradientes con el objetivo de evitar las actualizaciones excesivas.
 
 El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana <!--EarlyStopping--> que monitorea la pérdida del set de validación y detiene el entrenamiento si después de 5 épocas no ha mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estanca. 
+
+#### Modelo convolucional 1D
+
+
+#### Modelo recurrente
+
 <!--
 ### Validación del modelo
 -->
@@ -443,7 +442,18 @@ El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas
 Falta añadir otros modelos, incluidos los de convolucionales y los que consideran el ruido-->
 
 ## Evaluación
-Durante el entrenamiento del modelo se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-loss-evolution, @fig-mse-evolution y @fig-mae-evolution .
+
+Una vez entrenadas las distintas opciones de red neuronal, es necesario evaluar el rendimiento para determinar que aproximación es la más adecuada al problema que se ha planteado. 
+
+Para hacerlo, se considerarán diversos caminos. Por un lado, se analizarán las métricas obtenidas durante el entrenamiento, como por ejemplo los valores de la función de pérdida, el [MAE]{.acr} o [MSE]{.acr}. No obstante, debe tenerse en cuenta que se han usado diferentes funciones de normalización, por lo que no en todos los casos estas métricas se podrán comparar directamente. 
+
+Para evitar este problema, la evaluación se basará también en otras técnicas. La primera será una comparativa visual de los espectros respecto al real de [SDSS]{.acr} tras deshacer la normalización, esto permitirá comprobar si el modelo se ajusta correctamente a la forma global del espectro y a sus zonas de emisión y absorción. 
+
+Por último, se empleará la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, como por ejemplo la temperatura efectiva o la gravedad superficial, con el objetivo de comparar los obtenidos con las predicciones y el espectro real. De esta forma no se comparará solo la similitud de los espectros de forma numérica, sino que también se tendrá en cuenta si las predicciones se aproximan a la información astrofísica que se obtiene del espectro de [SDSS]{.acr} original.
+
+### Resultados obtenidos con el modelo base
+
+Durante el entrenamiento del modelo basado en capas densas con normalización a partir de la mediana global de los datos, se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-loss-evolution, @fig-mse-evolution y @fig-mae-evolution .
 
 ![Gráfica de la evolución de la función de pérdida](_partials/assets/loss_function_evolution.png){#fig-loss-evolution}
 
@@ -451,24 +461,60 @@ Durante el entrenamiento del modelo se pudo observar una evolución estable de l
 
 ![Gráfica de la evolución del MAE](_partials/assets/mae_evolution.png){#fig-mae-evolution}
 
-En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento de 0.0084, un error absoluto medio de 0.0726 y un error cuadrático medio de 0.0189.
-En el conjunto de validación las métricas obtenidas fueron muy cercanas, siendo un 0.0083 de pérdida, un [MAE]{.acr} de 0.0729 y [MSE]{.acr} de 0.0173. 
-
-Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos en este conjunto tuvieron una pérdida de 0.0087, [MAE]{.acr} de 0.0734 y [MSE]{.acr} de 0.0187. Estos datos son cercanos a los obtenidos en la muestra de validación y entrenamiento, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos anteriormente. 
+En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento muy similar a la del conjunto de validación.
+Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos anteriormente. 
 
 Cabe destacar que las métricas calculadas anteriormente se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
-En las gráficas detalladas de la @fig-generado_123 y la @fig-generado_191, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. 
+En las gráficas detalladas de la @fig-generado_global_123 y la @fig-generado_global_191, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. 
 
-![Ejemplo 1 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_predicho_123_full.png){#fig-generado_123}
+![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.](_partials/assets/espectro_predicho_123_full.png){#fig-generado_global_123}
 
-![Ejemplo 2 del espectro generado por el modelo y los de Gaia y SDSS originales](_partials/assets/espectro_predicho_191_full.png){#fig-generado_191}
+![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.](_partials/assets/espectro_predicho_191_full.png){#fig-generado_global_191}
 
 Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de [SDSS]{.acr} una vez han sido recortados y agrupados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usan escalas diferentes. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
 
 En gran parte de los gráficos observados, el modelo reproduce la morfología general del espectro, incluso modela gran parte de los picos más acentuados. 
 Si bien es cierto, hay puntos que el modelo no puede inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
+
+Por otro lado, al usar una normalización basada en la mediana por espectro, los resultados obtenidos fueron similares. 
+Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre las mismas observaciones que el modelo anterior fueron las observadas en la @fig-generado_mediana_espectro_123 y @fig-generado_mediana_espectro_191:
+
+![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.](_partials/assets/espectro_predicho_123_full_mediana_espectro.png){#fig-generado_mediana_espectro_123}
+
+![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.](_partials/assets/espectro_predicho_191_full_mediana_espectro.png){#fig-generado_mediana_espectro_191}
+
+Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual ínfima, pero positiva hacia este segundo tipo de normalización. 
+
+Por último, si nos fijamos en las figuras @fig-generado_maximo_espectro_123 y @fig-generado_maximo_espectro_191 , observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
+
+![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.](_partials/assets/espectro_predicho_123_full_maximo_espectro.png){#fig-generado_maximo_espectro_123}
+
+![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.](_partials/assets/espectro_predicho_191_full_maximo_espectro.png){#fig-generado_maximo_espectro_191}
+
+A partir de las gráficas observadas, parece que la opción con mejores resultados es la segunda, dado que es la que obtiene espectros más cercanos a los reales. Ahora bien, comprobemos las siguientes métricas para obtener resultados más concluyentes.
+
+En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta arquitectura según el tipo de normalización aplicado. 
+
+| Normalización | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Media del conjunto de entrenamiento | 0.0086 | 0.0735 | 0.0181 |
+| Por mediana de cada espectro | 0.0046 | 0.0496 | 0.0129 |
+| Por máximo de cada espectro | 0.0050 | 0.0666 | 0.0100 |
+
+: Resultados obtenidos con distintas estrategias de normalización. {#tbl-normalizaciones-densa}
+
+Igual que en la conclusión anterior, parece que al aplicar una normalización por espectro basada en la mediana, obtenemos ligeramente mejores resultados. 
+
+La última comparación vendrá dada por la librería *ISpec*. 
+
+
+### Resultados obtenidos con el modelo convolucional 1D
+
+### Resultados obtenidos con el modelo recurrente
+
+### Comparación entre modelos 
 
 ## Conclusiones y trabajo futuro
 
