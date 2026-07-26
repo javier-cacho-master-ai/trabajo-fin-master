@@ -301,14 +301,33 @@ Para un correcto desarrollo del proyecto, es necesario garantizar una serie de r
 
 ### Requisitos del conjunto de datos
 
-El conjunto de datos usado para el entrenamiento del modelo debe estar formada por pares de espectros de Gaia y [SDSS]{.acr} que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos.
+El conjunto de datos usado para el entrenamiento del modelo debe estar formado por pares de espectros de Gaia y [SDSS]{.acr} que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos, en concreto, la tabla de mejores vecinos entre Gaia DR3 y [SDSS]{.acr} DR13. 
 
-Cada muestra usada debe contener el identificador de este objeto dentro de su base de datos, el espectro, la malla de longitud de onda correspondiente y la relación señal-ruido del espectro. 
+Cada muestra usada debe contener, como mínimo, el identificador de este objeto dentro de su base de datos, el espectro, la malla de longitud de onda correspondiente y la relación señal-ruido del espectro. En el caso de [SDSS]{.acr} el [SNR]{.acr} será obtenido a partir de la variable *ivar*.
+El identificador del objeto dependerá de la base de datos, ya que en Gaia será suficiente con el *source_id*, mientras que en [SDSS]{.acr} se necesitará *specObjID*, *plate*, *mjd* y *fiberID*.
 
-El conjunto de datos original deberá ser almacenado en un formato que sea eficiente para su uso en el modelo. En este trabajo se consideró el formato HDF5.
+El conjunto de datos original deberá ser almacenado en un formato que sea eficiente para su uso en el modelo. En este trabajo se consideró el formato HDF5, ya que permite organizar en un solo fichero todos los datos necesarios para su entrenamiento. 
 
-Una vez extraído el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento, por ejemplo se descartarán aquellos que presenten posibles anomalías o estén faltos de variabilidad en el flujo, pudiendo indicar un error en el espectro. Estos descartes de datos se describen en profundidad en la sección 5.
-Además, se recortarán los rangos de longitud de onda a aquellos que se sobrepongan entre ambas muestras y que no incluyan anomalías de forma generalizada. 
+Por último, será necesaria la aplicación de criterios de calidad y el preprocesado del conjunto de datos a usar.
+
+### Requisitos de calidad
+
+Una vez extraído el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento del modelo.
+
+En primer lugar, los espectros deberán contener valores numéricos válidos en todo el rango usado, con lo que se descartarán aquellos datos que contengan valores nulos o infinitos. Del mismo modo, se descartarán aquellas observaciones que contengas posibles anomalías en el flujo, como por ejemplo picos extremos o que no encajen en la tendencia general de la muestra. Al mismo tiempo, también se descartará el caso contrario, muestras donde haya una clara falta de variabilidad en el flujo, es decir, por ejemplo, que este sea un valor constante. Un claro ejemplo se puede observar en la @fig-descarte-constante, donde se aprecia como el espectro captado por SDSS es nulo:
+
+![Ejemplo de espectros donde el espectro de SDSS es constante 0.](_partials/assets/ejemplo_descarte_1.png){#fig-descarte-constante} 
+
+Por otro lado, las parejas de espectros de Gaia y [SDSS]{.acr} deberán ser coherentes en cuanto a la escala del flujo. Aunque ambos instrumentos presentan resoluciones diferentes, al tratarse de observaciones hechas al mismo cuerpo estelar, la relación entre los flujos no debe situarse en valores extremos. 
+Para descartar aquellas muestras que no sean coherentes, se comparará la media del flujo de ambos espectros y se descartarán aquellos pares cuya relación se encuentre fuera de los límites definidos con el percentil 99 del conjunto de datos. En la @fig-descarte-escala encontramos un ejemplo de lo que se evitará gracias a esta restricción.
+
+![Ejemplo de espectros donde la escala de Gaia y SDSS es diferente.](_partials/assets/ejemplo_descarte_2.png){#fig-descarte-escala} 
+
+En gran parte de los descartes que se realizarán, se usarán los percentiles 95 o 99 para establecer los límites tolerables. Al establecerlos de esta forma, no estableceremos un valor arbitrario fijo, sino que se tendrá en cuenta el comportamiento estadístico de la muestra, permitiendo extender su uso en casos futuros.
+
+Asimismo, deberá tenerse en cuenta la [SNR]{.acr} de las observaciones. Este dato informa de la calidad de la señal respecto al ruido, por lo que si este valor es muy bajo, la información del espectro asociado es poco fiable. Respecto a esto, se impondrán dos criterios: por un lado, se descartarán aquellos datos con los valores de [SNR]{.acr} por debajo del percentil 1, y por otro, dado que el modelo tratará de aprender la correspondencia entre las observaciones de Gaia y [SDSS]{.acr}, se descartarán aquellos pares con relación entre la media de [SNR]{.acr} mayores al percentil 95 o inferiores al 5.
+
+Finalmente, los espectros se recortarán a los rangos de longitud de onda comunes entre Gaia y [SDSS]{.acr} y, al mismo tiempo, se descartarán los intervalos iniciales y finales del rango espectral, ya que en estas zonas suelen aparecer con mayor frecuencia anomalías u observaciones de artefactos.
 
 ### Requisitos del modelo
 
@@ -330,7 +349,7 @@ En este capítulo se describe el trabajo realizado en cada una de las etapas def
 
 ### Preparación del conjunto de datos
 
-La construcción del conjunto de datos de entrenamiento se ha automatizado mediante un flujo  reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consume el resultado de la anterior y guarda su salida en disco de inmediato, de manera que una ejecución interrumpida puede reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. A grandes rasgos dicho flujo obtiene la referencia de los objectos con espectro en [SDSS]{.acr}, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objectos referenciados de [SDSS]{.acr}, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal.
+La construcción del conjunto de datos de entrenamiento se ha automatizado mediante un flujo reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consume el resultado de la anterior y guarda su salida en disco de inmediato, de manera que una ejecución interrumpida puede reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. A grandes rasgos dicho flujo obtiene la referencia de los objetos con espectro en [SDSS]{.acr}, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objetos referenciados de [SDSS]{.acr}, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal.
 
 #### Obtención de los objectos con espectro de [SDSS]{.acr}
 
@@ -360,7 +379,7 @@ Este proceso de extracción ha permitido reunir hasta el momento un conjunto de 
 
 #### Análisis visual de los datos obtenidos
 
-Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usa una representación del diagrama HR ( Hertzsprung-Russell, ). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
+Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usa una representación del diagrama HR (Hertzsprung-Russell, ). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
 
 En concreto, para estudiar los cuerpos celestes usados en este trabajo, se considera la fuente de datos de Gaia. En el eje horizontal se considera la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
