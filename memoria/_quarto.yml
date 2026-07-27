@@ -15,8 +15,9 @@ format:
 
     code-line-numbers: true
 
-    tbl-cap-location: bottom
     tbl-pos: "H"
+
+    fig-cap-location: top
 
     include-after-body: _partials/bibliography.typ
 
