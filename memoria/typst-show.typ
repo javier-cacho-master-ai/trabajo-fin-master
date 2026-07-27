@@ -6,6 +6,7 @@
   director: [$director$],
   work_type: [$work_type$],
   degree: [$degree$],
+  city: [$city$],
   date: [$date$],
 
   abstract_es: [$abstract_es$],

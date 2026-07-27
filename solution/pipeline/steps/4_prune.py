@@ -82,7 +82,6 @@ def run(config: PipelineConfig) -> tuple[Path, Path]:
       , "phot_bp_mean_flux_over_error", "phot_rp_mean_flux_over_error"
       , "astrometric_excess_noise", "bp_rp"
       , "teff_gspphot", "logg_gspphot", "mh_gspphot", "vbroad", "alphafe_gspspec"
-      , "parallax", "phot_g_mean_mag"
       , "original_ext_source_id", "angular_distance"
     ]
     sdss_cols = ["original_ext_source_id", "plate", "mjd", "fiberID", "redshift"]
