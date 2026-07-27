@@ -11,6 +11,8 @@
     number-align: bottom + right,
   )[
     #index-heading[Índice de contenidos]
+    #show outline.entry: set block(spacing: styles.outline-entry-spacing)
+    #set outline.entry(fill: styles.outline-fill)
     #outline(title: none, depth: 2)
   ]
 }

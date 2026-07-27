@@ -59,5 +59,7 @@
       leading: 1.5em,
       spacing: 2em,
     ),
+    outline-entry-spacing: 1.5em,
+    outline-fill: repeat(text(size: 0.7em)[.]),
   )
 }

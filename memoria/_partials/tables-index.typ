@@ -1,3 +1,4 @@
+#import "styles.typ": styles
 #import "table-of-contents.typ": index-heading
 #import "header.typ": get-header
 
@@ -8,6 +9,8 @@
     number-align: bottom + right,
   )[
     #index-heading[Índice de tablas]
+    #show outline.entry: set block(spacing: styles.outline-entry-spacing)
+    #set outline.entry(fill: styles.outline-fill)
     #outline(
       title: none,
       target: figure.where(kind: table).or(figure.where(kind: "quarto-float-tbl")),
