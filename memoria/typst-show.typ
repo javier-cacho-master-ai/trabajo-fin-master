@@ -6,7 +6,6 @@
   director: [$director$],
   work_type: [$work_type$],
   degree: [$degree$],
-  city: [$city$],
   date: [$date$],
 
   abstract_es: [$abstract_es$],
@@ -16,5 +15,11 @@
     $for(keywords)$
       "$keywords$",
     $endfor$
-  )
+  ),
+
+  group_work_rows: (
+    $for(group_work)$
+      [$group_work.apartado$], [$group_work.responsables$],
+    $endfor$
+  ),
 )

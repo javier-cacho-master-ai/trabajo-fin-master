@@ -3,7 +3,6 @@ title     : "Redes Generativas de Aprendizaje Profundo para la mejora de la señ
 author    : "Carla Sequero, J. Javier Cacho"
 director  : "Dr. Guillermo Torralba Elipe"
 degree    : "Máster Universitario en Inteligencia Artificial"
-city      : ""
 work_type : "Desarrollo de Software"
 date      : 2026-02-05
 keywords  : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
@@ -16,6 +15,26 @@ En este trabajo proponemos un enfoque innovador para mejorar la calidad de las s
 ## Abstract
 
 In this work we propose an innovative approach to improve the quality of the astronomical signals captured by the blue and red photometers (BP/RP) of the Gaia satellite. By training a model from the huge amount of low resolution data collected by the Gaia mission and the cross matched best high resolution ground based observations we expect to find hidden patterns that can be applied to allow the usage of these low resolution spectrum as proxy for high resolution ones. We evaluate our method on several benchmark subsets of the original dataset by comparing it with the real observations from high resolution sources.
+
+## Organización del trabajo en grupo
+
+<!--
+Igual que el Resumen/Abstract, esta tabla no forma parte del cuerpo de la
+memoria: `_filters/process_group_work.lua` la extrae a los metadatos
+`group_work` y `_partials/group-work.typ` la renderiza con el formato
+requerido por la plantilla grupal (páginas VII-VIII). Columna
+"Responsables" pendiente de rellenar por los autores.
+-->
+
+| Apartado de la memoria | Responsables |
+|---|---|
+| Introducción | Alumno 1, Alumno 2 |
+| Contexto y estado del arte | Alumno 1, Alumno 2 |
+| Objetivos concretos y metodología de trabajo | Alumno 1, Alumno 2 |
+| Identificación de requisitos | Alumno 1, Alumno 2 |
+| Proyecto piloto | Alumno 1, Alumno 2 |
+| Evaluación | Alumno 1, Alumno 2 |
+| Conclusiones y trabajo futuro | Alumno 1, Alumno 2 |
 
 <!--
 El "Índice de acrónimos" se genera en las páginas preliminares (tras el Índice

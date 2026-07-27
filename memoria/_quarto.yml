@@ -7,6 +7,7 @@ format:
     lang: es
     filters:
       - _filters/process_abstracts.lua
+      - _filters/process_group_work.lua
       - _filters/acronyms.lua
     template-partials:
       - typst-template.typ

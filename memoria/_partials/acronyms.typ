@@ -1,4 +1,5 @@
 #import "table-of-contents.typ": index-heading
+#import "header.typ": get-header
 
 // Acronyms read from the shared data file (single source of truth).
 #let acronyms-data = yaml("../_acronyms.yml").acronyms
@@ -45,10 +46,11 @@
 
 // The "Índice de acrónimos" page, placed in the front matter (after the Índice
 // de Tablas), with the same heading style as the other indices.
-#let get-acronyms-index() = {
+#let get-acronyms-index(header-text: none) = {
   page(
+    header: get-header(header-text: header-text),
     numbering: "I",
-    number-align: bottom + center,
+    number-align: bottom + right,
   )[
     #set heading(numbering: none)
     #index-heading[Índice de acrónimos]
