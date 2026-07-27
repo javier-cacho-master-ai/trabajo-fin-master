@@ -323,11 +323,11 @@ Para descartar aquellas muestras que no sean coherentes, se comparará la media 
 
 ![Ejemplo de espectros donde la escala de Gaia y SDSS es diferente.](_partials/assets/ejemplo_descarte_2.png){#fig-descarte-escala} 
 
-En gran parte de los descartes que se realizarán, se usarán los percentiles 95 o 99 para establecer los límites tolerables. Al establecerlos de esta forma, no estableceremos un valor arbitrario fijo, sino que se tendrá en cuenta el comportamiento estadístico de la muestra, permitiendo extender su uso en casos futuros.
+En gran parte de los descartes que se realizarán, se usarán los percentiles 95 o 99 para establecer los límites tolerables. Al definirlos de esta forma, no se escogerá un valor arbitrario fijo, sino que se tendrá en cuenta el comportamiento estadístico de la muestra, permitiendo extender su uso en casos futuros.
 
-Asimismo, deberá tenerse en cuenta la [SNR]{.acr} de las observaciones. Este dato indica la calidad de la señal respecto al ruido, por lo que si este valor es muy bajo, la información del espectro asociado es poco fiable. Respecto a esto, se impondrán dos criterios: por un lado, se descartarán aquellos datos con los valores de [SNR]{.acr} por debajo del percentil 1. Por otro, dado que el modelo tratará de aprender la correspondencia entre las observaciones de Gaia y [SDSS]{.acr} y estos observan los objetos de formas diferentes y no bajo las mismas condiciones, lo que implica que las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste, se descartarán aquellos pares en los que la relación entre la media de [SNR]{.acr} de ambos instrumentos sean mayores al percentil 95 o inferiores al 5.
+Asimismo, deberá tenerse en cuenta la [SNR]{.acr} de las observaciones. Este dato indica la calidad de la señal respecto al ruido, por lo que si este valor es muy bajo, la información del espectro asociado es poco fiable. Respecto a esto, se impondrán dos criterios: por un lado, se descartarán aquellos datos con los valores de [SNR]{.acr} por debajo del percentil 1. Por otro, dado que el modelo tratará de aprender la correspondencia entre las observaciones de Gaia y [SDSS]{.acr} y estos observan los objetos de formas diferentes y no bajo las mismas condiciones, las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste, por lo que se descartarán aquellos pares en los que la relación entre la media de [SNR]{.acr} de ambos instrumentos sean mayores al percentil 95 o inferiores al 5.
 
-Finalmente, los espectros se recortarán a los rangos de longitud de onda comunes entre Gaia y [SDSS]{.acr} y así evitar que la generación de datos de salida se vea afectada por la falta de datos de entrada. Al mismo tiempo, se descartarán los intervalos iniciales y finales del rango espectral, ya que en estas zonas suelen aparecer con mayor frecuencia anomalías u observaciones de artefactos. En concreto, se restringirá el intervalo de entrenamiento entre los 500 y 900 nm. 
+Finalmente, los espectros se recortarán a los rangos de longitud de onda comunes entre Gaia y [SDSS]{.acr} y así se evitará que la generación de datos de salida se vea afectada por la falta de datos de entrada. Al mismo tiempo, se descartarán los intervalos iniciales y finales del rango espectral, ya que en estas zonas suelen aparecer con mayor frecuencia anomalías u observaciones de artefactos. En concreto, se restringirá el intervalo de entrenamiento entre los 500 y 900 nm. 
 
 ### Requisitos del modelo
 
@@ -381,17 +381,17 @@ Este proceso de extracción ha permitido reunir hasta el momento un conjunto de 
 
 Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usa una representación del diagrama [HR]{.acr} (Hertzsprung-Russell, @hertzsprung1911wellenlaengen y @russell1914spectra). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
 
-En concreto, para estudiar los cuerpos celestes usados en este trabajo, se considera la fuente de datos de Gaia. En el eje horizontal se considera la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
+En concreto, se considera la fuente de datos de Gaia. En el eje horizontal se grafics la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
-En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud aparente media en la banda G, que nos indica lo brillante que se aprecia la estrella a partir en las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertir todos los valores a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
-Tras esta modificación, aquellas estrellas más luminosas, presentan valores negativos, mientras que las más luminosas se mantienen en valores positivos. 
+En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertirlos a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
+Tras esta modificación, aquellas estrellas más luminosas, presentan valores más bajos incluso negativos, mientras que las menos luminosas se mantienen en valores más altos y positivos. 
 
 El diagrama de los datos usados en este estudio es el que se observa en la @fig-HR-diagram:
 
 ![Diagrama HR de las observaciones de Gaia contenidas en la base de datos](_partials/assets/DiagramaHR.png){#fig-HR-diagram}
 
 
-En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que encontramos objetos con propiedades físicas diferentes. Si bien es cierto, encontramos un grupo mayoritario de observaciones tal y como se aprecia en la parte media izquierda del gráfico. 
+En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que presenta objetos con propiedades físicas diferentes. Si bien es cierto, destaca un grupo mayoritario tal y como se aprecia en la parte media izquierda del gráfico. 
 Debido a esta diversidad, el modelo debe adaptarse a fuentes de distintas características, con lo que no es un entrenamiento especializado en un solo tipo de estrella. 
 Al mismo tiempo, se observan algunos datos dispersos y distantes de las regiones más ocupadas, los cuales podrían considerarse anomalías para el modelo a entrenar.
 
@@ -401,19 +401,19 @@ Una vez se dispone de la base de datos con los pares de espectros de Gaia y [SDS
 El objetivo es conseguir un modelo que aprenda una transformación entre los datos de entrada de Gaia y el espectro de [SDSS]{.acr} asociado. Así pues, el modelo planteado recibe como entrada un vector con el flujo de Gaia y obtiene como salida un vector con una aproximación del flujo correspondiente al espectro de [SDSS]{.acr}.
 
 De cara a la preparación de la base para el entrenamiento del modelo, se definieron 3 subconjuntos: entrenamiento, test y validación. 
-Los datos de test se formaron con un 20% del conjunto global y fueron empleados para evaluar el modelo, por lo que no fueron usados durante su entrenamiento. El 80% restante se separó de forma aleatoria entre las parejas que forman la base de entrenamiento del modelo, un 80% de lo restante, y la de validación, el 20% final.  
+Los datos de test se formaron con un 20% del conjunto global y fueron empleados para evaluar el modelo, por lo que no fueron usados durante su entrenamiento. El 80% restante se separó de forma aleatoria entre las parejas que forman la base de entrenamiento del modelo, un 80% de la fracción, y la de validación, el 20% final.  
 
 #### Planteamiento general del entrenamiento
-Una vez definida la partición de los datos, se realizaron diversas pruebas con tal de analizar como afectaban al rendimiento del modelo. 
-En primer lugar, se probaron diferentes funciones de normalización, dado que este paso facilitaba el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares y las funciones de pérdida se ubicaban en valores significativos de cara a su futura interpretación.
-Como punto de partida, se aplicó una normalización a través de la media y desviación típica de los datos del conjunto de entrenamiento. Esta opción no proporcionó malos resultados (tal y como podremos observar en los próximos apartados) y tenía la ventaja de que se podía deshacer la normalización sin necesidad de conocer los valores del conjunto de test, pero al tratarse de un proceso demasiado generalizado para la variabilidad de valores de los espectros, se probaron otros enfoques. Por ejemplo, se consideró la normalización espectro a espectro, en el que cada flujo se normaliza en su propia escala con la mediana de sus datos. 
+Para encontrar el modelo óptimo, se realizaron diversas pruebas con tal de analizar como afectaban al rendimiento del modelo. 
+En primer lugar, se probaron diferentes funciones de normalización para facilitar el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares cercanas al 1 y las funciones de pérdida se ubicaban en valores de más fácil interpretación.
+Como punto de partida, se aplicó una normalización global a través de la media y desviación típica de los datos del conjunto de entrenamiento. Esta opción no proporcionó malos resultados (tal y como podremos observar en los próximos apartados) y tenía la ventaja de que se podía deshacer la normalización sin necesidad de conocer los valores del conjunto de test, pero al tratarse de un proceso demasiado generalizado para la variabilidad de valores de los espectros, se probaron otros enfoques. Por ejemplo, se consideró la normalización espectro a espectro, en el que cada flujo se normaliza en su propia escala con la mediana de sus datos o su máximo. 
 
 
-Probamos también la adición de los datos de la relación señal-ruido que Gaia contiene en su catálogo como parte del conjunto de entrada. En este caso, los resultados obtenidos no mejoraron significativamente, por lo que se descartó y continuó el estudio sin este dato de entrada.
+Probamos también la adición de los datos de la relación señal-ruido del espectro de Gaia como parte del conjunto de entrada. En este caso, los resultados obtenidos no mejoraron significativamente, por lo que se descartó y continuó el estudio sin este dato de entrada.
 
 #### Modelo base: red neuronal densa
-Después de un procedimiento de prueba y error, el modelo que mejores resultados obtuvo dentro de la categoría de red neuronal densa, estuvo formado por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
-Además, probamos diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos. En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
+Después de un procedimiento de prueba y error, el modelo que mejores resultados obtuvo dentro en la categoría de red neuronal densa, estaba formado por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
+Además, se probaron diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos. En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
 
 La función de pérdida definida fue Huber [@huber1964robust], que combina el error cuadrático medio para errores pequeños, y el error absoluto medio para errores más grandes. La función matemática que la define es la siguiente:
 $$L_{\delta}(a)=
@@ -445,11 +445,11 @@ Falta añadir otros modelos, incluidos los de convolucionales y los que consider
 
 Una vez entrenadas las distintas opciones de red neuronal, es necesario evaluar el rendimiento para determinar que aproximación es la más adecuada al problema que se ha planteado. 
 
-Para hacerlo, se considerarán diversos caminos. Por un lado, se analizarán las métricas obtenidas durante el entrenamiento, como por ejemplo los valores de la función de pérdida, el [MAE]{.acr} o [MSE]{.acr}. No obstante, debe tenerse en cuenta que se han usado diferentes funciones de normalización, por lo que no en todos los casos estas métricas se podrán comparar directamente. 
+Para hacerlo, se considerarán diversos caminos. Por un lado, se analizarán las métricas obtenidas durante el entrenamiento, como por ejemplo los valores de la función de pérdida, [MAE]{.acr} o [MSE]{.acr}. No obstante, debe tenerse en cuenta que se han usado diferentes funciones de normalización, por lo que no en todos los casos estas métricas se podrán comparar directamente. 
 
 Para evitar este problema, la evaluación se basará también en otras técnicas. La primera será una comparativa visual de los espectros respecto al real de [SDSS]{.acr} tras deshacer la normalización, esto permitirá comprobar si el modelo se ajusta correctamente a la forma global del espectro y a sus zonas de emisión y absorción. 
 
-Por último, se empleará la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, como por ejemplo la temperatura efectiva o la gravedad superficial, con el objetivo de comparar los obtenidos con las predicciones y el espectro real. De esta forma no se comparará solo la similitud de los espectros de forma numérica, sino que también se tendrá en cuenta si las predicciones se aproximan a la información astrofísica que se obtiene del espectro de [SDSS]{.acr} original.
+Por último, se empleará la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, como por ejemplo la temperatura efectiva o la gravedad superficial. El objetivo será comparar los datos obtenidos con las predicciones y el espectro real. De esta forma no se valorará solo la similitud de los espectros por sí mismos, sino que también se tendrá en cuenta si las predicciones se aproximan a la información astrofísica que se obtiene del espectro de [SDSS]{.acr} original.
 
 ### Resultados obtenidos con el modelo base
 
@@ -462,9 +462,9 @@ Durante el entrenamiento del modelo basado en capas densas con normalización a 
 ![Gráfica de la evolución del MAE](_partials/assets/mae_evolution.png){#fig-mae-evolution}
 
 En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento muy similar a la del conjunto de validación.
-Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos anteriormente. 
+Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos con anterioridad. 
 
-Cabe destacar que las métricas calculadas anteriormente se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
+Cabe destacar que las métricas calculadas se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
 En las gráficas detalladas de la @fig-generado_global_123 y la @fig-generado_global_191, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. 
 
@@ -472,11 +472,12 @@ En las gráficas detalladas de la @fig-generado_global_123 y la @fig-generado_gl
 
 ![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.](_partials/assets/espectro_predicho_191_full.png){#fig-generado_global_191}
 
-Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de [SDSS]{.acr} una vez han sido recortados y agrupados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usan escalas diferentes. 
+Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de [SDSS]{.acr} una vez han sido recortados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usan escalas diferentes. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
 
-En gran parte de los gráficos observados, el modelo reproduce la morfología general del espectro, incluso modela gran parte de los picos más acentuados. 
-Si bien es cierto, hay puntos que el modelo no puede inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
+En gran parte de los gráficos observados, el modelo reproduce la morfología general del espectro, incluso modela los picos más acentuados. 
+Si bien es cierto, hay puntos que no puede inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
+Durante las comparaciones que se harán a continuación, siempre se usarán los mismos objetos, identificados por Gaia con id 2738403223023588608, y por SDSS con 1237657192516026455.
 
 Por otro lado, al usar una normalización basada en la mediana por espectro, los resultados obtenidos fueron similares. 
 Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre las mismas observaciones que el modelo anterior fueron las observadas en la @fig-generado_mediana_espectro_123 y @fig-generado_mediana_espectro_191:
@@ -485,7 +486,7 @@ Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obteni
 
 ![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.](_partials/assets/espectro_predicho_191_full_mediana_espectro.png){#fig-generado_mediana_espectro_191}
 
-Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual ínfima, pero positiva hacia este segundo tipo de normalización. 
+Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual pequeá, pero positiva hacia este segundo tipo de normalización. 
 
 Por último, si nos fijamos en las figuras @fig-generado_maximo_espectro_123 y @fig-generado_maximo_espectro_191 , observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
 
@@ -493,7 +494,7 @@ Por último, si nos fijamos en las figuras @fig-generado_maximo_espectro_123 y @
 
 ![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.](_partials/assets/espectro_predicho_191_full_maximo_espectro.png){#fig-generado_maximo_espectro_191}
 
-A partir de las gráficas observadas, parece que la opción con mejores resultados es la segunda, dado que es la que obtiene espectros más cercanos a los reales. Ahora bien, comprobemos las siguientes métricas para obtener resultados más concluyentes.
+A partir de las gráficas observadas, parece que la opción con mejores resultados es la segunda, dado que es la que obtiene espectros más cercanos a los reales. Ahora bien, comprobemos métricas para obtener resultados más concluyentes.
 
 En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta arquitectura según el tipo de normalización aplicado. 
 
@@ -507,14 +508,33 @@ En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta 
 
 Igual que en la conclusión anterior, parece que al aplicar una normalización por espectro basada en la mediana, obtenemos ligeramente mejores resultados. 
 
-La última comparación vendrá dada por la librería *ISpec*. 
+La última comparación vendrá dada por la librería *ISpec*. <!-- TODO clarisimamente->
 
+Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @generado_snr_123 y @fig-generado_snr_191.
+
+![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.](_partials/assets/espectro_predicho_123_full_snr.png){#fig-generado_snr_123}
+
+![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.](_partials/assets/espectro_predicho_191_full_snr.png){#fig-generado_snr_191}
+
+Por otro lado, las métricas obtenidas se encuentran en la @tbl-snr-gaia: 
+
+
+| Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|
+| 0.0047 | 0.0503 | 0.0130 |
+
+: Resultados obtenidos incluyendo la SNR de la muestra de Gaia como entrada del modelo. {#tbl-snr-gaia}
+
+Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicional de entrada no produce una mejora significativa en el modelo. Los valores de pérdida, [MAE]{.acr} y [MSE]{.acr} son prácticamente los mismos a los obtenidos en pruebas anteriores y visualmente tampoco se aprecia una mejora de la captación de tendencias del espectro. Por este motivo, se decidió no incluir esta variable en el modelo final.
 
 ### Resultados obtenidos con el modelo convolucional 1D
 
+
 ### Resultados obtenidos con el modelo recurrente
 
+
 ### Comparación entre modelos 
+
 
 ## Conclusiones y trabajo futuro
 
