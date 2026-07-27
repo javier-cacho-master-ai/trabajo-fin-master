@@ -27,7 +27,7 @@
         weight: "light"
       )
  
-      let block-config = (above: 1em, below: 1.5em)
+      let block-config = (above: 2em, below: 1.5em)
 
       if it.level == 1 {
         text-config += (

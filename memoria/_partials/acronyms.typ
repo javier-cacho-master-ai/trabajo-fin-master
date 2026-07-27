@@ -1,5 +1,6 @@
 #import "table-of-contents.typ": index-heading
 #import "header.typ": get-header
+#import "styles.typ": styles
 
 // Acronyms read from the shared data file (single source of truth).
 #let acronyms-data = yaml("../_acronyms.yml").acronyms
@@ -53,6 +54,8 @@
     number-align: bottom + right,
   )[
     #set heading(numbering: none)
+    #set text(..styles.text-config)
+    #set par(..styles.body-paragraph-config)
     #index-heading[Índice de acrónimos]
     #acronyms-list()
   ]
