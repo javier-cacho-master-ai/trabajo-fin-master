@@ -302,7 +302,7 @@ De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar 
 
 2. Preselección de los datos: a partir del análisis previo se definen filtros de calidad sobre el cruce de catálogos, con el objetivo de maximizar la fiabilidad de los pares de espectros utilizados.
 
-3. Extracción de los datos: descarga por lotes de los espectros emparejados, de manera reproducible y tolerante a las limitaciones de los servicios públicos de consulta.
+3. Extracción de los datos: descarga por lotes de los espectros emparejados, de manera reproducible y tolerante a las limitaciones de los servicios públicos de consulta. Esta etapa parte deliberadamente del catálogo espectroscópico de [SDSS]{.acr} y no del cruce fotométrico de Gaia, ya que este último constituyó inicialmente el cuello de botella del proceso: al buscar el espectro de [SDSS]{.acr} correspondiente a cada fuente fotométrica de Gaia, más del 98% de los candidatos carecían de una observación espectroscópica real, dejando un conjunto de datos prácticamente vacío. Invirtiendo el sentido de la consulta —partiendo de [SDSS]{.acr} y buscando la contrapartida en Gaia— se garantiza que cada candidato dispone de espectro desde el inicio, lo que eleva la tasa de coincidencia con Gaia a un 20-50%, muy por encima del 1% obtenido con el planteamiento original.
 
 4. Preprocesado de los datos: limpieza de anomalías y artefactos, y homogeneización de los espectros de ambas fuentes para que sean directamente comparables. En esta etapa resulta fundamental comparar la [SNR]{.acr} de los espectros: cada observatorio puede medir el mismo objeto un número distinto de veces y en condiciones diferentes, por lo que la [SNR]{.acr} puede variar entre observaciones de un mismo cuerpo. Por ello, los pares de espectros que se usen para entrenar y evaluar el modelo deben presentar una [SNR]{.acr} equivalente.
 
@@ -360,7 +360,7 @@ El modelo deberá evaluarse con métricas cuantitativas apropiadas al tipo de da
 
 ## Proyecto piloto
 
-En este capítulo se describe el trabajo realizado en cada una de las etapas definidas en la metodología, junto con la herramienta *software* desarrollada.
+En este capítulo se describe el trabajo realizado en cada una de las etapas definidas en la metodología.
 
 ### Preparación del conjunto de datos
 
