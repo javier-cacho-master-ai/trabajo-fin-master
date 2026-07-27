@@ -3,7 +3,6 @@ title     : "Redes Generativas de Aprendizaje Profundo para la mejora de la señ
 author    : "Carla Sequero, J. Javier Cacho"
 director  : "Dr. Guillermo Torralba Elipe"
 degree    : "Máster Universitario en Inteligencia Artificial"
-city      : ""
 work_type : "Desarrollo de Software"
 date      : 2026-02-05
 keywords  : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
