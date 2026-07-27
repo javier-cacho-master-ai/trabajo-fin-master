@@ -20,6 +20,7 @@
   abstract_es: none,
   abstract_en: none,
   keywords: (),
+  group_work_intro: none,
   group_work_rows: (),
   body,
 ) = {
@@ -68,7 +69,7 @@
   // Índice de acrónimos, right after the Índice de Tablas (last index above).
   get-acronyms-index(header-text: header-text)
 
-  get-group-work(header-text: header-text, rows: group_work_rows)
+  get-group-work(header-text: header-text, intro: group_work_intro, rows: group_work_rows)
 
   get-body(
     header-text: header-text,

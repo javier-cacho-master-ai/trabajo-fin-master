@@ -1,8 +1,9 @@
--- Extracts the "Organización del trabajo en grupo" front-matter table from
--- the body into metadata, the same way process_abstracts.lua relocates the
--- Resumen/Abstract sections. _partials/group-work.typ renders the extracted
--- rows with the styling required by the grupal template (see
--- resources/plantilla_grupal_mia.pdf, pages VII-VIII).
+-- Extracts the "Organización del trabajo en grupo" front-matter section
+-- (intro text + table) from the body into metadata, the same way
+-- process_abstracts.lua relocates the Resumen/Abstract sections.
+-- _partials/group-work.typ renders the extracted content with the styling
+-- required by the grupal template (see resources/plantilla_grupal_mia.pdf,
+-- pages VII-VIII).
 local TARGET_HEADING = "Organización del trabajo en grupo"
 
 local function is_h2(el)
@@ -54,10 +55,15 @@ function Pandoc(doc)
   local after = slice(blocks, section_end, #blocks)
   doc.blocks = before .. after
 
-  local section = slice(blocks, section_start, section_end - 1)
-  local table_block = section:find_if(is_table)
+  local content = slice(blocks, section_start + 1, section_end - 1)
+  local table_block = content:find_if(is_table)
+  local intro_blocks = content:filter(function(el) return not is_table(el) end)
+
   if table_block then
     doc.meta['group_work'] = pandoc.MetaList(table_to_rows(table_block))
+  end
+  if #intro_blocks > 0 then
+    doc.meta['group_work_intro'] = pandoc.MetaBlocks(pandoc.Blocks(intro_blocks))
   end
 
   return doc

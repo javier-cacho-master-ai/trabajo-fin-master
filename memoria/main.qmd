@@ -26,6 +26,18 @@ requerido por la plantilla grupal (páginas VII-VIII). Columna
 "Responsables" pendiente de rellenar por los autores.
 -->
 
+Este trabajo ha sido desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se han mantenido reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se ha empleado un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se han integrado mediante revisiones cruzadas.
+
+En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación del proceso de extracción de los datos para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
+En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de la red neuronal, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. 
+
+Por otro lado, la elaboración de la memoria también se repartió entre los dos autores. Carla desarrolló los apartados de introducción, contexto y conclusiones. Mientras que Javier trabajó en el estado del arte, metodología y objetivos. 
+
+El capítulo 6, llamado *Proyecto piloto*, fue redactado por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
+
+Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha llevado a cabo de forma completamente independiente. Tanto la memoria como el código utilizado han sido revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes hayan sido desarrolladas únicamente por esa persona. Gracias a las revisiones se han detectado errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
+
+
 | Apartado de la memoria | Responsables |
 |---|---|
 | Introducción | Alumno 1, Alumno 2 |
@@ -297,22 +309,6 @@ De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar 
 5. Preparación de los conjuntos de entrenamiento, validación y test: partición del conjunto de datos garantizando una distribución homogénea de las muestras, también en términos de [SNR]{.acr}, y de manera reproducible.
 
 6. Entrenamiento, refinamiento y validación del modelo: proceso iterativo de optimización y ajuste de hiperparámetros, evaluando el modelo sobre el conjunto de validación y reservando el conjunto de test para la evaluación final.
-
-<!--
-### Organización del trabajo en grupo
-
-Este trabajo ha sido desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se han mantenido reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se ha empleado un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se han integrado mediante revisiones cruzadas.
-
-<!-- TODO: detallar el reparto concreto de tareas entre Carla y Javier (la plantilla requiere describir el trabajo grupal)
-En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación de la base de datos usada para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
-En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de la red neuronal, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. 
-
-Por otro lado, la elaboración de la memoria también se repartió entre los dos autores. Carla desarrolló los apartados de introducción, contexto y conclusiones. Mientras que Javier trabajó en el estado del arte, metodología y objetivos. 
-
-El capítulo 6, llamado *Proyecto piloto*, fue redactado por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
-
-Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha llevado a cabo de forma completamente independiente. Tanto la memoria como el código utilizado han sido revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes hayan sido desarrolladas únicamente por esa persona. Gracias a las revisiones se han detectado errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
---> 
 
 ## Identificación de requisitos
 

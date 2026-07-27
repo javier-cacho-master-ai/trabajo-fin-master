@@ -1,12 +1,14 @@
+#import "styles.typ": styles
 #import "table-of-contents.typ": index-heading
 #import "header.typ": get-header
 
 // "Organización del trabajo en grupo" front-matter chapter, required for
 // group TFEs (see memoria/resources/plantilla_grupal_mia.pdf, pages VII-VIII).
 // Not listed in the Índice de Contenidos, same as the other front-matter
-// chapters. `rows` is the flat cell sequence extracted from the Markdown
-// table in main.qmd by _filters/process_group_work.lua.
-#let get-group-work(header-text: none, rows: ()) = {
+// chapters. `intro` and `rows` are extracted from the Markdown section in
+// main.qmd by _filters/process_group_work.lua: `intro` is the explanatory
+// text and `rows` is the flat cell sequence from its table.
+#let get-group-work(header-text: none, intro: none, rows: ()) = {
   page(
     header: get-header(header-text: header-text),
     numbering: "I",
@@ -15,9 +17,8 @@
     #set heading(numbering: none)
     #index-heading[Organización del trabajo en grupo]
 
-    En este apartado se detallan las distintas partes en las que se ha dividido
-    el trabajo entre los componentes del grupo y los mecanismos de coordinación
-    empleados.
+    #set par(..styles.body-paragraph-config)
+    #intro
 
     #figure(
       table(
