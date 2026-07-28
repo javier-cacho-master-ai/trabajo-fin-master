@@ -3,7 +3,6 @@ title     : "Redes Generativas de Aprendizaje Profundo para la mejora de la señ
 author    : "Carla Sequero, J. Javier Cacho"
 director  : "Dr. Guillermo Torralba Elipe"
 degree    : "Máster Universitario en Inteligencia Artificial"
-city      : ""
 work_type : "Desarrollo de Software"
 date      : 2026-02-05
 keywords  : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
@@ -16,6 +15,38 @@ En este trabajo proponemos un enfoque innovador para mejorar la calidad de las s
 ## Abstract
 
 In this work we propose an innovative approach to improve the quality of the astronomical signals captured by the blue and red photometers (BP/RP) of the Gaia satellite. By training a model from the huge amount of low resolution data collected by the Gaia mission and the cross matched best high resolution ground based observations we expect to find hidden patterns that can be applied to allow the usage of these low resolution spectrum as proxy for high resolution ones. We evaluate our method on several benchmark subsets of the original dataset by comparing it with the real observations from high resolution sources.
+
+## Organización del trabajo en grupo
+
+<!--
+Igual que el Resumen/Abstract, esta tabla no forma parte del cuerpo de la
+memoria: `_filters/process_group_work.lua` la extrae a los metadatos
+`group_work` y `_partials/group-work.typ` la renderiza con el formato
+requerido por la plantilla grupal (páginas VII-VIII). Columna
+"Responsables" pendiente de rellenar por los autores.
+-->
+
+Este trabajo ha sido desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se han mantenido reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se ha empleado un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se han integrado mediante revisiones cruzadas.
+
+En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación del proceso de extracción de los datos para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
+En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de la red neuronal, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. 
+
+Por otro lado, la elaboración de la memoria también se repartió entre los dos autores. Carla desarrolló los apartados de introducción, contexto y conclusiones. Mientras que Javier trabajó en el estado del arte, metodología y objetivos. 
+
+El capítulo 6, llamado *Proyecto piloto*, fue redactado por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
+
+Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha llevado a cabo de forma completamente independiente. Tanto la memoria como el código utilizado han sido revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes hayan sido desarrolladas únicamente por esa persona. Gracias a las revisiones se han detectado errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
+
+
+| Apartado de la memoria | Responsables |
+|---|---|
+| Introducción | Alumno 1, Alumno 2 |
+| Contexto y estado del arte | Alumno 1, Alumno 2 |
+| Objetivos concretos y metodología de trabajo | Alumno 1, Alumno 2 |
+| Identificación de requisitos | Alumno 1, Alumno 2 |
+| Proyecto piloto | Alumno 1, Alumno 2 |
+| Evaluación | Alumno 1, Alumno 2 |
+| Conclusiones y trabajo futuro | Alumno 1, Alumno 2 |
 
 <!--
 El "Índice de acrónimos" se genera en las páginas preliminares (tras el Índice
@@ -186,7 +217,11 @@ A pesar de estos avances, el uso de redes neuronales profundas en astronomía si
 
 Dentro de las evoluciones recientes encontramos el trabajo @grassi2026differentiable, en el que se explora la integración de modelos físicos dentro de arquitecturas de aprendizaje automático, mediante el desarrollo de un modelo geométrico 3D completamente diferenciable para la interpretación de cubos de datos espectrales moleculares. Mediante el uso de librerías de diferenciación automática como JAX, generaron observaciones sintéticas a partir de campos de densidad y velocidad parametrizados, optimizándolos iterativamente para reproducir con precisión las observaciones astronómicas reales. Aunque este enfoque orientado a la física difiere de las redes neuronales generativas utilizadas para relacionar directamente las bandas fotométricas con espectros de alta resolución, subraya la importancia de emplear modelos computacionales avanzados y generación sintética de datos para sortear las limitaciones instrumentales y extraer propiedades subyacentes de las señales astrofísicas, especialmente para la comprensión de la composición química de los objetos celestes radiando dichas señales.
 
-El ejemplo más cercano al enfoque propuesto en este trabajo lo encontramos en un trabajo muy reciente de @haghjoo2026learning. En esta propuesta, se usó el conjunto de datos de [JADES]{.acr} [@curtis2025jades] que proporciona imágenes y espectroscopía profunda combinando observaciones de la cámara (NIRCam) y el espectrógrafo (NIRSpec) del [JWST]{.acr}. Este sondeo es ideal para el estudio porque observa los mismos objetivos de galaxias utilizando una combinación de espectroscopía de prisma de baja resolución (R ~ 30–300) y modos de red de difracción de media resolución (R ~ 1000; mediante los instrumentos G140M, G235M y G395M). A partir de estas observaciones emparejadas, los investigadores seleccionaron una muestra inicial de 1 187 pares de espectros coincidentes, la cual fue ampliada posteriormente a 24 927 muestras mediante técnicas de mejora de datos (*data augmentation*) para el entrenamiento del modelo.
+El ejemplo más cercano al enfoque propuesto en este trabajo lo encontramos en un trabajo muy reciente de @haghjoo2026learning. En esta propuesta, se usó el conjunto de datos de [JADES]{.acr} [@curtis2025jades] que proporciona imágenes y espectroscopía profunda combinando observaciones de la cámara (NIRCam) y el espectrógrafo (NIRSpec) del [JWST]{.acr}. Este sondeo es ideal para el estudio porque observa los mismos objetivos de galaxias utilizando una combinación de espectroscopía de prisma de baja resolución (R ~ 30–300) y modos de red de difracción de media resolución (R ~ 1000; mediante los instrumentos G140M, G235M y G395M). A partir de estas observaciones emparejadas, los investigadores seleccionaron una muestra inicial de 1 187 pares de espectros coincidentes, la cual fue ampliada posteriormente a 24 927 muestras mediante técnicas de mejora de datos (*data augmentation*) para el entrenamiento del modelo, tal y como se ilustra en la @fig-jades-mejora-datos.
+
+![Ejemplo del procedimiento de mejora de datos aplicado a un par de espectros JADES de baja y alta resolución: sobre el espectro original (negro) se generan veinte realizaciones sintéticas (líneas de color) mediante desplazamientos aleatorios del corrimiento al rojo y perturbaciones de flujo (adaptado de @haghjoo2026learning)](_partials/assets/haghjoo2026learning_data_augmentation.png){#fig-jades-mejora-datos}
+
+Este planteamiento guarda un notable paralelismo con el que se persigue en el presente trabajo: en ambos casos se dispone de observaciones reales emparejadas del mismo objeto en baja y en alta resolución, y el objetivo es entrenar un modelo que aprenda a recuperar el detalle de la observación de alta resolución a partir de la de baja resolución. La diferencia principal reside en la escala y naturaleza de los datos de partida: mientras que @haghjoo2026learning contaban únicamente con 1 187 pares reales y recurrieron a la mejora de datos para ampliar el conjunto de entrenamiento, en este trabajo se dispone de decenas de miles de pares reales de espectros Gaia-[SDSS]{.acr}, lo que permite abordar el problema directamente con los datos observados sin necesidad de generar realizaciones sintéticas adicionales.
 
 Para llevar a cabo este estudio, los investigadores desarrollaron una red neuronal profunda personalizada de tres etapas, diseñada específicamente para procesar datos unidimensionales. La primera etapa emplea una red neuronal convolucional residual (1D ResNet-CNN) que genera una reconstrucción preliminar y conservadora del espectro. La segunda etapa utiliza otra red convolucional para inferir el corrimiento al rojo (*redshift*), contextualizando así la posición física de los elementos. Finalmente, la tercera etapa de refinamiento divide el trabajo en dos ramas: un modelo basado en mecanismos de atención (*Transformer encoder*) que procesa de manera aislada las líneas de emisión, y otra red convolucional que ajusta suavemente el continuo del espectro. En total, esta arquitectura por fases cuenta con unos 2,5 millones de parámetros y está diseñada para aplicar correcciones basadas en la física, evitando que la [IA]{.acr} "alucine" datos inexistentes.  
 
@@ -271,29 +306,13 @@ De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar 
 
 2. Preselección de los datos: a partir del análisis previo se definen filtros de calidad sobre el cruce de catálogos, con el objetivo de maximizar la fiabilidad de los pares de espectros utilizados.
 
-3. Extracción de los datos: descarga por lotes de los espectros emparejados, de manera reproducible y tolerante a las limitaciones de los servicios públicos de consulta.
+3. Extracción de los datos: descarga por lotes de los espectros emparejados, de manera reproducible y tolerante a las limitaciones de los servicios públicos de consulta. Esta etapa parte deliberadamente del catálogo espectroscópico de [SDSS]{.acr} y no del cruce fotométrico de Gaia, ya que este último constituyó inicialmente el cuello de botella del proceso: al buscar el espectro de [SDSS]{.acr} correspondiente a cada fuente fotométrica de Gaia, más del 98% de los candidatos carecían de una observación espectroscópica real, dejando un conjunto de datos prácticamente vacío. Invirtiendo el sentido de la consulta —partiendo de [SDSS]{.acr} y buscando la contrapartida en Gaia— se garantiza que cada candidato dispone de espectro desde el inicio, lo que eleva la tasa de coincidencia con Gaia a un 20-50%, muy por encima del 1% obtenido con el planteamiento original.
 
 4. Preprocesado de los datos: limpieza de anomalías y artefactos, y homogeneización de los espectros de ambas fuentes para que sean directamente comparables. En esta etapa resulta fundamental comparar la [SNR]{.acr} de los espectros: cada observatorio puede medir el mismo objeto un número distinto de veces y en condiciones diferentes, por lo que la [SNR]{.acr} puede variar entre observaciones de un mismo cuerpo. Por ello, los pares de espectros que se usen para entrenar y evaluar el modelo deben presentar una [SNR]{.acr} equivalente.
 
 5. Preparación de los conjuntos de entrenamiento, validación y test: partición del conjunto de datos garantizando una distribución homogénea de las muestras, también en términos de [SNR]{.acr}, y de manera reproducible.
 
 6. Entrenamiento, refinamiento y validación del modelo: proceso iterativo de optimización y ajuste de hiperparámetros, evaluando el modelo sobre el conjunto de validación y reservando el conjunto de test para la evaluación final.
-
-<!--
-### Organización del trabajo en grupo
-
-Este trabajo ha sido desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se han mantenido reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se ha empleado un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se han integrado mediante revisiones cruzadas.
-
-<!-- TODO: detallar el reparto concreto de tareas entre Carla y Javier (la plantilla requiere describir el trabajo grupal)
-En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación de la base de datos usada para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
-En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de la red neuronal, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. 
-
-Por otro lado, la elaboración de la memoria también se repartió entre los dos autores. Carla desarrolló los apartados de introducción, contexto y conclusiones. Mientras que Javier trabajó en el estado del arte, metodología y objetivos. 
-
-El capítulo 6, llamado *Proyecto piloto*, fue redactado por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
-
-Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha llevado a cabo de forma completamente independiente. Tanto la memoria como el código utilizado han sido revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes hayan sido desarrolladas únicamente por esa persona. Gracias a las revisiones se han detectado errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
---> 
 
 ## Identificación de requisitos
 
@@ -345,7 +364,7 @@ El modelo deberá evaluarse con métricas cuantitativas apropiadas al tipo de da
 
 ## Proyecto piloto
 
-En este capítulo se describe el trabajo realizado en cada una de las etapas definidas en la metodología, junto con la herramienta *software* desarrollada.
+En este capítulo se describe el trabajo realizado en cada una de las etapas definidas en la metodología.
 
 ### Preparación del conjunto de datos
 
@@ -508,9 +527,9 @@ En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta 
 
 Igual que en la conclusión anterior, parece que al aplicar una normalización por espectro basada en la mediana, obtenemos ligeramente mejores resultados. 
 
-La última comparación vendrá dada por la librería *ISpec*. <!-- TODO clarisimamente->
+La última comparación vendrá dada por la librería *ISpec*. <!-- TODO clarisimamente -->
 
-Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @generado_snr_123 y @fig-generado_snr_191.
+Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-generado_snr_123 y @fig-generado_snr_191.
 
 ![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.](_partials/assets/espectro_predicho_123_full_snr.png){#fig-generado_snr_123}
 

@@ -7,6 +7,7 @@ format:
     lang: es
     filters:
       - _filters/process_abstracts.lua
+      - _filters/process_group_work.lua
       - _filters/acronyms.lua
     template-partials:
       - typst-template.typ
@@ -14,8 +15,9 @@ format:
 
     code-line-numbers: true
 
-    tbl-cap-location: bottom
     tbl-pos: "H"
+
+    fig-cap-location: top
 
     include-after-body: _partials/bibliography.typ
 

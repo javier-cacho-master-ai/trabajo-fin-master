@@ -1,18 +1,19 @@
 #import "styles.typ": styles
+#import "table-of-contents.typ": index-heading
 #import "header.typ": get-header
 
-// Index headings look like chapters but are not numbered nor listed in the TOC
-#let index-heading(title) = heading(level: 1, numbering: none, outlined: false)[#title]
-
-#let table-of-contents(header-text: none) = {
+#let get-tables-index(header-text: none) = {
   page(
     header: get-header(header-text: header-text),
     numbering: "I",
     number-align: bottom + right,
   )[
-    #index-heading[Índice de contenidos]
+    #index-heading[Índice de tablas]
     #show outline.entry: set block(spacing: styles.outline-entry-spacing)
     #set outline.entry(fill: styles.outline-fill)
-    #outline(title: none, depth: 2)
+    #outline(
+      title: none,
+      target: figure.where(kind: table).or(figure.where(kind: "quarto-float-tbl")),
+    )
   ]
 }
