@@ -34,6 +34,9 @@
         ..rows,
       ),
       caption: [Organización del trabajo en grupo.],
+      // Front-matter table: keep it out of the Índice de tablas, like the
+      // rest of the preliminary chapters.
+      outlined: false,
     )
   ]
 }
