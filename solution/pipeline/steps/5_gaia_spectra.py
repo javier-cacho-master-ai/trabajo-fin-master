@@ -7,8 +7,10 @@ lotes y llama a gaiaxpy.calibrate() sobre cada lote en paralelo.
 El resultado de cada lote se persiste de inmediato en disco como un fichero VOTable
 (identificadores de fuente + matrices de flujo e incertidumbre), de modo que un
 fallo a mitad de la ejecución reanuda desde el primer lote sin caché.  Tras
-completar todos los lotes, los ficheros individuales se combinan en la tabla final
-«spectra.vot».  La rejilla de longitudes de onda compartida se guarda en «sampling.npy».
+completar todos los lotes, los ficheros individuales (incluidos los
+«supplement_*.vot» de descargas complementarias) se combinan, deduplicados por
+source_id, en la tabla final «spectra.vot».  La rejilla de longitudes de onda
+compartida se guarda en «sampling.npy».
 """
 
 from __future__ import annotations
@@ -53,14 +55,17 @@ def _is_batch_cached(output_dir: Path, indexed: tuple[int, list]) -> bool:
     return _batch_path(output_dir, i).exists()
 
 
-def _combine_batches(output_dir: Path, n_batches: int) -> Table:
-    return (
-        table_vstack(list(map(
-            lambda i: Table.read(str(_batch_path(output_dir, i)), format="votable"),
-            range(n_batches),
-        )))
-        if n_batches > 0 else Table()
-    )
+def _combine_batches(output_dir: Path) -> Table:
+    files = sorted(output_dir.glob("batch_*.vot")) + sorted(output_dir.glob("supplement_*.vot"))
+    if not files:
+        return Table()
+    combined = table_vstack(list(map(
+        lambda f: Table.read(str(f), format="votable"),
+        files,
+    )))
+    # Los suplementos pueden repetir fuentes ya presentes en un lote desalineado
+    _, keep = np.unique(np.asarray(combined["source_id"], dtype=np.int64), return_index=True)
+    return combined[np.sort(keep)]
 
 
 # ---------------------------------------------------------------------------
@@ -121,7 +126,7 @@ def run(config: PipelineConfig, pruned_gaia_path: Path | None = None) -> list[Pa
         list(pool.map(calibrate, pending))
 
     spectra_path = output_dir / "spectra.vot"
-    combined = _combine_batches(output_dir, len(indexed_batches))
+    combined = _combine_batches(output_dir)
     combined.write(str(spectra_path), format="votable", overwrite=True)
 
     print(f"[gaia_spectra] {len(combined)} espectros  →  {spectra_path.name}")
