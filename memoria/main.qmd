@@ -3,7 +3,7 @@ title     : "Redes Generativas de Aprendizaje Profundo para la mejora de la señ
 author    : "Carla Sequero, J. Javier Cacho"
 director  : "Dr. Guillermo Torralba Elipe"
 degree    : "Máster Universitario en Inteligencia Artificial"
-work_type : "Desarrollo de Software"
+work_type : "Proyecto Piloto"
 date      : 2026-02-05
 keywords  : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
 ---
@@ -620,7 +620,9 @@ Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una n
 
 A partir de las gráficas observadas, parece que la opción con mejores resultados es la segunda, dado que es la que obtiene espectros más cercanos a los reales. Ahora bien, comprobemos métricas para obtener resultados más concluyentes.
 
-En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta arquitectura según el tipo de normalización aplicado. 
+En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta arquitectura según el tipo de normalización aplicado.
+
+::: {#tbl-normalizaciones-densa}
 
 | Normalización | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
 |---|---:|---:|---:|
@@ -628,7 +630,10 @@ En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta 
 | Por mediana de cada espectro | 0.0046 | 0.0496 | 0.0129 |
 | Por máximo de cada espectro | 0.0050 | 0.0666 | 0.0100 |
 
-: Resultados obtenidos con distintas estrategias de normalización. {#tbl-normalizaciones-densa}
+*Fuente: Elaboración propia*
+
+Resultados obtenidos con distintas estrategias de normalización.
+:::
 
 Igual que en la conclusión anterior, parece que al aplicar una normalización por espectro basada en la mediana, obtenemos ligeramente mejores resultados. 
 
@@ -657,11 +662,16 @@ Ejemplo 2 del espectro generado por el modelo de redes neuronales densas con la 
 Por otro lado, las métricas obtenidas se encuentran en la @tbl-snr-gaia: 
 
 
+::: {#tbl-snr-gaia}
+
 | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
 |---|---:|---:|
 | 0.0047 | 0.0503 | 0.0130 |
 
-: Resultados obtenidos incluyendo la SNR de la muestra de Gaia como entrada del modelo. {#tbl-snr-gaia}
+*Fuente: Elaboración propia*
+
+Resultados obtenidos incluyendo la SNR de la muestra de Gaia como entrada del modelo.
+:::
 
 Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicional de entrada no produce una mejora significativa en el modelo. Los valores de pérdida, [MAE]{.acr} y [MSE]{.acr} son prácticamente los mismos a los obtenidos en pruebas anteriores y visualmente tampoco se aprecia una mejora de la captación de tendencias del espectro. Por este motivo, se decidió no incluir esta variable en el modelo final.
 
