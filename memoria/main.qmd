@@ -156,7 +156,14 @@ Estas relaciones han sido estudiadas por muchos científicos a lo largo de los a
 
 En la @fig-espectro-ejemplo se muestra un ejemplo de espectro estelar observado por [SDSS]{.acr}, donde se pueden apreciar las líneas de absorción mencionadas.
 
-![Ejemplo de espectro estelar observado por SDSS](_partials/assets/espectro_sloan_1.png){#fig-espectro-ejemplo}
+:::{#fig-espectro-ejemplo}
+
+![](_partials/assets/espectro_sloan_1.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo de espectro estelar observado por SDSS
+:::
 
 <!--
 Hay estudios existentes que desarrollan la conexión entre los espectros y las variables anteriormente mencionadas, por ejemplo @lee2008segue trataron los datos de [SDSS]{.acr} en su sexta liberación de datos para tratar de crear herramientas automatizadas que estableciesen dicha relación.-->
@@ -192,7 +199,14 @@ Dentro del proyecto de [SDSS]{.acr}, el programa [MANGA]{.acr} se encarga de pro
 Gaia y [SDSS]{.acr} comparten gran parte de su rango óptico pero con datos captados con estrategias e instrumentos diferentes. Esto se enfatiza cuando comparamos los espectros observados por cada proyecto acerca del mismo cuerpo celeste. En la @fig-gaia-sdss se muestra un ejemplo aleatorio.
 
 <!-- TODO: indicar el SNR de cada espectro en la figura o en su pie (anotación del director) -->
-![Ejemplo aleatorio del espectro captado de un mismo cuerpo por Gaia y SDSS](_partials/assets/espectro_gaia_sloan.png){#fig-gaia-sdss}
+:::{#fig-gaia-sdss}
+
+![](_partials/assets/espectro_gaia_sloan.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo aleatorio del espectro captado de un mismo cuerpo por Gaia y SDSS
+:::
 
 Podemos observar como claramente el intervalo que [SDSS]{.acr} cubre es muy similar a Gaia, pero existe una gran diferencia en cuanto a la suavidad de las curvas representadas. Como vemos, [SDSS]{.acr} incluye muchos más detalles que Gaia, su espectro tiene una resolución superior. 
 Por otro lado, si nos fijamos en los datos captados en los extremos de visión de Gaia, notamos la posibilidad de que en rangos inferiores a 400 nm estemos observando artefactos u obteniendo mediciones muy poco precisas. Lo mismo sucede en valores superiores a 950 nm.
@@ -219,7 +233,14 @@ Dentro de las evoluciones recientes encontramos el trabajo @grassi2026differenti
 
 El ejemplo más cercano al enfoque propuesto en este trabajo lo encontramos en un trabajo muy reciente de @haghjoo2026learning. En esta propuesta, se usó el conjunto de datos de [JADES]{.acr} [@curtis2025jades] que proporciona imágenes y espectroscopía profunda combinando observaciones de la cámara (NIRCam) y el espectrógrafo (NIRSpec) del [JWST]{.acr}. Este sondeo es ideal para el estudio porque observa los mismos objetivos de galaxias utilizando una combinación de espectroscopía de prisma de baja resolución (R ~ 30–300) y modos de red de difracción de media resolución (R ~ 1000; mediante los instrumentos G140M, G235M y G395M). A partir de estas observaciones emparejadas, los investigadores seleccionaron una muestra inicial de 1 187 pares de espectros coincidentes, la cual fue ampliada posteriormente a 24 927 muestras mediante técnicas de mejora de datos (*data augmentation*) para el entrenamiento del modelo, tal y como se ilustra en la @fig-jades-mejora-datos.
 
-![Ejemplo del procedimiento de mejora de datos aplicado a un par de espectros JADES de baja y alta resolución: sobre el espectro original (negro) se generan veinte realizaciones sintéticas (líneas de color) mediante desplazamientos aleatorios del corrimiento al rojo y perturbaciones de flujo (adaptado de @haghjoo2026learning)](_partials/assets/haghjoo2026learning_data_augmentation.png){#fig-jades-mejora-datos}
+:::{#fig-jades-mejora-datos}
+
+![](_partials/assets/haghjoo2026learning_data_augmentation.png)
+
+*Fuente: @haghjoo2026learning*
+
+Ejemplo del procedimiento de mejora de datos aplicado a un par de espectros JADES de baja y alta resolución: sobre el espectro original (negro) se generan veinte realizaciones sintéticas (líneas de color) mediante desplazamientos aleatorios del corrimiento al rojo y perturbaciones de flujo.
+:::
 
 Este planteamiento guarda un notable paralelismo con el que se persigue en el presente trabajo: en ambos casos se dispone de observaciones reales emparejadas del mismo objeto en baja y en alta resolución, y el objetivo es entrenar un modelo que aprenda a recuperar el detalle de la observación de alta resolución a partir de la de baja resolución. La diferencia principal reside en la escala y naturaleza de los datos de partida: mientras que @haghjoo2026learning contaban únicamente con 1 187 pares reales y recurrieron a la mejora de datos para ampliar el conjunto de entrenamiento, en este trabajo se dispone de decenas de miles de pares reales de espectros Gaia-[SDSS]{.acr}, lo que permite abordar el problema directamente con los datos observados sin necesidad de generar realizaciones sintéticas adicionales.
 
@@ -335,12 +356,26 @@ Una vez extraído el conjunto de datos inicial, las parejas de espectros deberá
 
 En primer lugar, los espectros deberán contener valores numéricos válidos en todo el rango usado, con lo que se descartarán aquellos datos que contengan valores nulos o infinitos. Del mismo modo, se descartarán aquellas observaciones que contengas posibles anomalías en el flujo, como por ejemplo picos extremos o que no encajen en la tendencia general de la muestra. Al mismo tiempo, también se descartará el caso contrario, muestras donde haya una clara falta de variabilidad en el flujo, es decir, por ejemplo, que este sea un valor constante. Un claro ejemplo se puede observar en la @fig-descarte-constante, donde se aprecia como el espectro captado por SDSS es nulo:
 
-![Ejemplo de espectros donde el espectro de SDSS es constante 0.](_partials/assets/ejemplo_descarte_1.png){#fig-descarte-constante} 
+:::{#fig-descarte-constante}
+
+![](_partials/assets/ejemplo_descarte_1.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo de espectros donde el espectro de SDSS es constante 0.
+::: 
 
 Por otro lado, las parejas de espectros de Gaia y [SDSS]{.acr} deberán ser coherentes en cuanto a la escala del flujo. Aunque ambos instrumentos presentan resoluciones diferentes, al tratarse de observaciones hechas al mismo cuerpo estelar, la relación entre los flujos no debe situarse en valores extremos. 
 Para descartar aquellas muestras que no sean coherentes, se comparará la media del flujo de ambos espectros y se descartarán aquellos pares cuya relación se encuentre fuera de los límites definidos con el percentil 99 del conjunto de datos. En la @fig-descarte-escala encontramos un ejemplo de lo que se evitará gracias a esta restricción.
 
-![Ejemplo de espectros donde la escala de Gaia y SDSS es diferente.](_partials/assets/ejemplo_descarte_2.png){#fig-descarte-escala} 
+:::{#fig-descarte-escala}
+
+![](_partials/assets/ejemplo_descarte_2.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo de espectros donde la escala de Gaia y SDSS es diferente.
+::: 
 
 En gran parte de los descartes que se realizarán, se usarán los percentiles 95 o 99 para establecer los límites tolerables. Al definirlos de esta forma, no se escogerá un valor arbitrario fijo, sino que se tendrá en cuenta el comportamiento estadístico de la muestra, permitiendo extender su uso en casos futuros.
 
@@ -407,7 +442,14 @@ Tras esta modificación, aquellas estrellas más luminosas, presentan valores m�
 
 El diagrama de los datos usados en este estudio es el que se observa en la @fig-HR-diagram:
 
-![Diagrama HR de las observaciones de Gaia contenidas en la base de datos](_partials/assets/DiagramaHR.png){#fig-HR-diagram}
+:::{#fig-HR-diagram}
+
+![](_partials/assets/DiagramaHR.png)
+
+*Fuente: Elaboración propia*
+
+Diagrama HR de las observaciones de Gaia contenidas en la base de datos
+:::
 
 
 En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que presenta objetos con propiedades físicas diferentes. Si bien es cierto, destaca un grupo mayoritario tal y como se aprecia en la parte media izquierda del gráfico. 
@@ -474,11 +516,32 @@ Por último, se empleará la librería *ISpec* [@blancocuaresma2014ispec] para e
 
 Durante el entrenamiento del modelo basado en capas densas con normalización a partir de la mediana global de los datos, se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-loss-evolution, @fig-mse-evolution y @fig-mae-evolution .
 
-![Gráfica de la evolución de la función de pérdida](_partials/assets/loss_function_evolution.png){#fig-loss-evolution}
+:::{#fig-loss-evolution}
 
-![Gráfica de la evolución del MSE](_partials/assets/mse_evolution.png){#fig-mse-evolution}
+![](_partials/assets/loss_function_evolution.png)
 
-![Gráfica de la evolución del MAE](_partials/assets/mae_evolution.png){#fig-mae-evolution}
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución de la función de pérdida
+:::
+
+:::{#fig-mse-evolution}
+
+![](_partials/assets/mse_evolution.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MSE
+:::
+
+:::{#fig-mae-evolution}
+
+![](_partials/assets/mae_evolution.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MAE
+:::
 
 En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento muy similar a la del conjunto de validación.
 Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos con anterioridad. 
@@ -487,9 +550,23 @@ Cabe destacar que las métricas calculadas se definen sobre espectros normalizad
 
 En las gráficas detalladas de la @fig-generado_global_123 y la @fig-generado_global_191, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. 
 
-![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.](_partials/assets/espectro_predicho_123_full.png){#fig-generado_global_123}
+:::{#fig-generado_global_123}
 
-![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.](_partials/assets/espectro_predicho_191_full.png){#fig-generado_global_191}
+![](_partials/assets/espectro_predicho_123_full.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.
+:::
+
+:::{#fig-generado_global_191}
+
+![](_partials/assets/espectro_predicho_191_full.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.
+:::
 
 Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de [SDSS]{.acr} una vez han sido recortados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usan escalas diferentes. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
@@ -501,17 +578,45 @@ Durante las comparaciones que se harán a continuación, siempre se usarán los 
 Por otro lado, al usar una normalización basada en la mediana por espectro, los resultados obtenidos fueron similares. 
 Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre las mismas observaciones que el modelo anterior fueron las observadas en la @fig-generado_mediana_espectro_123 y @fig-generado_mediana_espectro_191:
 
-![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.](_partials/assets/espectro_predicho_123_full_mediana_espectro.png){#fig-generado_mediana_espectro_123}
+:::{#fig-generado_mediana_espectro_123}
 
-![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.](_partials/assets/espectro_predicho_191_full_mediana_espectro.png){#fig-generado_mediana_espectro_191}
+![](_partials/assets/espectro_predicho_123_full_mediana_espectro.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.
+:::
+
+:::{#fig-generado_mediana_espectro_191}
+
+![](_partials/assets/espectro_predicho_191_full_mediana_espectro.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.
+:::
 
 Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual pequeá, pero positiva hacia este segundo tipo de normalización. 
 
 Por último, si nos fijamos en las figuras @fig-generado_maximo_espectro_123 y @fig-generado_maximo_espectro_191 , observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
 
-![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.](_partials/assets/espectro_predicho_123_full_maximo_espectro.png){#fig-generado_maximo_espectro_123}
+:::{#fig-generado_maximo_espectro_123}
 
-![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.](_partials/assets/espectro_predicho_191_full_maximo_espectro.png){#fig-generado_maximo_espectro_191}
+![](_partials/assets/espectro_predicho_123_full_maximo_espectro.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.
+:::
+
+:::{#fig-generado_maximo_espectro_191}
+
+![](_partials/assets/espectro_predicho_191_full_maximo_espectro.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.
+:::
 
 A partir de las gráficas observadas, parece que la opción con mejores resultados es la segunda, dado que es la que obtiene espectros más cercanos a los reales. Ahora bien, comprobemos métricas para obtener resultados más concluyentes.
 
@@ -531,9 +636,23 @@ La última comparación vendrá dada por la librería *ISpec*. <!-- TODO clarisi
 
 Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-generado_snr_123 y @fig-generado_snr_191.
 
-![Ejemplo 1 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.](_partials/assets/espectro_predicho_123_full_snr.png){#fig-generado_snr_123}
+:::{#fig-generado_snr_123}
 
-![Ejemplo 2 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.](_partials/assets/espectro_predicho_191_full_snr.png){#fig-generado_snr_191}
+![](_partials/assets/espectro_predicho_123_full_snr.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.
+:::
+
+:::{#fig-generado_snr_191}
+
+![](_partials/assets/espectro_predicho_191_full_snr.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.
+:::
 
 Por otro lado, las métricas obtenidas se encuentran en la @tbl-snr-gaia: 
 
