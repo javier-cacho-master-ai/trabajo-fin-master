@@ -171,6 +171,10 @@ Algunos estudios trataron de crear herramientas automatizadas para la obtención
 
 Paralelamente, en la unidad de control número 8 de Gaia se trata de establecer la misma relación, como se puede observar en el trabajo llevado a cabo por @witten2023bprp, donde llegaron a identificar de manera detallada la proporción de composición metálica de las estrellas observadas.
 
+Para cuantificar la calidad de las observaciones, se utiliza la relación señal-ruido [SNR]{.acr}. Esta medida se expresa como el cociente entre el flujo observado y su error correspondiente. Una [SNR].{acr} baja indica que en los datos observados predomina el ruido, por lo que son poco precisos, mientras que un valor alto indica lo contrario, poco ruido y una mayor precisión.
+Si definimos el error como $\sigma$ y suponemos que el error sigue una distribución normal, $F \pm \sigma$ contendría alrededor del 68% de los valores reales, $F \pm 2\sigma$ el 95% y $F \pm 3\sigma$ el 99.7% de los datos. 
+Bajo esta nomenclatura $\mathrm{SNR}=F/\sigma$ y el error relativo de un espectro sería su inversa, $\mathrm{error relativo}=\sigma/F$, indicando la incertidumbre expresada en porcentaje del tamaño de la muestra
+
 En los siguientes apartados comentaremos los datos espectrales de Gaia y [SDSS]{.acr}.
 
 #### Datos espectrales de Gaia
@@ -182,6 +186,8 @@ El satélite en cuestión se encuentra en una posición espacial conocida como L
 La espectrofotometría en la que nos basaremos durante el desarrollo de este trabajo es la [BP/RP]{.acr}, también denominada espectro [XP]{.acr}. Como hemos comentado, estos datos proceden del fotómetro azul y del rojo, lo que permite cubrir entre los 330 y 680 nm gracias al espectro azul y de los 640 a 1050 nm gracias al rojo [@zhang2023parameters]. 
 Estos datos se representan por aproximadamente 110 elementos efectivos de resolución [@deangeli2023bprp], con un poder de resolución variable según la longitud de onda de aproximadamente R $\sim$ 50 - 160. 
 Este detalle conlleva que en la tercera liberación de datos de Gaia no obtengamos directamente una tabla de relación flujo - longitud de onda, sino que los espectros vienen dados por coeficientes que deben transformarse con ayuda de librerías como *GaiaXPy* o su correspondiente desarrollo con funciones lineales [@deangeli2022gaiabprp].
+
+
 
 
 #### Datos espectrales de [SDSS]{.acr}
@@ -435,7 +441,7 @@ Este proceso de extracción ha permitido reunir hasta el momento un conjunto de 
 
 Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usa una representación del diagrama [HR]{.acr} (Hertzsprung-Russell, @hertzsprung1911wellenlaengen y @russell1914spectra). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
 
-En concreto, se considera la fuente de datos de Gaia. En el eje horizontal se grafics la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
+En concreto, se considera la fuente de datos de Gaia. En el eje horizontal se grafica la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
 En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertirlos a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
 Tras esta modificación, aquellas estrellas más luminosas, presentan valores más bajos incluso negativos, mientras que las menos luminosas se mantienen en valores más altos y positivos. 
@@ -455,6 +461,35 @@ Diagrama HR de las observaciones de Gaia contenidas en la base de datos
 En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que presenta objetos con propiedades físicas diferentes. Si bien es cierto, destaca un grupo mayoritario tal y como se aprecia en la parte media izquierda del gráfico. 
 Debido a esta diversidad, el modelo debe adaptarse a fuentes de distintas características, con lo que no es un entrenamiento especializado en un solo tipo de estrella. 
 Al mismo tiempo, se observan algunos datos dispersos y distantes de las regiones más ocupadas, los cuales podrían considerarse anomalías para el modelo a entrenar.
+
+### Análisis de la [SNR]{.acr} de los datos obtenidos
+
+Una vez creado y filtrado el conjunto de datos, para analizar la calidad de los espectros, se usó la [SNR]{.acr} y el error relativo. 
+En primer lugar, para los espectros de Gaia, se calculó a partir del flujo y de la incertidumbre proporcionada por la librería *GaiaXPy*. La mediana obtenida fue de 20.04, representando un error relativo del 5%. 
+Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a parir del flujo y la varianza inversa, definiendo el error como $\sigma = 1/\sqrt{\mathrm{ivar}}$. Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde $ivar$ era cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
+
+Observamos a continuación en la @fig-SNR-gaia-sdss la distribución del [SNR]{.acr} en los espectros de Gaia y SDSS. 
+
+![Distribución de la SNR de los espectros de Gaia y SDSS](_partials/assets/dist_error_abs.png){#fig-SNR-gaia-sdss}
+
+En esta gráfica se puede observar la distribución del valor mediano de [SNR]{.acr} de los espectros del conjunto de datos. Se puede apreciar como [SDSS]{.acr} tiene una distribución centrada en valores más grandes, mientras que Gaia se ubica en valores inferiores. Esta observación era la esperada dadas las características de ambos instrumentos.
+
+Por otro lado, valoramos el error relativo mediano según la longitud de onda. En la @fig-error-rel-gaia se aprecian los valores obtenidos para Gaia. 
+
+![Distribución del error relativo según la longitud de onda de los espectros de Gaia](_partials/assets/dist_error_rel_gaia.png){#fig-error-rel-gaia}
+
+La evolución del error relativo no es uniforme. Cerca de los 6500 Å se observa un salto, coincidiendo con el rango en el que se solapan las mediciones de BP y RP. Esta discontinuidad puede deberse al proceso con el que se solapan ambos espectros, y por lo tanto no se considera una característica de los espectros. 
+Además, cabe destacar que los valores menores se encuentran en la zona del salto, alcanzando el mínimo sobre los 6400Å. Después del salto, en el que el error incrementa bruscamente, el error relativo vuelve desciende y parece mantenerse constante en la zona central del RS, volviendo a aumentar en las longitudes de onda más elevadas.
+Asimismo, los percentiles 25 y 75 indican que la variabilidad es más alta en la zona del salto que en los extremos de la longitud espectral analizada y menor cerca del final del rango del BS. 
+
+En la @fig-error-rel-sdss encontramos la distribución de [SDSS]{.acr}. 
+
+![Distribución del error relativo según la longitud de onda de los espectros de SDSS](_partials/assets/dist_err_rel_sdss.png){#fig-error-rel-sdss}
+
+A diferencia de Gaia, el error relativo se mantiene mayormente constante a lo largo de todo el intervalo estudiado, teniendo una tendencia creciente a partir de los 8000 Å.
+Por otro lado, el mínimo se alcanza entre los 6000 y 7500 Å. 
+A partir de los 9000 Å la mediana es más inestable y la banda de los percentiles 25 y 75 se ensancha. Este dato implica que los datos son menos precisos en el extremo rojo del flujo. 
+
 
 ### Entrenamiento del modelo
 
