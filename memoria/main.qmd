@@ -444,8 +444,9 @@ En la @fig-error-rel-sdss encontramos la distribución de [SDSS]{.acr}.
 
 ![Distribución del error relativo según la longitud de onda de los espectros de SDSS](_partials/assets/dist_err_rel_sdss.png){#fig-error-rel-sdss}
 
-
-
+A diferencia de Gaia, el error relativo se mantiene mayormente constante a lo largo de todo el intervalo estudiado, teniendo una tendencia creciente a partir de los 8000 Å.
+Por otro lado, el mínimo se alcanza entre los 6000 y 7500 Å. 
+A partir de los 9000 Å la mediana es más inestable y la banda de los percentiles 25 y 75 se ensancha. Este dato implica que los datos son menos precisos en el extremo rojo del flujo. 
 
 
 ### Entrenamiento del modelo
