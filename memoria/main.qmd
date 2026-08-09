@@ -470,13 +470,27 @@ Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a parir del flujo y la varianza in
 
 Observamos a continuación en la @fig-SNR-gaia-sdss la distribución del [SNR]{.acr} en los espectros de Gaia y SDSS. 
 
-![Distribución de la SNR de los espectros de Gaia y SDSS](_partials/assets/dist_error_abs.png){#fig-SNR-gaia-sdss}
+:::{#fig-SNR-gaia-sdss}
+
+![](_partials/assets/dist_error_abs.png)
+
+*Fuente: Elaboración propia*
+
+Distribución de la SNR de los espectros de Gaia y SDSS
+:::
 
 En esta gráfica se puede observar la distribución del valor mediano de [SNR]{.acr} de los espectros del conjunto de datos. Se puede apreciar como [SDSS]{.acr} tiene una distribución centrada en valores más grandes, mientras que Gaia se ubica en valores inferiores. Esta observación era la esperada dadas las características de ambos instrumentos.
 
 Por otro lado, valoramos el error relativo mediano según la longitud de onda. En la @fig-error-rel-gaia se aprecian los valores obtenidos para Gaia. 
 
-![Distribución del error relativo según la longitud de onda de los espectros de Gaia](_partials/assets/dist_error_rel_gaia.png){#fig-error-rel-gaia}
+:::{#fig-error-rel-gaia}
+
+![](_partials/assets/dist_error_rel_gaia.png)
+
+*Fuente: Elaboración propia*
+
+Distribución del error relativo según la longitud de onda de los espectros de Gaia
+:::
 
 La evolución del error relativo no es uniforme. Cerca de los 6500 Å se observa un salto, coincidiendo con el rango en el que se solapan las mediciones de BP y RP. Esta discontinuidad puede deberse al proceso con el que se solapan ambos espectros, y por lo tanto no se considera una característica de los espectros. 
 Además, cabe destacar que los valores menores se encuentran en la zona del salto, alcanzando el mínimo sobre los 6400Å. Después del salto, en el que el error incrementa bruscamente, el error relativo vuelve desciende y parece mantenerse constante en la zona central del RS, volviendo a aumentar en las longitudes de onda más elevadas.
@@ -484,12 +498,41 @@ Asimismo, los percentiles 25 y 75 indican que la variabilidad es más alta en la
 
 En la @fig-error-rel-sdss encontramos la distribución de [SDSS]{.acr}. 
 
-![Distribución del error relativo según la longitud de onda de los espectros de SDSS](_partials/assets/dist_err_rel_sdss.png){#fig-error-rel-sdss}
+:::{#fig-error-rel-sdss}
+
+![](_partials/assets/dist_err_rel_sdss.png)
+
+*Fuente: Elaboración propia*
+
+Distribución del error relativo según la longitud de onda de los espectros de SDSS
+:::
 
 A diferencia de Gaia, el error relativo se mantiene mayormente constante a lo largo de todo el intervalo estudiado, teniendo una tendencia creciente a partir de los 8000 Å.
 Por otro lado, el mínimo se alcanza entre los 6000 y 7500 Å. 
 A partir de los 9000 Å la mediana es más inestable y la banda de los percentiles 25 y 75 se ensancha. Este dato implica que los datos son menos precisos en el extremo rojo del flujo. 
 
+Sobreponiendo el espectro del mismo objeto observado por Gaia y [SDSS]{.acr} con su respectiva banda +-error, obtenemos gráficos como los observados en la @fig-error-margin1 y @fig-error-margin2 .
+
+
+:::{#fig-error-margin1}
+
+![](_partials/assets/error_margin_1.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 de los espectros observados por Gaia y SDSS con bandas de error
+:::
+
+:::{#fig-error-margin2}
+
+![](_partials/assets/error_margin_2.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 de los espectros observados por Gaia y SDSS con bandas de error
+:::
+
+En estos se observa como la banda de error de Gaia tiende a ser más ancha y constante, mientras que [SDSS]{.acr} tiene picos donde la imprecisión es destacable.
 
 ### Entrenamiento del modelo
 
