@@ -5,13 +5,18 @@ import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
 
-# Definimos la configuración de iSpec
+
+# ============================================================
+# CONFIGURACIÓN DE ISPEC
+# ============================================================
+
 ISPEC_DIR = "/Users/carlasequero/iSpec"
 
 if ISPEC_DIR not in sys.path:
     sys.path.insert(0, ISPEC_DIR)
 
 import ispec
+
 
 ISPEC_CONFIG = {
 
@@ -29,10 +34,13 @@ ISPEC_CONFIG = {
     "default_logg": 4.0,
     "default_mh": 0.0,
 
- 
+    # ========================================================
     # Recursos de iSpec
+    # ========================================================
+
     "atmosphere_dir":
-        "/Users/carlasequero/iSpec/input/atmospheres/MARCS.GES/",
+        "/Users/carlasequero/iSpec/input/atmospheres/"
+        "MARCS.GES/",
 
     "atomic_linelist_file":
         "/Users/carlasequero/iSpec/input/linelists/transitions/"
@@ -43,40 +51,48 @@ ISPEC_CONFIG = {
         "Grevesse.2007/stdatom.dat",
 
     "isotopes_file":
-        "/Users/carlasequero/iSpec/input/isotopes/SPECTRUM.lst",
+        "/Users/carlasequero/iSpec/input/isotopes/"
+        "SPECTRUM.lst",
 
     "line_regions_file":
         "/Users/carlasequero/iSpec/input/regions/"
         "47000_SPECTRUM/"
         "spectrum_synth_good_for_params_all.txt",
 
-
-    # Elimina de la lista atómica las líneas teóricamente demasiado débiles.
+    # Elimina líneas teóricamente demasiado débiles
     "minimum_theoretical_depth": 0.01,
 
-    # Número máximo de iteraciones del ajuste de iSpec
+    # Número máximo de iteraciones
     "max_iterations": 6,
- 
 }
+
+
+# ============================================================
+# CARGA DE RECURSOS
+# ============================================================
 
 def load_ispec_resources(config=ISPEC_CONFIG):
 
     print("Cargando modelos atmosféricos...")
+
     modeled_layers_pack = ispec.load_modeled_layers_pack(
         config["atmosphere_dir"]
     )
 
     print("Cargando abundancias solares...")
+
     solar_abundances = ispec.read_solar_abundances(
         config["solar_abundances_file"]
     )
 
     print("Cargando isótopos...")
+
     isotopes = ispec.read_isotope_data(
         config["isotopes_file"]
     )
 
     print("Cargando lista atómica...")
+
     atomic_linelist = ispec.read_atomic_linelist(
         config["atomic_linelist_file"],
         wave_base=config["wave_min_nm"],
@@ -85,21 +101,31 @@ def load_ispec_resources(config=ISPEC_CONFIG):
 
     # Filtrar líneas extremadamente débiles
     if "theoretical_depth" in atomic_linelist.dtype.names:
+
         atomic_linelist = atomic_linelist[
             atomic_linelist["theoretical_depth"]
             >= config["minimum_theoretical_depth"]
         ]
 
-    print(f"Líneas atómicas cargadas: {len(atomic_linelist)}")
+    print(
+        f"Líneas atómicas cargadas: "
+        f"{len(atomic_linelist)}"
+    )
 
     print("Cargando regiones espectrales...")
+
     line_regions = ispec.read_line_regions(
         config["line_regions_file"]
     )
 
-    print(f"Regiones cargadas: {len(line_regions)}")
+    print(
+        f"Regiones cargadas: "
+        f"{len(line_regions)}"
+    )
 
-    print("\nRecursos de iSpec cargados correctamente.")
+    print(
+        "\nRecursos de iSpec cargados correctamente."
+    )
 
     return {
         "modeled_layers_pack": modeled_layers_pack,
@@ -109,6 +135,11 @@ def load_ispec_resources(config=ISPEC_CONFIG):
         "line_regions": line_regions
     }
 
+
+# ============================================================
+# CONVERSIÓN AL FORMATO ISPEC
+# ============================================================
+
 def build_ispec_spectrum(
     wavelength_aa,
     flux,
@@ -117,18 +148,41 @@ def build_ispec_spectrum(
     wave_max_nm=900.0
 ):
 
-    wavelength_aa = np.asarray(wavelength_aa, dtype=float)
-    flux = np.asarray(flux, dtype=float)
+    wavelength_aa = np.asarray(
+        wavelength_aa,
+        dtype=float
+    )
 
-    # Å -> nm
+    flux = np.asarray(
+        flux,
+        dtype=float
+    )
+
+    # Angstrom -> nm
     wavelength_nm = wavelength_aa / 10.0
 
-    if error is None:
-        error = np.zeros_like(flux, dtype=float)
-    else:
-        error = np.asarray(error, dtype=float)
+    # ========================================================
+    # Errores
+    # ========================================================
 
+    if error is None:
+
+        error = np.zeros_like(
+            flux,
+            dtype=float
+        )
+
+    else:
+
+        error = np.asarray(
+            error,
+            dtype=float
+        )
+
+    # ========================================================
     # Filtrar valores inválidos
+    # ========================================================
+
     valid = (
         np.isfinite(wavelength_nm)
         & np.isfinite(flux)
@@ -142,14 +196,26 @@ def build_ispec_spectrum(
     error = error[valid]
 
     if len(wavelength_nm) == 0:
-        raise ValueError("El espectro no contiene puntos válidos.")
 
+        raise ValueError(
+            "El espectro no contiene puntos válidos."
+        )
+
+    # ========================================================
     # Ordenar por longitud de onda
-    order = np.argsort(wavelength_nm)
+    # ========================================================
+
+    order = np.argsort(
+        wavelength_nm
+    )
 
     wavelength_nm = wavelength_nm[order]
     flux = flux[order]
     error = error[order]
+
+    # ========================================================
+    # Crear estructura de iSpec
+    # ========================================================
 
     spectrum = np.recarray(
         len(wavelength_nm),
@@ -165,6 +231,11 @@ def build_ispec_spectrum(
     spectrum["err"] = error
 
     return spectrum
+
+
+# ============================================================
+# NORMALIZACIÓN AL CONTINUO
+# ============================================================
 
 def normalize_spectrum_for_ispec(
     spectrum,
@@ -191,6 +262,11 @@ def normalize_spectrum_for_ispec(
 
     return normalized_spectrum
 
+
+# ============================================================
+# PARÁMETROS INICIALES
+# ============================================================
+
 def get_initial_parameters(
     gaia_row=None,
     config=ISPEC_CONFIG
@@ -200,48 +276,88 @@ def get_initial_parameters(
     logg = config["default_logg"]
     mh = config["default_mh"]
 
+    # ========================================================
+    # Usar parámetros Gaia si los tenemos
+    # ========================================================
+
     if gaia_row is not None:
 
         if (
             "teff_gspphot" in gaia_row.index
-            and pd.notna(gaia_row["teff_gspphot"])
+            and pd.notna(
+                gaia_row["teff_gspphot"]
+            )
         ):
-            teff = float(gaia_row["teff_gspphot"])
+
+            teff = float(
+                gaia_row["teff_gspphot"]
+            )
 
         if (
             "logg_gspphot" in gaia_row.index
-            and pd.notna(gaia_row["logg_gspphot"])
+            and pd.notna(
+                gaia_row["logg_gspphot"]
+            )
         ):
-            logg = float(gaia_row["logg_gspphot"])
+
+            logg = float(
+                gaia_row["logg_gspphot"]
+            )
 
         if (
             "mh_gspphot" in gaia_row.index
-            and pd.notna(gaia_row["mh_gspphot"])
+            and pd.notna(
+                gaia_row["mh_gspphot"]
+            )
         ):
-            mh = float(gaia_row["mh_gspphot"])
 
-    # Abundancia alfa esperada
+            mh = float(
+                gaia_row["mh_gspphot"]
+            )
+
+    # ========================================================
+    # Alpha
+    # ========================================================
+
     alpha = ispec.determine_abundance_enchancements(
         mh
     )
 
+    # ========================================================
+    # Microturbulencia
+    # ========================================================
+
     try:
+
         vmic = ispec.estimate_vmic(
             teff,
             logg,
             mh
         )
+
     except Exception:
+
         vmic = 1.0
 
+    # ========================================================
+    # Macroturbulencia
+    # ========================================================
+
     try:
+
         vmac = ispec.estimate_vmac(
             teff,
             logg,
             mh
         )
+
     except Exception:
+
         vmac = 3.0
+
+    # ========================================================
+    # Rotación inicial
+    # ========================================================
 
     vsini = 2.0
 
@@ -254,6 +370,11 @@ def get_initial_parameters(
         "vmac": vmac,
         "vsini": vsini
     }
+
+
+# ============================================================
+# SELECCIÓN DE REGIONES
+# ============================================================
 
 def select_valid_regions(
     spectrum,
@@ -273,9 +394,12 @@ def select_valid_regions(
         & (line_regions["wave_top"] <= wave_max)
     )
 
-    regions = line_regions[valid]
+    return line_regions[valid]
 
-    return regions
+
+# ============================================================
+# ANÁLISIS DE UN ESPECTRO
+# ============================================================
 
 def analyze_spectrum_with_ispec(
     wavelength_aa,
@@ -287,6 +411,7 @@ def analyze_spectrum_with_ispec(
 ):
 
     if resources is None:
+
         raise ValueError(
             "Debes cargar primero los recursos de iSpec."
         )
@@ -304,24 +429,28 @@ def analyze_spectrum_with_ispec(
     )
 
     if len(spectrum) < 50:
+
         raise ValueError(
             "El espectro contiene muy pocos puntos."
         )
 
     # ========================================================
-    # 2. SNR
+    # 2. Estimar SNR
     # ========================================================
 
     try:
+
         snr = ispec.estimate_snr(
             spectrum["flux"],
             num_points=10
         )
+
     except Exception:
+
         snr = np.nan
 
     # ========================================================
-    # 3. Normalizar
+    # 3. Normalizar al continuo
     # ========================================================
 
     normalized = normalize_spectrum_for_ispec(
@@ -341,6 +470,7 @@ def analyze_spectrum_with_ispec(
     teff = initial["teff"]
     logg = initial["logg"]
     MH = initial["MH"]
+
     alpha = initial["alpha"]
 
     vmic = initial["vmic"]
@@ -348,17 +478,7 @@ def analyze_spectrum_with_ispec(
     vsini = initial["vsini"]
 
     # ========================================================
-    # 5. Continuo fijo = 1
-    # ========================================================
-
-    continuum_model = ispec.fit_continuum(
-        normalized,
-        fixed_value=1.0,
-        model="Fixed value"
-    )
-
-    # ========================================================
-    # 6. Seleccionar regiones
+    # 5. Seleccionar regiones válidas
     # ========================================================
 
     line_regions = select_valid_regions(
@@ -367,12 +487,71 @@ def analyze_spectrum_with_ispec(
     )
 
     if len(line_regions) == 0:
+
         raise ValueError(
-            "No hay regiones válidas para este espectro."
+            "No hay regiones válidas dentro "
+            "del rango del espectro."
         )
 
     # ========================================================
-    # 7. Parámetros que iSpec optimizará
+    # 6. Ajustar las máscaras a las líneas observadas
+    # ========================================================
+
+    try:
+
+        line_regions = ispec.adjust_linemasks(
+            normalized,
+            line_regions,
+            max_margin=0.5
+        )
+
+    except Exception:
+
+        # Si no se pueden reajustar,
+        # conservamos las regiones originales
+        pass
+
+    # ========================================================
+    # 7. Crear segmentos alrededor de las líneas
+    # ========================================================
+
+    segments = ispec.create_segments_around_lines(
+        line_regions,
+        margin=0.25
+    )
+
+    # ========================================================
+    # 8. Recortar el espectro a los segmentos
+    # ========================================================
+
+    wfilter = ispec.create_wavelength_filter(
+        normalized,
+        regions=segments
+    )
+
+    normalized_selected = normalized[
+        wfilter
+    ]
+
+    if len(normalized_selected) < 10:
+
+        raise ValueError(
+            "Muy pocos puntos después de aplicar "
+            "las regiones espectrales."
+        )
+
+    # ========================================================
+    # 9. Continuo fijo
+    # ========================================================
+
+    continuum_model = ispec.fit_continuum(
+        normalized_selected,
+        fixed_value=1.0,
+        model="Fixed value"
+    )
+
+    # ========================================================
+    # 10. Parámetros libres
     # ========================================================
 
     free_params = [
@@ -381,21 +560,41 @@ def analyze_spectrum_with_ispec(
         "MH"
     ]
 
+    # No estamos ajustando abundancias individuales todavía
+    free_abundances = None
+
+    # Tampoco estamos ajustando log(gf)
+    linelist_free_loggf = None
+
     # ========================================================
-    # 8. Ajuste
+    # 11. Otros parámetros iniciales requeridos por iSpec
+    # ========================================================
+
+    initial_limb_darkening_coeff = 0.6
+
+    initial_R = config["resolution"]
+
+    # Se supone que el espectro ya está en su sistema
+    # de referencia para este análisis.
+    initial_vrad = 0.0
+
+    # ========================================================
+    # 12. Ajuste con iSpec
     # ========================================================
 
     (
-        synthetic_spectrum,
+        obs_spec,
+        modeled_synth_spectrum,
         params,
         errors,
         abundances_found,
         loggf_found,
         status,
-        stats
+        stats_linemasks
+
     ) = ispec.model_spectrum(
 
-        normalized,
+        normalized_selected,
         continuum_model,
 
         resources["modeled_layers_pack"],
@@ -403,7 +602,16 @@ def analyze_spectrum_with_ispec(
         resources["isotopes"],
         resources["solar_abundances"],
 
-        free_params,
+        # ----------------------------------------------------
+        # No ajustamos abundancias ni log(gf)
+        # ----------------------------------------------------
+
+        free_abundances,
+        linelist_free_loggf,
+
+        # ----------------------------------------------------
+        # Parámetros iniciales
+        # ----------------------------------------------------
 
         teff,
         logg,
@@ -414,28 +622,70 @@ def analyze_spectrum_with_ispec(
         vmac,
         vsini,
 
-        0.6,
+        initial_limb_darkening_coeff,
 
-        config["resolution"],
+        initial_R,
+        initial_vrad,
 
-        regions=line_regions,
+        # ----------------------------------------------------
+        # Parámetros libres
+        # ----------------------------------------------------
 
-        code=config["code"],
+        free_params,
 
-        max_iterations=config["max_iterations"]
+        # ----------------------------------------------------
+        # Regiones utilizadas
+        # ----------------------------------------------------
+
+        segments=segments,
+        linemasks=line_regions,
+
+        # ----------------------------------------------------
+        # Configuración
+        # ----------------------------------------------------
+
+        enhance_abundances=False,
+
+        use_errors=False,
+
+        vmic_from_empirical_relation=False,
+
+        vmac_from_empirical_relation=False,
+
+        max_iterations=config["max_iterations"],
+
+        tmp_dir=None,
+
+        code=config["code"]
     )
 
     # ========================================================
-    # 9. Output
+    # 13. Resultado
     # ========================================================
 
     result = {
 
         "snr": snr,
 
+        "n_regions": len(
+            line_regions
+        ),
+
+        "n_points_fit": len(
+            normalized_selected
+        ),
+
+        # ----------------------------------------------------
+        # Parámetros iniciales
+        # ----------------------------------------------------
+
         "initial_teff": teff,
         "initial_logg": logg,
         "initial_mh": MH,
+
+        # ----------------------------------------------------
+        # Parámetros ajustados
+        # ----------------------------------------------------
 
         "teff": params.get(
             "teff",
@@ -472,6 +722,10 @@ def analyze_spectrum_with_ispec(
             vsini
         ),
 
+        # ----------------------------------------------------
+        # Errores
+        # ----------------------------------------------------
+
         "teff_err": errors.get(
             "teff",
             np.nan
@@ -490,14 +744,21 @@ def analyze_spectrum_with_ispec(
         "status": status
     }
 
-    if isinstance(stats, dict):
+    # ========================================================
+    # 14. Estadísticas del ajuste
+    # ========================================================
 
-        for key, value in stats.items():
+    if isinstance(
+        stats_linemasks,
+        dict
+    ):
+
+        for key, value in stats_linemasks.items():
 
             if np.isscalar(value):
+
                 result[
                     f"fit_{key}"
                 ] = value
 
     return result
-
