@@ -166,11 +166,7 @@ def build_ispec_spectrum(
     # ========================================================
 
     if error is None:
-
-        error = np.zeros_like(
-            flux,
-            dtype=float
-        )
+         error = np.ones_like(flux, dtype=float)
 
     else:
 
@@ -646,11 +642,11 @@ def analyze_spectrum_with_ispec(
 
         enhance_abundances=False,
 
-        use_errors=False,
+        use_errors=True,
 
-        vmic_from_empirical_relation=False,
+        vmic_from_empirical_relation=True,
 
-        vmac_from_empirical_relation=False,
+        vmac_from_empirical_relation=True,
 
         max_iterations=config["max_iterations"],
 
