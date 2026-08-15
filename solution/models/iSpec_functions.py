@@ -4,7 +4,7 @@ import traceback
 import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
-
+import matplotlib.pyplot as plt
 
 # Configuramos iSpec
 ISPEC_DIR = "/Users/carlasequero/iSpec"
@@ -367,6 +367,7 @@ def analyze_spectrum_with_ispec(
         vmic_from_empirical_relation=True,
         vmac_from_empirical_relation=True,
         max_iterations=config["max_iterations"],
+        verbose=0,
         tmp_dir=None,
         code=config["code"]
     )
@@ -424,7 +425,11 @@ def analyze_sample_real_vs_pred(
     min_teff=2500,
     max_teff=8000
 ):
-
+    progress_bar = tqdm(
+        total=sample_size,
+        desc="Espectros analizados",
+        unit="cuerpos estelares"
+    )
     rng = np.random.default_rng(random_seed)
 
     random_indexes = rng.permutation(
@@ -518,10 +523,99 @@ def analyze_sample_real_vs_pred(
             "delta_logg": delta_logg,
             "delta_mh": delta_mh,
         }
- 
+
+        progress_bar.update(1)
         results.append(row_result)
 
     # Definimos como Dataframe
     results_df = pd.DataFrame(results)
+    progress_bar.close()
 
     return results_df
+
+# Funcion para calcular error y graficar resultados
+def analyze_ispec_errors(results_df):
+
+    df = results_df.copy()
+
+    # Errores absolutos
+    df["abs_error_teff"] = np.abs(results_df["delta_teff"])
+    df["abs_error_logg"] = np.abs(results_df["delta_logg"])
+    df["abs_error_mh"] = np.abs(results_df["delta_mh"])
+
+    # Errores relativos
+    df["rel_error_teff"] = ( df["abs_error_teff"] / np.abs(df["real_teff"]) ) * 100
+    df["rel_error_logg"] = ( df["abs_error_logg"] / np.abs(df["real_logg"]) ) * 100
+
+
+    # Graficamos histogramas por variable
+    plt.figure(figsize=(7, 5))
+
+    plt.hist(
+        df["rel_error_teff"].dropna(),
+        bins=20
+    )
+
+    plt.axvline(
+        df["rel_error_teff"].median(),
+        linestyle="--",
+        label=(
+            "Mediana = "
+            f"{df['rel_error_teff'].median():.2f}%"
+        )
+    )
+
+    plt.xlabel("Error relativo en Teff [%]")
+    plt.ylabel("Número de observaciones")
+    plt.title("Error relativo de Teff")
+    plt.legend()
+
+    plt.show()
+
+    plt.figure(figsize=(7, 5))
+
+    plt.hist(
+        df["rel_error_logg"].dropna(),
+        bins=20
+    )
+
+    plt.axvline(
+        df["rel_error_logg"].median(),
+        linestyle="--",
+        label=(
+            "Mediana = "
+            f"{df['rel_error_logg'].median():.2f}%"
+        )
+    )
+
+    plt.xlabel("Error relativo en log(g) [%]")
+    plt.ylabel("Número de observaciones")
+    plt.title("Error relativo de log(g)")
+    plt.legend()
+
+    plt.show()
+
+    plt.figure(figsize=(7, 5))
+
+    plt.hist(
+        df["abs_error_mh"].dropna(),
+        bins=20
+    )
+
+    plt.axvline(
+        df["abs_error_mh"].median(),
+        linestyle="--",
+        label=(
+            "Mediana = "
+            f"{df['abs_error_mh'].median():.3f} dex"
+        )
+    )
+
+    plt.xlabel("Error absoluto M/H")
+    plt.ylabel("Número de observaciones")
+    plt.title("Error absoluto de M/H")
+    plt.legend()
+
+    plt.show()
+
+    return df
