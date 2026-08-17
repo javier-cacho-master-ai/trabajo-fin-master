@@ -549,11 +549,9 @@ def analyze_ispec_errors(results_df):
 
 
     # Graficamos histogramas por variable
-    plt.figure(figsize=(7, 5))
-
     plt.hist(
         df["rel_error_teff"].dropna(),
-        bins=20
+        bins=30
     )
 
     plt.axvline(
@@ -572,11 +570,9 @@ def analyze_ispec_errors(results_df):
 
     plt.show()
 
-    plt.figure(figsize=(7, 5))
-
     plt.hist(
         df["rel_error_logg"].dropna(),
-        bins=20
+        bins=30
     )
 
     plt.axvline(
@@ -595,11 +591,9 @@ def analyze_ispec_errors(results_df):
 
     plt.show()
 
-    plt.figure(figsize=(7, 5))
-
     plt.hist(
         df["abs_error_mh"].dropna(),
-        bins=20
+        bins=30
     )
 
     plt.axvline(
