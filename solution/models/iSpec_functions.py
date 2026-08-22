@@ -113,8 +113,7 @@ def build_ispec_spectrum(
     # Angstrom a nm
     wavelength_nm = wavelength_aa / 10.0
 
-    # Si no pasamos error,
-    # se definen todos los valores del espectro a 1 para darles el mismo peso en el ajuste
+    # Si no pasamos error, se definen todos los valores del espectro a 1 para darles el mismo peso en el ajuste
     if error is None:
          error = np.ones_like(flux, dtype=float)
 
