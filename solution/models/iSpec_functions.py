@@ -34,7 +34,8 @@ ISPEC_CONFIG = {
     # Definimos los recursos de iSpec
     "atmosphere_dir":
         "/Users/carlasequero/iSpec/input/atmospheres/"
-        "MARCS.GES/",
+        "ATLAS9.Castelli/",
+       # "MARCS.GES/",
 
     "atomic_linelist_file":
         "/Users/carlasequero/iSpec/input/linelists/transitions/"
@@ -465,8 +466,8 @@ def analyze_sample_real_vs_pred(
             continue
 
         # Comprobar que la temperatura esté en el intervalo válido
-        if not (min_teff <= teff_gaia <= max_teff):
-            continue
+        #if not (min_teff <= teff_gaia <= max_teff):
+        #   continue
 
         try:
             real_estimation = analyze_spectrum_with_ispec(
