@@ -411,7 +411,7 @@ En este capítulo se describe el trabajo realizado en cada una de las etapas def
 
 La construcción del conjunto de datos de entrenamiento se ha automatizado mediante un flujo reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consume el resultado de la anterior y guarda su salida en disco de inmediato, de manera que una ejecución interrumpida puede reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. A grandes rasgos dicho flujo obtiene la referencia de los objetos con espectro en [SDSS]{.acr}, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objetos referenciados de [SDSS]{.acr}, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal.
 
-#### Obtención de los objectos con espectro de [SDSS]{.acr}
+#### Obtención de los objetos con espectro de [SDSS]{.acr}
 
 La primera etapa parte del catálogo espectroscópico de [SDSS]{.acr} y recopila los metadatos de todos sus espectros primarios. Comenzar por este catálogo garantiza que cada objeto considerado dispone realmente de una observación espectral de [SDSS]{.acr}, lo que evita la enorme pérdida de muestras que se produciría al partir del cruce fotométrico en sentido contrario. El resultado es la lista de candidatos con espectro de [SDSS]{.acr} confirmado.
 
@@ -540,13 +540,16 @@ Una vez se dispone de la base de datos con los pares de espectros de Gaia y [SDS
 El objetivo es conseguir un modelo que aprenda una transformación entre los datos de entrada de Gaia y el espectro de [SDSS]{.acr} asociado. Así pues, el modelo planteado recibe como entrada un vector con el flujo de Gaia y obtiene como salida un vector con una aproximación del flujo correspondiente al espectro de [SDSS]{.acr}.
 
 De cara a la preparación de la base para el entrenamiento del modelo, se definieron 3 subconjuntos: entrenamiento, test y validación. 
-Los datos de test se formaron con un 20% del conjunto global y fueron empleados para evaluar el modelo, por lo que no fueron usados durante su entrenamiento. El 80% restante se separó de forma aleatoria entre las parejas que forman la base de entrenamiento del modelo, un 80% de la fracción, y la de validación, el 20% final.  
+El 80% de los datos se usó para el entrenamiento del modelo, mientras que el 20% restante fue dividido de forma aleatoria entre los conjuntos de test y validación, siendo cada uno un 10% de los datos originales.
+ 
 
 #### Planteamiento general del entrenamiento
 Para encontrar el modelo óptimo, se realizaron diversas pruebas con tal de analizar como afectaban al rendimiento del modelo. 
 En primer lugar, se probaron diferentes funciones de normalización para facilitar el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares cercanas al 1 y las funciones de pérdida se ubicaban en valores de más fácil interpretación.
 Como punto de partida, se aplicó una normalización global a través de la media y desviación típica de los datos del conjunto de entrenamiento. Esta opción no proporcionó malos resultados (tal y como podremos observar en los próximos apartados) y tenía la ventaja de que se podía deshacer la normalización sin necesidad de conocer los valores del conjunto de test, pero al tratarse de un proceso demasiado generalizado para la variabilidad de valores de los espectros, se probaron otros enfoques. Por ejemplo, se consideró la normalización espectro a espectro, en el que cada flujo se normaliza en su propia escala con la mediana de sus datos o su máximo. 
 
+Las diferentes pruebas de normalización se realizaron durante el ensayo del modelo neuronal denso, dado que era el más simple y rápido de entrenar para poder observar los resultados de pequeñas modificaciones como esta.
+Una vez se definió la normalización más efectiva, fue usada en modelos posteriores. 
 
 Probamos también la adición de los datos de la relación señal-ruido del espectro de Gaia como parte del conjunto de entrada. En este caso, los resultados obtenidos no mejoraron significativamente, por lo que se descartó y continuó el estudio sin este dato de entrada.
 
@@ -572,13 +575,19 @@ El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas
 
 
 #### Modelo recurrente
+Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró como una secuencia en función de la longitud de onda, donde cada longitud de onda era un paso de la secuencia, y el flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
 
-<!--
-### Validación del modelo
--->
+Los primeros intentos de arquitectura recurrente se basaron en capas recurrentes simples y [GRU]{.acr}.
+En los primeros intentos, las funciones de pérdida, optimizador y parada temprana se mantuvieron igual que las descritas en las redes neuronales densas, dado que habían presentado un buen funcionamiento con estos modelos.
 
-<!-- TO DO
-Falta añadir otros modelos, incluidos los de convolucionales y los que consideran el ruido-->
+La arquitectura usada para los modelos más simples incorporaba capas densas similares a las que anteriormente habían sido definidas pero con la adición de una capa recurrente simple de dimensión 128, o dos capas de [GRU]{.acr} de dimensión 128 consecutivas, configurando la primera como *return_sequences = True* para que devolviese la representación de cada punto y la otra como *False* para que devolviese el último estado de la secuencia y que este vector fuese usado como entrada a las capas densas.
+
+Por otro lado, se probaron variantes bidireccionales de la arquitectura recurrente [@schuster1997bidirectional]. Esta capa procesa la secuencia de puntos en ambos sentidos, en sentido creciente y decreciente de longitud de onda. Se incluyeron versiones con y sin capas de normalización internas.
+
+Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resuma el entreno en el último estado recurrente, sino que el modelo conserva información de todos los pasos de la secuencia y asigna pesos a aquellas regiones del espectro que se consideran más importantes para la predicción.  
+
+En todas las arquitecturas probadas, la capa de salida del modelo tenía dimensión igual al número de puntos del espectro real de [SDSS]{.acr}. 
+
 
 ## Evaluación
 
@@ -596,29 +605,29 @@ Durante el entrenamiento del modelo basado en capas densas con normalización a 
 
 :::{#fig-loss-evolution}
 
-![](_partials/assets/loss_function_evolution.png)
+![](images/evo_loss_dense_global.png)
 
 *Fuente: Elaboración propia*
 
-Gráfica de la evolución de la función de pérdida
+Gráfica de la evolución de la función de pérdida en el modelo de redes neuronales densas con normalización global.
 :::
 
 :::{#fig-mse-evolution}
 
-![](_partials/assets/mse_evolution.png)
+![](images/evo_mse_dense_global.png)
 
 *Fuente: Elaboración propia*
 
-Gráfica de la evolución del MSE
+Gráfica de la evolución del MSE en el modelo de redes neuronales densas con normalización global.
 :::
 
 :::{#fig-mae-evolution}
 
-![](_partials/assets/mae_evolution.png)
+![](images/evo_mae_dense_global.png)
 
 *Fuente: Elaboración propia*
 
-Gráfica de la evolución del MAE
+Gráfica de la evolución del MAE en el modelo de redes neuronales densas con normalización global.
 :::
 
 En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento muy similar a la del conjunto de validación.
@@ -626,20 +635,20 @@ Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el 
 
 Cabe destacar que las métricas calculadas se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
-En las gráficas detalladas de la @fig-generado_global_123 y la @fig-generado_global_191, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. 
+En las gráficas detalladas de la @fig-generado_global_10 y la @fig-generado_global_245, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. 
 
-:::{#fig-generado_global_123}
+:::{#fig-generado_global_10}
 
-![](_partials/assets/espectro_predicho_123_full.png)
+![](images/ejemplo_10_global_dense.png)
 
 *Fuente: Elaboración propia*
 
 Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.
 :::
 
-:::{#fig-generado_global_191}
+:::{#fig-generado_global_245}
 
-![](_partials/assets/espectro_predicho_191_full.png)
+![](images/ejemplo_245_global_dense.png)
 
 *Fuente: Elaboración propia*
 
@@ -651,23 +660,51 @@ Finalmente, en naranja encontramos el espectro predicho por el modelo.
 
 En gran parte de los gráficos observados, el modelo reproduce la morfología general del espectro, incluso modela los picos más acentuados. 
 Si bien es cierto, hay puntos que no puede inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
-Durante las comparaciones que se harán a continuación, siempre se usarán los mismos objetos, identificados por Gaia con id 2738403223023588608, y por SDSS con 1237657192516026455.
+Durante las comparaciones que se harán a continuación, siempre se usarán los mismos objetos, identificados por los id que aparecen en los gráficos recientemente comentados.
 
-Por otro lado, al usar una normalización basada en la mediana por espectro, los resultados obtenidos fueron similares. 
-Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre las mismas observaciones que el modelo anterior fueron las observadas en la @fig-generado_mediana_espectro_123 y @fig-generado_mediana_espectro_191:
+Por otro lado, al usar una normalización basada en la mediana por espectro, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar tal y como observamos en las gráficas representadas en las imágenes @fig-loss-evolution-spec-medi, @fig-mse-evolution-spec-medi y @fig-mae-evolution-spec-medi .
 
-:::{#fig-generado_mediana_espectro_123}
+:::{#fig-loss-evolution-spec-medi}
 
-![](_partials/assets/espectro_predicho_123_full_mediana_espectro.png)
+![](images/evo_loss_dense_spec_mean.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución de la función de pérdida en el modelo de redes neuronales densas con normalización por espectro con su mediana.
+:::
+
+:::{#fig-mse-evolution-spec-medi}
+
+![](images/evo_mse_dense_spec_mean.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MSE en el modelo de redes neuronales densas con normalización por espectro con su mediana.
+:::
+
+:::{#fig-mae-evolution-spec-medi}
+
+![](images/evo_mae_dense_spec_mean.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MAE en el modelo de redes neuronales densas con normalización por espectro con su mediana.
+:::
+
+Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre las mismas observaciones que el modelo anterior fueron las observadas en la @fig-generado_mediana_espectro_10 y @fig-generado_mediana_espectro_245:
+
+:::{#fig-generado_mediana_espectro_10}
+
+![](images/ejemplo_10_spec_mean_dense.png)
 
 *Fuente: Elaboración propia*
 
 Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.
 :::
 
-:::{#fig-generado_mediana_espectro_191}
+:::{#fig-generado_mediana_espectro_245}
 
-![](_partials/assets/espectro_predicho_191_full_mediana_espectro.png)
+![](images/ejemplo_245_spec_mean_dense.png)
 
 *Fuente: Elaboración propia*
 
@@ -676,20 +713,20 @@ Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una n
 
 Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual pequeá, pero positiva hacia este segundo tipo de normalización. 
 
-Por último, si nos fijamos en las figuras @fig-generado_maximo_espectro_123 y @fig-generado_maximo_espectro_191 , observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
+Por último, si nos fijamos en las figuras @fig-generado_maximo_espectro_10 y @fig-generado_maximo_espectro_245 , observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
 
-:::{#fig-generado_maximo_espectro_123}
+:::{#fig-generado_maximo_espectro_10}
 
-![](_partials/assets/espectro_predicho_123_full_maximo_espectro.png)
+![](images/ejemplo_10_spec_max_dense.png)
 
 *Fuente: Elaboración propia*
 
 Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.
 :::
 
-:::{#fig-generado_maximo_espectro_191}
+:::{#fig-generado_maximo_espectro_245}
 
-![](_partials/assets/espectro_predicho_191_full_maximo_espectro.png)
+![](images/ejemplo_245_spec_max_dense.png)
 
 *Fuente: Elaboración propia*
 
@@ -704,9 +741,9 @@ En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta 
 
 | Normalización | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
 |---|---:|---:|---:|
-| Mediana del conjunto de entrenamiento | 0.0086 | 0.0735 | 0.0181 |
-| Por mediana de cada espectro | 0.0046 | 0.0496 | 0.0129 |
-| Por máximo de cada espectro | 0.0050 | 0.0666 | 0.0100 |
+| Mediana del conjunto de entrenamiento | 0.0094 | 0.0769 | 0.0211 |
+| Por mediana de cada espectro | 0.0032 | 0.0423 | 0.0091 |
+| Por máximo de cada espectro | 0.0048 | 0.0625 | 0.0097 |
 
 *Fuente: Elaboración propia*
 
@@ -715,8 +752,55 @@ Resultados obtenidos con distintas estrategias de normalización.
 
 Igual que en la conclusión anterior, parece que al aplicar una normalización por espectro basada en la mediana, obtenemos ligeramente mejores resultados. 
 
-La última comparación vendrá dada por la librería *ISpec*. <!-- TODO clarisimamente -->
+La última comparación vendrá dada por la librería *ISpec*. Con esta estimamos los parámetros astrofísicos de los cuerpos observados a partir del espectro real de [SDSS]{.acr} y los predichos. 
+Para ello primero transformamos cada espectro en el formato requerido por iSpec, teniendo que añadir para cada punto el flujo, longitud de onda y error asociado. El análisis se realizó sin incertidumbre asignada a cada punto, con lo que se asignó un valor unitario de error a todos los puntos de modo que todos partiesen del mismo peso.
+Una vez teníamos la estructura requerida, normalizamos al continuo los espectros con la función propia de iSpec.
 
+Además, los puntos iniciales de testeo de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto en todos los espectros. 
+
+En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES*, pero se observaron advertencias de que los valores quedaba fuera del rango disponible, así que se usó *ATLAS9.Castelli*, que eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD*, cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen. 
+Se usaron las abundancias solares de Grevesse como referencia de la metalicidad y la información isotópica de *SPECTRUM*.
+
+A partir de los datos iniciales, mallas e información base mencionada, se ajustó la temperatura, gravedad superficial y metalicidad de las estrellas.
+
+Para comprobar el funcionamiento del modelo de redes neuronales, se tomó los resultados del espectro real de [SDSS].{acr} como los verdaderos, y se comparó los predichos con estos, calculando las diferencias entre los datos obtenidos, sus errores absolutos y relativos. 
+
+Analizamos muestras aleatorias de 250 espectros para cada modelo denso. El resultado se resume en las gráficas observadas en las figuras @fig-logg_ispec_dense, @fig-teff_ispec_dense y @fig-mh_ispec_dense.
+
+:::{#fig-logg_ispec_dense}
+
+![](images/iSpec_dense_logg.png)
+
+*Fuente: Elaboración propia*
+
+Gráfico de barras del error relativo de la gravedad superficial obtenida con iSpec entre los espectros reales de SDSS y los predichos.
+:::
+
+:::{#fig-teff_ispec_dense}
+
+![](images/iSpec_dense_teff.png)
+
+*Fuente: Elaboración propia*
+
+Gráfico de barras del error relativo de la temperatura obtenida con iSpec entre los espectros reales de SDSS y los predichos.
+:::
+
+:::{#fig-mh_ispec_dense}
+
+![](images/iSpec_dense_logg.png)
+
+*Fuente: Elaboración propia*
+
+Gráfico de barras del error absoluto de la metalicidad obtenida con iSpec entre los espectros reales de SDSS y los predichos.
+:::
+
+
+Encontramos destacada la mediana de los valores obtenidos y la distribución en histogramas de los errores de cada espectro. 
+
+Se aprecia como la mediana del error de la temperatura se ubica en todos los modelos alrededor del 0.25%, mientras que la de la gravedad superficial cerca del 0.10% y el error absoluto de la temperatura cerca de los 0.017. 
+Estos valores indican una relación de similitud entre las propiedades físicas de ambos espectros, por lo que podemos afirmar que los modelos densos estudiados conllevan una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con iSpec en rangos de error pequeños. 
+
+<!-- TO DO falta ejecutar el SNR de nuevo-->
 Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-generado_snr_123 y @fig-generado_snr_191.
 
 :::{#fig-generado_snr_123}

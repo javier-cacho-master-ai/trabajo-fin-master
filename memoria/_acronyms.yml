@@ -36,6 +36,9 @@ acronyms:
     shortname: GAN
     longname: Generative Adversarial Network
     translation: red generativa antagónica
+  - key: GRU
+    shortname: GRU
+    longname: Gated Recurrent Unit
   - key: HR
     shortname: HR
     longname: Hertzsprung-Russell
