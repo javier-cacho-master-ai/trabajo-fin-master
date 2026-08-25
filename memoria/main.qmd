@@ -83,7 +83,7 @@ En este contexto, gracias a los avances constantes de la inteligencia artificial
 
 A lo largo de 2026 se publicarán los últimos datos recolectados por Gaia en un último DR4 y catálogo final DR5. Se calcula que a lo largo de la misión, unos 2 000 millones de estrellas y otros objetos celestes fueron captados por el satélite. 
 Gracias a los datos recolectados, se dispone de una imagen reconstruida sobre cómo un observador vería nuestra galaxia desde el exterior de esta. Esta hazaña se ha conseguido a base de un conjunto de datos donde la información del cuerpo celeste parte fundamentalmente de dos espectros de baja resolución.
-La espectroscopía es una de las herramientas principales de la astrofísica para extraer información acerca de los cuerpos astronómicos. Gracias a la distribución de la luz en función de la longitud de onda, se pueden conocer detalles clave acerca de los objetos estudiados, como por ejemplo su composición, la temperatura y la gravedad superficial. 
+La espectroscopía es una de las herramientas principales de la astrofísica para extraer información acerca de los cuerpos astronómicos. Gracias a la distribución de la luz en función de la longitud de onda, se pueden conocer detalles clave acerca de los objetos estudiados, como por ejemplo su composición, la temperatura y la gravedad superficial [@RecioBlanco2016]. 
 <!--
 A diferencia de Gaia, otros proyectos astronómicos como [SDSS]{.acr} presentan una resolución espectral mayor en gran parte del rango de longitudes de onda que ambos comparten (en el resto del rango, simplemente no disponen de datos). Como contrapartida, al tratarse de un sondeo terrestre que depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@DR13sdss], el número de objetos que [SDSS]{.acr} puede observar es muy inferior al de Gaia.
 -->
@@ -102,7 +102,7 @@ El objetivo principal del trabajo que se desarrolla a continuación es diseñar 
 
 Para llevarlo a cabo, primero debemos entender las características de ambas fuentes de información, dado que los datos que usaremos deben estar correlacionados entre ambos conjuntos de datos. 
 En concreto nos centraremos en la tercera liberación de datos de Gaia (Gaia DR3) [@Gaia_DR3_Summary_2023] y la decimotercera de [SDSS]{.acr} (DR13) [@DR13sdss], debido a que estos son los que en el DR3 de Gaia ya encontramos semi comparados, o por lo menos las asociaciones de vecindad hechas.
-Para ser exactos, trataremos de relacionar los espectros de baja resolución [XP]{.acr} de Gaia DR3 (constituidos por los espectros azul y rojo) y los espectros ópticos de [SDSS]{.acr} DR13.
+Para ser exactos, trataremos de relacionar los espectros de baja resolución de Gaia DR3 y los espectros ópticos de [SDSS]{.acr} DR13.
 
 Para realizar este trabajo seleccionamos el conjunto de datos de Gaia como base de estudio por diferentes motivos, por un lado, estas observaciones son parte de un estudio actual y al mismo tiempo la forma de acceder a los datos es relativamente sencilla, pero por otro, es muy destacable la gran cantidad de información y cuerpos observados que Gaia dispone. Esto nos permite tener una buena base para tratar de sacar comparaciones con otros satélites y al mismo tiempo justifica la magnitud del efecto que tendría su mejora.
 
@@ -181,11 +181,11 @@ En los siguientes apartados comentaremos los datos espectrales de Gaia y [SDSS]{
 
 El satélite Gaia consta de 3 instrumentos para detectar la luz que recogen los telescopios del satélite [@Gaia_DR3_Summary_2023]. El primero, conocido como astrómetro, mide las posiciones estelares en el cielo, el espectómetro, [RVS]{.acr}, medirá las velocidades radiales y, por último, el instrumento fotométrico aportará dos espectros de baja resolución de dos bandas ópticas, la azul y la roja. Cabe destacar que, debido al movimiento rotativo de Gaia, se toman unas 70 mediciones fotométricas de cada cuerpo celeste. Estos espectros son preprocesados y tratados por diferentes unidades de coordinación antes de formar parte del conjunto de datos que nosotros usaremos en este trabajo, por lo que el ruido de fondo ya habrá sido reducido significativamente.
 
-El satélite en cuestión se encuentra en una posición espacial conocida como L~2~, ubicada a 1,5 millones de kilómetros de la Tierra y donde las fuerzas gravitacionales del Sol, la Tierra y la Luna están en equilibrio. Por otro lado, el satélite, el Sol y la Tierra siempre van a permanecer alineados, impidiendo así que ninguno de los cuerpos celestes mencionados se interponga en el campo de visión de Gaia. 
+El satélite en cuestión se encuentra en una posición espacial conocida como el segundo punto de Lagrange, ubicada a 1,5 millones de kilómetros de la Tierra y donde las fuerzas gravitacionales del Sol, la Tierra y la Luna están en equilibrio. Por otro lado, el satélite, el Sol y la Tierra siempre van a permanecer alineados, impidiendo así que ninguno de los cuerpos celestes mencionados se interponga en el campo de visión de Gaia. 
 
 La espectrofotometría en la que nos basaremos durante el desarrollo de este trabajo es la [BP/RP]{.acr}, también denominada espectro [XP]{.acr}. Como hemos comentado, estos datos proceden del fotómetro azul y del rojo, lo que permite cubrir entre los 330 y 680 nm gracias al espectro azul y de los 640 a 1050 nm gracias al rojo [@zhang2023parameters]. 
 Estos datos se representan por aproximadamente 110 elementos efectivos de resolución [@deangeli2023bprp], con un poder de resolución variable según la longitud de onda de aproximadamente R $\sim$ 50 - 160. 
-Este detalle conlleva que en la tercera liberación de datos de Gaia no obtengamos directamente una tabla de relación flujo - longitud de onda, sino que los espectros vienen dados por coeficientes que deben transformarse con ayuda de librerías como *GaiaXPy* o su correspondiente desarrollo con funciones lineales [@deangeli2022gaiabprp].
+Este detalle conlleva que en la tercera liberación de datos de Gaia no obtengamos directamente una tabla de relación flujo - longitud de onda, sino que los espectros vienen dados por coeficientes [XP]{.acr} que deben transformarse con ayuda de librerías como *GaiaXPy* [@deangeli2022gaiabprp].
 
 
 
@@ -215,7 +215,7 @@ Ejemplo aleatorio del espectro captado de un mismo cuerpo por Gaia y SDSS
 :::
 
 Podemos observar como claramente el intervalo que [SDSS]{.acr} cubre es muy similar a Gaia, pero existe una gran diferencia en cuanto a la suavidad de las curvas representadas. Como vemos, [SDSS]{.acr} incluye muchos más detalles que Gaia, su espectro tiene una resolución superior. 
-Por otro lado, si nos fijamos en los datos captados en los extremos de visión de Gaia, notamos la posibilidad de que en rangos inferiores a 400 nm estemos observando artefactos u obteniendo mediciones muy poco precisas. Lo mismo sucede en valores superiores a 950 nm.
+Por otro lado, si nos fijamos en los datos captados en los extremos de visión de Gaia, notamos la posibilidad de que en rangos inferiores a 400 nm estemos observando artefactos u obteniendo mediciones muy poco precisas. Lo mismo sucede en valores superiores a 950 nm. Diversos estudios han observado una menor precisión y un error mayor en intervalos muy similares a los mencionados en este trabajo, por ejemplo el artículo de @Huang2024.
 
 A lo largo del trabajo, para garantizar que los datos analizados correspondan al mismo objeto astronómico, se empleará la tabla de cruce oficial de DR3 denominada *gaiadr3.sdssdr13_best_neighbour* que se puede consultar en el archivo de Gaia [@gaiaDR3sdssBestNeighbourDataset]. Esta tabla contiene para cada cuerpo observado por Gaia, el vecino más cercano en [SDSS]{.acr} DR13, es decir, el que cuenta con una mayor probabilidad de que estén describiendo el mismo cuerpo celeste. El procedimiento con el cual se establece esta vecindad se encuentra descrito en la documentación oficial de Gaia DR3 [@Gaia_DR3_Documentation_2023], que puede consultarse en el propio archivo de Gaia. Dentro de este conjunto, definiremos un umbral de aceptación dado por la distancia angular, fijado en 2 segundos de arco.
 
@@ -335,7 +335,7 @@ De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar 
 
 3. Extracción de los datos: descarga por lotes de los espectros emparejados, de manera reproducible y tolerante a las limitaciones de los servicios públicos de consulta. Esta etapa parte deliberadamente del catálogo espectroscópico de [SDSS]{.acr} y no del cruce fotométrico de Gaia, ya que este último constituyó inicialmente el cuello de botella del proceso: al buscar el espectro de [SDSS]{.acr} correspondiente a cada fuente fotométrica de Gaia, más del 98% de los candidatos carecían de una observación espectroscópica real, dejando un conjunto de datos prácticamente vacío. Invirtiendo el sentido de la consulta —partiendo de [SDSS]{.acr} y buscando la contrapartida en Gaia— se garantiza que cada candidato dispone de espectro desde el inicio, lo que eleva la tasa de coincidencia con Gaia a un 20-50%, muy por encima del 1% obtenido con el planteamiento original.
 
-4. Preprocesado de los datos: limpieza de anomalías y artefactos, y homogeneización de los espectros de ambas fuentes para que sean directamente comparables. En esta etapa resulta fundamental comparar la [SNR]{.acr} de los espectros: cada observatorio puede medir el mismo objeto un número distinto de veces y en condiciones diferentes, por lo que la [SNR]{.acr} puede variar entre observaciones de un mismo cuerpo. Por ello, los pares de espectros que se usen para entrenar y evaluar el modelo deben presentar una [SNR]{.acr} equivalente.
+4. Preprocesado de los datos: limpieza de anomalías y artefactos, y homogeneización de los espectros de ambas fuentes para que sean directamente comparables. En esta etapa se compara la [SNR]{.acr} de los espectros: cada observatorio puede medir el mismo objeto un número distinto de veces y en condiciones diferentes, por lo que la [SNR]{.acr} puede variar entre observaciones de un mismo cuerpo. Por ello, los pares de espectros que se usen para entrenar y evaluar el modelo deben presentar una [SNR]{.acr} equivalente.
 
 5. Preparación de los conjuntos de entrenamiento, validación y test: partición del conjunto de datos garantizando una distribución homogénea de las muestras, también en términos de [SNR]{.acr}, y de manera reproducible.
 
@@ -350,7 +350,7 @@ Para un correcto desarrollo del proyecto, es necesario garantizar una serie de r
 El conjunto de datos usado para el entrenamiento del modelo debe estar formado por pares de espectros de Gaia y [SDSS]{.acr} que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos, en concreto, la tabla de mejores vecinos entre Gaia DR3 y [SDSS]{.acr} DR13. 
 
 Cada muestra usada debe contener, como mínimo, el identificador de este objeto dentro de su base de datos, el espectro, la malla de longitud de onda correspondiente y la relación señal-ruido del espectro. En el caso de [SDSS]{.acr} el [SNR]{.acr} será obtenido a partir de la variable *ivar*.
-El identificador del objeto dependerá de la base de datos, ya que en Gaia será suficiente con el *source_id*, mientras que en [SDSS]{.acr} se necesitará *specObjID*, *plate*, *mjd* y *fiberID*.
+El identificador del objeto dependerá de la base de datos, ya que en Gaia será suficiente con el *source_id*, mientras que en [SDSS]{.acr} se necesitará *specObjID*, *plate*, *mjd* y *fiberID* que hacen referencia al identificador único del objeto en la base de datos de [SDSS]{.acr}, el número de placa usada en la observación, la fecha de observación y el número de fibra dentro de la placa asignada al objeto observado.
 
 El conjunto de datos original deberá ser almacenado en un formato que sea eficiente para su uso en el modelo. En este trabajo se consideró el formato HDF5, ya que permite organizar en un solo fichero todos los datos necesarios para su entrenamiento. 
 
@@ -435,7 +435,7 @@ La quinta etapa recupera los espectros de Gaia de los objetos ya depurados. Dado
 
 Finalmente, la sexta etapa homogeneiza y combina ambas fuentes: los espectros de [SDSS]{.acr} se remuestrean a una rejilla común de longitudes de onda y se guardan junto a los de Gaia correspondientes en un único fichero con un formato optimizado HDF5. Este fichero es además acumulativo, de forma que sucesivas ejecuciones incorporan los pares nuevos sin descartar los ya almacenados.
 
-Este proceso de extracción ha permitido reunir hasta el momento un conjunto de datos real con más de 55 000 pares de espectros emparejados de Gaia y [SDSS]{.acr}.
+Este proceso de extracción ha permitido reunir un conjunto de datos real con más de 55 000 pares de espectros emparejados de Gaia y [SDSS]{.acr}.
 
 #### Análisis visual de los datos obtenidos
 
@@ -450,7 +450,7 @@ El diagrama de los datos usados en este estudio es el que se observa en la @fig-
 
 :::{#fig-HR-diagram}
 
-![](_partials/assets/DiagramaHR.png)
+![](images/diagrama_HR_hexbin.png)
 
 *Fuente: Elaboración propia*
 
