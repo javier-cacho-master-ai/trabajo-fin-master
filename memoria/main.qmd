@@ -848,6 +848,73 @@ Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicion
 
 ### Resultados obtenidos con el modelo convolucional 1D
 
+En el caso del modelo convolucional residual, el entrenamiento se detuvo en la época 11 por la función de parada temprana. La evolución de las métricas, representada en la @fig-loss-evolution-cnn, @fig-mse-evolution-cnn y @fig-mae-evolution-cnn, muestra un descenso muy rápido durante las dos primeras épocas seguido de un estancamiento, a pesar de las sucesivas reducciones de la tasa de aprendizaje aplicadas durante el proceso.
+
+:::{#fig-loss-evolution-cnn}
+
+![](_partials/assets/loss_function_evolution_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución de la función de pérdida del modelo convolucional 1D
+:::
+
+:::{#fig-mse-evolution-cnn}
+
+![](_partials/assets/mse_evolution_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MSE del modelo convolucional 1D
+:::
+
+:::{#fig-mae-evolution-cnn}
+
+![](_partials/assets/mae_evolution_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MAE del modelo convolucional 1D
+:::
+
+Este comportamiento sugiere que la red converge casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación permanecen muy próximas entre sí durante todo el proceso, por lo que tampoco en esta arquitectura se aprecian indicios de sobreajuste.
+
+Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de test, obteniendo las métricas recogidas en la @tbl-test-cnn, muy similares a las del conjunto de validación.
+
+::: {#tbl-test-cnn}
+
+| Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|
+| 0.0153 | 0.1137 | 0.0352 |
+
+*Fuente: Elaboración propia*
+
+Resultados obtenidos sobre el conjunto de test con el modelo convolucional 1D.
+:::
+
+Cabe recordar que estas métricas se calculan sobre espectros normalizados con la mediana del flujo de Gaia, una estrategia distinta a las empleadas en el modelo denso, por lo que los valores no son directamente comparables con los de las tablas anteriores.
+
+En la @fig-generado_cnn_123 y la @fig-generado_cnn_191 se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, una vez deshecha la normalización.
+
+:::{#fig-generado_cnn_123}
+
+![](_partials/assets/espectro_predicho_123_full_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo convolucional 1D.
+:::
+
+:::{#fig-generado_cnn_191}
+
+![](_partials/assets/espectro_predicho_191_full_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo convolucional 1D.
+:::
+
+En ambos ejemplos se observa que el espectro predicho se mantiene muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llega a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
 
 ### Resultados obtenidos con el modelo recurrente
 
