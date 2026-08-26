@@ -5,16 +5,23 @@ director  : "Dr. Guillermo Torralba Elipe"
 degree    : "Máster Universitario en Inteligencia Artificial"
 work_type : "Proyecto Piloto"
 date      : 2026-02-05
-keywords  : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
+keywords  : [inteligencia artificial generativa, aprendizaje automático, espectro azul, espectro rojo, Gaia, astronomía]
+keywords_en : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
 ---
 
 ## Resumen
 
-En este trabajo proponemos un enfoque innovador para mejorar la calidad de las señales astronómicas captadas por los fotómetros azul y rojo (BP/RP, *Blue Photometer* y *Red Photometer*) del satélite Gaia. Al entrenar un modelo a partir de la gran cantidad de datos de baja resolución recopilados por la misión Gaia y cruzarlos con las observaciones terrestres de alta resolución, se esperan encontrar patrones ocultos que puedan aplicarse a los datos de baja resolución para aproximar los de alta resolución. Para evaluar este método se usan varios subconjuntos del conjunto de datos original y se comparan con las observaciones reales de fuentes de alta resolución terrestres.
+En este trabajo se propone un enfoque basado en aprendizaje profundo para mejorar la calidad de los espectros de baja resolución captados por los fotómetros azul (BP) y rojo (RP) del satélite Gaia, aproximándolos a espectros de mayor resolución equivalentes a los del *Sloan Digital Sky Survey* (SDSS). Para ello se ha construido un conjunto de datos propio con más de 55 000 pares de espectros emparejados de Gaia y SDSS, obtenido al cruzar la tercera liberación de datos de Gaia (DR3) con la decimotercera de SDSS (DR13) mediante la tabla oficial de mejores vecinos, y depurado con criterios de calidad basados en la relación señal-ruido y en la coherencia entre ambas fuentes. Sobre este conjunto se han entrenado y comparado tres arquitecturas de red neuronal: una red densa, una red convolucional unidimensional (CNN) y una red recurrente (RNN).
+
+Los resultados muestran que la red densa, combinada con una normalización por la mediana de cada espectro, proporciona las mejores aproximaciones: las predicciones reproducen la morfología general del espectro de SDSS, incluidos sus picos más acentuados, y la similitud de las métricas obtenidas en entrenamiento, validación y test descarta el sobreajuste. Además de la comparación directa con las observaciones reales, los espectros generados se han validado estimando con la librería iSpec parámetros astrofísicos como la temperatura efectiva, la gravedad superficial y la metalicidad, con errores relativos medianos inferiores al 1% en temperatura y gravedad respecto a los derivados de los espectros reales de SDSS. Estos resultados demuestran la viabilidad de emplear redes neuronales para trasladar el detalle de las observaciones terrestres de alta resolución al extenso catálogo de Gaia.
+
 
 ## Abstract
 
-In this work we propose an innovative approach to improve the quality of the astronomical signals captured by the blue and red photometers (BP/RP) of the Gaia satellite. By training a model from the huge amount of low resolution data collected by the Gaia mission and the cross matched best high resolution ground based observations we expect to find hidden patterns that can be applied to allow the usage of these low resolution spectrum as proxy for high resolution ones. We evaluate our method on several benchmark subsets of the original dataset by comparing it with the real observations from high resolution sources.
+This work proposes a deep learning-based approach to improve the quality of the low-resolution spectra captured by the blue (BP) and red (RP) photometers of the Gaia satellite, approximating them to higher-resolution spectra equivalent to those of the *Sloan Digital Sky Survey* (SDSS). To this end, a dedicated dataset of more than 55,000 matched pairs of Gaia and SDSS spectra has been built by cross-matching the third Gaia data release (DR3) with the thirteenth SDSS data release (DR13) through the official best-neighbour table, and refined with quality criteria based on the signal-to-noise ratio and on the consistency between both sources. Three neural network architectures have been trained and compared on this dataset: a dense network, a one-dimensional convolutional network (CNN), and a recurrent network (RNN).
+
+The results show that the dense network, combined with a per-spectrum median normalization, provides the best approximations: the predictions reproduce the overall morphology of the SDSS spectrum, including its most prominent peaks, and the similarity of the metrics obtained on the training, validation, and test sets rules out overfitting. In addition to the direct comparison against real observations, the generated spectra have been validated by estimating astrophysical parameters with the iSpec library, such as the effective temperature, the surface gravity, and the metallicity, with median relative errors below 1% in temperature and gravity with respect to those derived from the real SDSS spectra. These results demonstrate the feasibility of using neural networks to transfer the detail of high-resolution ground-based observations to the vast Gaia catalogue.
+
 
 ## Organización del trabajo en grupo
 
@@ -59,7 +66,6 @@ y las siguientes muestran solo la sigla.
 
 ## Introducción
  
-
 En diciembre de 2013 comenzó la misión Gaia [@gaiaDR1] con el objetivo de crear un mapa que permita conocer más detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de [ESA]{.acr}, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en el 1989 y finalizó en el 1993. Los datos que Gaia aporta son 200 veces más precisos que los obtenidos por dicho satélite, pero aun así, de menor calidad que los obtenidos por otros proyectos actuales.  
 
 La propia agencia [ESA]{.acr} describe en el reporte publicado en 2013 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto, pero sin un orden o punto de referencia, en sus propias palabras, describen lo siguiente:<br>
@@ -417,7 +423,7 @@ La primera etapa parte del catálogo espectroscópico de [SDSS]{.acr} y recopila
 
 #### Cruce inverso con Gaia
 
-A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} busca la fuente equivalente en Gaia que además disponga de espectro BP/RP. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
+A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} busca la fuente equivalente en Gaia que además disponga de espectro BP/RP. La búsqueda se realiza localizando el identificador fotométrico de cada objeto de [SDSS]{.acr} en la tabla de cruce oficial *gaiadr3.sdssdr13_best_neighbour*, descrita en la sección de conjuntos de datos, y aplicando el umbral de aceptación de 2 segundos de arco de distancia angular allí definido; de las fuentes así emparejadas se conservan solo aquellas que publican el espectro BP/RP continuo. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
 
 #### Descarga de los espectros de [SDSS]{.acr}.
 

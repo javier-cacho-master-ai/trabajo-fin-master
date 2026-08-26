@@ -20,6 +20,7 @@
   abstract_es: none,
   abstract_en: none,
   keywords: (),
+  keywords_en: (),
   group_work_intro: none,
   group_work_rows: (),
   body,
@@ -60,6 +61,7 @@
     abstract_es: abstract_es,
     abstract_en: abstract_en,
     keywords: keywords,
+    keywords_en: keywords_en,
   )
 
   table-of-contents(header-text: header-text)

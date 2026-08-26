@@ -7,6 +7,7 @@
   abstract_es: none,
   abstract_en: none,
   keywords: (),
+  keywords_en: (),
 ) = {
   // First roman-numbered page after the cover; the cover itself counts as
   // page I even though its number isn't shown (matches the reference, where
@@ -30,8 +31,8 @@
     #index-heading[Abstract]
     #abstract_en
 
-    #if keywords.len() > 0 [
-      #strong[Keywords:] #keywords.join(", ")
+    #if keywords_en.len() > 0 [
+      #strong[Keywords:] #keywords_en.join(", ")
     ]
   ]
 }
