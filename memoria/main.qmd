@@ -573,6 +573,15 @@ El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas
 
 #### Modelo convolucional 1D
 
+Como segunda arquitectura se planteó un modelo basado en capas convolucionales de una dimensión. La motivación de este enfoque reside en la propia naturaleza de los espectros: las estructuras que los caracterizan, como las líneas de absorción y emisión o la forma local del continuo, son patrones locales que pueden aparecer en cualquier punto del rango de longitudes de onda. Las convoluciones explotan precisamente esta localidad, ya que aplican los mismos filtros a lo largo de todo el espectro, lo que reduce drásticamente el número de parámetros respecto a una red densa y favorece que el modelo generalice los patrones aprendidos en una zona del espectro a las demás.
+
+El diseño sigue un planteamiento de superresolución análogo al de la primera etapa del modelo de @haghjoo2026learning. En primer lugar, el espectro de Gaia se interpola linealmente sobre la malla de longitudes de onda de [SDSS]{.acr}, obteniendo así una versión de baja resolución alineada punto a punto con la salida esperada. La red recibe este espectro interpolado y aprende únicamente la corrección que debe aplicarse sobre él, gracias a una conexión residual global que suma la entrada interpolada a la salida de la red. De esta forma el modelo no necesita aprender la forma general del continuo, que ya viene dada por la interpolación, y puede concentrar su capacidad en recuperar el detalle espectral que la resolución de Gaia no capta.
+
+En cuanto a la arquitectura interna, el modelo se compone de una capa convolucional inicial de 64 filtros con un núcleo de tamaño 9, seguida de cuatro bloques residuales. Cada bloque contiene dos convoluciones de 64 filtros con núcleo de tamaño 7 y activación ELU, junto con un atajo que suma la entrada del bloque a su salida para facilitar la propagación del gradiente. Una última capa convolucional con un único filtro y núcleo de tamaño 5 genera la corrección final. En total, la red cuenta con aproximadamente 230 000 parámetros entrenables, una cifra muy inferior a la del modelo denso descrito anteriormente.
+
+Respecto a la normalización, en este caso ambos espectros del par se escalan con la mediana del flujo del espectro de Gaia. Al depender únicamente de la entrada, esta estrategia permite deshacer la normalización de la predicción sin necesidad de conocer el espectro real de [SDSS]{.acr}, lo que resulta imprescindible al aplicar el modelo sobre observaciones nuevas.
+
+El resto de la configuración del entrenamiento se mantuvo idéntica a la del modelo base: función de pérdida Huber con $\delta = 1$, optimizador Adam con tasa de aprendizaje de 0.0001 y limitación a 1 de la norma de los gradientes, lotes de 64 muestras, un máximo de 50 épocas y las mismas funciones de parada temprana y reducción de la tasa de aprendizaje.
 
 #### Modelo recurrente
 Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró como una secuencia en función de la longitud de onda, donde cada longitud de onda era un paso de la secuencia, y el flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
@@ -839,6 +848,73 @@ Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicion
 
 ### Resultados obtenidos con el modelo convolucional 1D
 
+En el caso del modelo convolucional residual, el entrenamiento se detuvo en la época 11 por la función de parada temprana. La evolución de las métricas, representada en la @fig-loss-evolution-cnn, @fig-mse-evolution-cnn y @fig-mae-evolution-cnn, muestra un descenso muy rápido durante las dos primeras épocas seguido de un estancamiento, a pesar de las sucesivas reducciones de la tasa de aprendizaje aplicadas durante el proceso.
+
+:::{#fig-loss-evolution-cnn}
+
+![](_partials/assets/loss_function_evolution_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución de la función de pérdida del modelo convolucional 1D
+:::
+
+:::{#fig-mse-evolution-cnn}
+
+![](_partials/assets/mse_evolution_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MSE del modelo convolucional 1D
+:::
+
+:::{#fig-mae-evolution-cnn}
+
+![](_partials/assets/mae_evolution_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MAE del modelo convolucional 1D
+:::
+
+Este comportamiento sugiere que la red converge casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación permanecen muy próximas entre sí durante todo el proceso, por lo que tampoco en esta arquitectura se aprecian indicios de sobreajuste.
+
+Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de test, obteniendo las métricas recogidas en la @tbl-test-cnn, muy similares a las del conjunto de validación.
+
+::: {#tbl-test-cnn}
+
+| Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|
+| 0.0153 | 0.1137 | 0.0352 |
+
+*Fuente: Elaboración propia*
+
+Resultados obtenidos sobre el conjunto de test con el modelo convolucional 1D.
+:::
+
+Cabe recordar que estas métricas se calculan sobre espectros normalizados con la mediana del flujo de Gaia, una estrategia distinta a las empleadas en el modelo denso, por lo que los valores no son directamente comparables con los de las tablas anteriores.
+
+En la @fig-generado_cnn_123 y la @fig-generado_cnn_191 se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, una vez deshecha la normalización.
+
+:::{#fig-generado_cnn_123}
+
+![](_partials/assets/espectro_predicho_123_full_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo convolucional 1D.
+:::
+
+:::{#fig-generado_cnn_191}
+
+![](_partials/assets/espectro_predicho_191_full_cnn.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo convolucional 1D.
+:::
+
+En ambos ejemplos se observa que el espectro predicho se mantiene muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llega a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
 
 ### Resultados obtenidos con el modelo recurrente
 
