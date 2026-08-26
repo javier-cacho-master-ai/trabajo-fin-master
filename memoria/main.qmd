@@ -423,7 +423,7 @@ La primera etapa parte del catálogo espectroscópico de [SDSS]{.acr} y recopila
 
 #### Cruce inverso con Gaia
 
-A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} busca la fuente equivalente en Gaia que además disponga de espectro BP/RP. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
+A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} busca la fuente equivalente en Gaia que además disponga de espectro BP/RP. La búsqueda se realiza localizando el identificador fotométrico de cada objeto de [SDSS]{.acr} en la tabla de cruce oficial *gaiadr3.sdssdr13_best_neighbour*, descrita en la sección de conjuntos de datos, y aplicando el umbral de aceptación de 2 segundos de arco de distancia angular allí definido; de las fuentes así emparejadas se conservan solo aquellas que publican el espectro BP/RP continuo. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
 
 #### Descarga de los espectros de [SDSS]{.acr}.
 
