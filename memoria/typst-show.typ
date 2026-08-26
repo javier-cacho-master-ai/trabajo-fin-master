@@ -16,6 +16,11 @@
       "$keywords$",
     $endfor$
   ),
+  keywords_en: (
+    $for(keywords_en)$
+      "$keywords_en$",
+    $endfor$
+  ),
 
   group_work_intro: [$group_work_intro$],
   group_work_rows: (
