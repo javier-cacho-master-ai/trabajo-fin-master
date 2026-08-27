@@ -801,20 +801,20 @@ Se aprecia como la mediana del error de la temperatura se ubica en todos los mod
 Estos valores indican una relación de similitud entre las propiedades físicas de ambos espectros, por lo que podemos afirmar que los modelos densos estudiados conllevan una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con iSpec en rangos de error pequeños. 
 
 <!-- TO DO falta ejecutar el SNR de nuevo-->
-Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-generado_snr_123 y @fig-generado_snr_191.
+Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-generado_snr_10 y @fig-generado_snr_245.
 
-:::{#fig-generado_snr_123}
+:::{#fig-generado_snr_10}
 
-![](_partials/assets/espectro_predicho_123_full_snr.png)
+![](images/ejemplo_10_snr.png)
 
 *Fuente: Elaboración propia*
 
 Ejemplo 1 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.
 :::
 
-:::{#fig-generado_snr_191}
+:::{#fig-generado_snr_245}
 
-![](_partials/assets/espectro_predicho_191_full_snr.png)
+![](images/ejemplo_245_snr.png)
 
 *Fuente: Elaboración propia*
 
@@ -828,7 +828,7 @@ Por otro lado, las métricas obtenidas se encuentran en la @tbl-snr-gaia:
 
 | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
 |---|---:|---:|
-| 0.0047 | 0.0503 | 0.0130 |
+| 0.0031 | 0.0424 | 0.0089 |
 
 *Fuente: Elaboración propia*
 
