@@ -6,8 +6,10 @@ import pandas as pd
 from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
 
-# Configuramos iSpec
-ISPEC_DIR = "/Users/carlasequero/iSpec"
+# Configuramos iSpec con una ruta relativa a este fichero
+ISPEC_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "lib", "iSpec")
+)
 
 if ISPEC_DIR not in sys.path:
     sys.path.insert(0, ISPEC_DIR)
@@ -32,27 +34,31 @@ ISPEC_CONFIG = {
     "default_mh": 0.0,
 
     # Definimos los recursos de iSpec
-    "atmosphere_dir":
-        "/Users/carlasequero/iSpec/input/atmospheres/"
-        "ATLAS9.Castelli/",
-       # "MARCS.GES/",
+    "atmosphere_dir": os.path.join(
+        ISPEC_DIR, "input", "atmospheres",
+        "ATLAS9.Castelli/"
+        # "MARCS.GES/"
+    ),
 
-    "atomic_linelist_file":
-        "/Users/carlasequero/iSpec/input/linelists/transitions/"
-        "VALD.300_1100nm/atomic_lines.tsv",
+    "atomic_linelist_file": os.path.join(
+        ISPEC_DIR, "input", "linelists", "transitions",
+        "VALD.300_1100nm", "atomic_lines.tsv"
+    ),
 
-    "solar_abundances_file":
-        "/Users/carlasequero/iSpec/input/abundances/"
-        "Grevesse.2007/stdatom.dat",
+    "solar_abundances_file": os.path.join(
+        ISPEC_DIR, "input", "abundances",
+        "Grevesse.2007", "stdatom.dat"
+    ),
 
-    "isotopes_file":
-        "/Users/carlasequero/iSpec/input/isotopes/"
-        "SPECTRUM.lst",
+    "isotopes_file": os.path.join(
+        ISPEC_DIR, "input", "isotopes", "SPECTRUM.lst"
+    ),
 
-    "line_regions_file":
-        "/Users/carlasequero/iSpec/input/regions/"
-        "47000_SPECTRUM/"
-        "spectrum_synth_good_for_params_all.txt",
+    "line_regions_file": os.path.join(
+        ISPEC_DIR, "input", "regions",
+        "47000_SPECTRUM",
+        "spectrum_synth_good_for_params_all.txt"
+    ),
 
     # Elimina líneas teóricamente débiles
     "minimum_theoretical_depth": 0.01,
