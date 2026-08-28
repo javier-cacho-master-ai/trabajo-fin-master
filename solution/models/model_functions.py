@@ -81,3 +81,45 @@ def plot_worst_best_predictions(
         plt.grid(alpha=0.2)
         plt.legend()
         plt.show()
+
+def calculate_chi2(y_real, y_pred, y_ivar):
+
+    chi2 = np.sum(((y_real - y_pred)**2)* y_ivar)
+
+    return chi2 / len(y_real)
+
+
+def calculate_all_chi2(y_real, y_pred, y_ivar, plot=True):
+    chi2_values = []
+
+    for i in range(len(y_real)):
+        chi2_values.append(calculate_chi2(y_real[i], y_pred[i], y_ivar[i]))
+
+    chi2_values = np.asarray(chi2_values)
+
+    if plot:
+        plt.figure(figsize=(8, 5))
+
+        plt.hist(
+            chi2_values,
+            bins=40,
+            alpha=0.7
+        )
+
+        median_chi2 = np.median(chi2_values)
+
+        plt.axvline(
+            median_chi2,
+            linestyle="--",
+            linewidth=2,
+            label=f"Mediana = {median_chi2:.2f}"
+        )
+
+        plt.xlabel("chi cuadrado")
+        plt.ylabel("Número de espectros")
+        plt.title("Distribución del chi cuadrado entre espectros reales y predichos")
+
+        plt.legend()
+        plt.show()
+
+    return chi2_values
