@@ -71,6 +71,16 @@ ISPEC_CONFIG = {
 # Función para cargar recursos
 def load_ispec_resources(config=ISPEC_CONFIG):
 
+    # Sin el sintetizador compilado, ispec.model_spectrum genera espectros
+    # sintéticos de ceros y el ajuste devuelve los parámetros iniciales de Gaia
+    # intactos: el error real - predicho saldría exactamente 0 para todo objeto
+    if config["code"] == "spectrum" and not ispec.is_spectrum_support_enabled():
+        raise RuntimeError(
+            "El sintetizador SPECTRUM de iSpec no está compilado "
+            "(falta ispec/synthesizer.so). Ejecuta 'make spectrum' en "
+            "lib/iSpec con el entorno del proyecto activo."
+        )
+
     modeled_layers_pack = ispec.load_modeled_layers_pack(config["atmosphere_dir"])
 
     solar_abundances = ispec.read_solar_abundances(config["solar_abundances_file"])
@@ -377,6 +387,15 @@ def analyze_spectrum_with_ispec(
         tmp_dir=None,
         code=config["code"]
     )
+
+    # Si la síntesis ha fallado, el espectro modelado queda a cero y los
+    # parámetros devueltos son los iniciales sin ajustar: no es un resultado
+    if (
+        modeled_synth_spectrum is None
+        or not np.any(modeled_synth_spectrum["flux"])
+    ):
+        print("Error: la síntesis ha devuelto un espectro nulo")
+        return None
 
     result = {
         "initial_teff": teff,

@@ -6,6 +6,10 @@
 # Data
 data/
 
+# Snapshot de datos de test de los modelos: se regenera desde data/splits
+# y supera el limite de tamano de fichero de GitHub
+models/**/*_test_data.npz
+
 # temp files
 temp_*
 
