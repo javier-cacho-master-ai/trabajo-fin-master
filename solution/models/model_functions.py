@@ -84,9 +84,13 @@ def plot_worst_best_predictions(
 
 def calculate_chi2(y_real, y_pred, y_ivar):
 
-    chi2 = np.sum(((y_real - y_pred)**2)* y_ivar)
+    valid = (
+        np.isfinite(y_ivar)
+        & (y_ivar > 0)
+    )
+    chi2 = np.sum((pow((y_real[valid] - y_pred[valid]), 2))* y_ivar[valid])
 
-    return chi2 / len(y_real)
+    return chi2 / len(y_real[valid])
 
 
 def calculate_all_chi2(y_real, y_pred, y_ivar, plot=True):
