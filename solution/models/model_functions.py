@@ -111,6 +111,8 @@ def calculate_all_chi2(y_real, y_pred, y_ivar, plot=True):
         )
 
         median_chi2 = np.median(chi2_values)
+        maximum_chi2 = np.max(chi2_values)
+        minimum_chi2 = np.min(chi2_values)
 
         plt.axvline(
             median_chi2,
@@ -125,5 +127,8 @@ def calculate_all_chi2(y_real, y_pred, y_ivar, plot=True):
 
         plt.legend()
         plt.show()
+
+        print(f"Mínimo: {minimum_chi2: .2f}")
+        print(f"Máximo: {maximum_chi2: .2f}")
 
     return chi2_values

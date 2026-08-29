@@ -444,6 +444,24 @@ Para analizar la distribución física de los datos usados en el entrenamiento d
 En concreto, se considera la fuente de datos de Gaia. En el eje horizontal se grafica la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
 En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertirlos a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
+
+La fórmula usada parte de la representación del diagrama [HR]{.acr} realizada en el trabajo de @GaiaCollaboration2018HRD. En este artículo se usa la siguiente fórmula para representar todas las observaciones en la misma escala: 
+$$ M_G = G + 5 + 5\log_{10}\left(\frac{\varpi}{1000}\right) $$
+
+Aplicando las propiedades de los logaritmos a la fórmula anterior:
+
+$$ M_G = G + 5 + 5\left[\log_{10}(\varpi)-\log_{10}(1000)\right] $$
+
+Como $\log_{10}(1000)=3$, se obtiene: 
+
+$$ M_G = G + 5 + 5\log_{10}(\varpi)-15 $$
+
+y, simplificando la expressión :
+
+$$ M_G = G + 5\log_{10}(\varpi)-10 $$
+
+Donde G corresponde *phot_g_mean_mag* y $\varpi$ es el paralaje expresado en milisegundos de arco.
+
 Tras esta modificación, aquellas estrellas más luminosas, presentan valores más bajos incluso negativos, mientras que las menos luminosas se mantienen en valores más altos y positivos. 
 
 El diagrama de los datos usados en este estudio es el que se observa en la @fig-HR-diagram:
@@ -569,7 +587,7 @@ En esta, *a* representa el error entre el valor real y predicho, y $\delta$ defi
 Este comportamiento permite rebajar la penalización en aquellos casos en los que los espectros tengan desviaciones anómalas que no deban definir el comportamiento del modelo. 
 Se consideró el optimizador Adam [@kingma2014adam] con una tasa de aprendizaje de 0.0001 y una limitación a 1 en la norma de los gradientes con el objetivo de evitar las actualizaciones excesivas.
 
-El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana <!--EarlyStopping--> que monitorea la pérdida del set de validación y detiene el entrenamiento si después de 5 épocas no ha mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estanca. 
+El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana <!--EarlyStopping--> que monitorea la pérdida del set de validación y detiene el entrenamiento si después de 5 épocas no ha mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estanca durante dos épocas. 
 
 #### Modelo convolucional 1D
 
@@ -578,9 +596,9 @@ El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas
 Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró como una secuencia en función de la longitud de onda, donde cada longitud de onda era un paso de la secuencia, y el flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
 
 Los primeros intentos de arquitectura recurrente se basaron en capas recurrentes simples y [GRU]{.acr}.
-En los primeros intentos, las funciones de pérdida, optimizador y parada temprana se mantuvieron igual que las descritas en las redes neuronales densas, dado que habían presentado un buen funcionamiento con estos modelos.
+En los primeros intentos, las funciones de pérdida, optimizador y parada temprana se mantuvieron igual que las descritas en las redes neuronales densas, dado que habían presentado un buen funcionamiento con estos modelos. Pero finalmente se redujo las épocas de espera dado que la diferencia entre esperar 2 o 4 épocas no reflejaba mejoras en las estadísticas pero sí en el tiempo de entrenamiento.
 
-La arquitectura usada para los modelos más simples incorporaba capas densas similares a las que anteriormente habían sido definidas pero con la adición de una capa recurrente simple de dimensión 128, o dos capas de [GRU]{.acr} de dimensión 128 consecutivas, configurando la primera como *return_sequences = True* para que devolviese la representación de cada punto y la otra como *False* para que devolviese el último estado de la secuencia y que este vector fuese usado como entrada a las capas densas.
+La arquitectura usada para los modelos más simples incorporaban capas densas similares a las que anteriormente habían sido definidas pero con la adición de una capa recurrente simple de dimensión 128, o dos capas de [GRU]{.acr} de dimensión 128 consecutivas, configurando la primera como *return_sequences = True* para que devolviese la representación de cada punto y la otra como *False* para que devolviese el último estado de la secuencia y que este vector fuese usado como entrada a las capas densas.
 
 Por otro lado, se probaron variantes bidireccionales de la arquitectura recurrente [@schuster1997bidirectional]. Esta capa procesa la secuencia de puntos en ambos sentidos, en sentido creciente y decreciente de longitud de onda. Se incluyeron versiones con y sin capas de normalización internas.
 
@@ -635,7 +653,7 @@ Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el 
 
 Cabe destacar que las métricas calculadas se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
-En las gráficas detalladas de la @fig-generado_global_10 y la @fig-generado_global_245, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. 
+En las gráficas detalladas de la @fig-generado_global_10 y la @fig-generado_global_245, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. Las observaciones representadas formaron parte del conjunto de test.  
 
 :::{#fig-generado_global_10}
 
@@ -711,7 +729,7 @@ Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una n
 Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.
 :::
 
-Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual pequeá, pero positiva hacia este segundo tipo de normalización. 
+Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. 
 
 Por último, si nos fijamos en las figuras @fig-generado_maximo_espectro_10 y @fig-generado_maximo_espectro_245 , observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
 
@@ -842,9 +860,149 @@ Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicion
 
 ### Resultados obtenidos con el modelo recurrente
 
+Después de entrenar diversas combinaciones de las características descritas para los modelos en el apartado de redes recurrentes, podemos destacar 3 modelos que obtuvieron los mejores resultados entre los estudiados. 
+
+La primera arquitectura destacable, formada por una capa de [GRU]{.acr} y dos densas con función de activación ReLU, junto a las mismas funciones de disminución de la tasa de aprendizaje y parada temprana que los modelos basados únicamente en redes neuronales densas. Después de 23 épocas se obtuvieron las  métricas de entrenamiento, validación y test descritas en la @tbl-GRU-metrics:
+
+::: {#tbl-GRU-metrics}
+
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0045 | 0.0482 | 0.0119 |
+| Validación | 0.0045 | 0.0485 | 0.0138 |
+| Test | 0.0045 | 0.0486 | 0.0123 |
+
+*Fuente: Elaboración propia*
+
+Resultados obtenidos con el primer modelo basado en GRU para los diferentes conjuntos de datos.
+:::
+
+Se puede observar como no se aprecian diferencias significativas entre los grupos, pudiendo confirmar la inexistencia de sobreajuste al conjunto de entrenamiento.
+
+Respecto a las predicciones realizadas sobre las mismas observaciones que en los casos anteriores, obtenemos las figuras @fig-rnn-small_10 y @fig-rnn-small_245 :
+
+:::{#fig-rnn-small_10}
+
+![](images/ejemplo_10_RNN_small.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes con una capa de GRU.
+:::
+
+:::{#fig-rnn-small_245}
+
+![](images/ejemplo_245_RNN_small.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una capa de GRU.
+:::
+
+Los siguientes modelos a mencionar, usaron funciones de parada temprana con espera de 2 épocas y reducción de la tasa de aprendizaje con 1 época. 
+
+La siguiente arquitectura usó una capa Bidireccional después de la de entrada, y a continuación, 4 capas densas con capas de funciones de activación ReLU. 
+
+Las métricas obtenidas tras el entrenamiento de las 6 épocas del modelo fueron los incluidos en la @tbl-BIRNN-metrics :
+
+::: {#tbl-BIRNN-metrics}
+
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0047 | 0.0513 | 0.0124 |
+| Validación | 0.0048 | 0.0540 | 0.0146 |
+| Test | 0.0048 | 0.0533 | 0.0129 |
+
+*Fuente: Elaboración propia*
+
+
+Resultados obtenidos con el modelo basado en RNN bidireccionales para los diferentes conjuntos de datos.
+:::
+
+Estos valores son muy similares a los obtenidos en el modelo anterior, siendo entre un 0.001 y 0.01 más altos según la métrica. Siguen siendo buenas aproximaciones e indicando un buen comportamiento del modelo, pero no presentan una mejora significativa comparado con el anterior. 
+
+
+Los ejemplos usados para la representación visual de las aproximaciones, tampoco presentan grandes diferencias, tal y como observamos en las figuras @fig-BIRNN_10 y @fig-birnn-245
+
+:::{#fig-BIRNN_10}
+
+![](images/ejemplo_10_BIRNN.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes con una capa bidireccional.
+:::
+
+:::{#fig-birnn-245}
+
+![](images/ejemplo_245_BIRNN.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una capa bidireccional.
+:::
+
+
+El último modelo destacable de los estudiados en este apartado, se basa en dos capas Bidireccionales y la aplicación de la función de Atención sobre todos los puntos del espectro junto a las capas densas anteriormente mencionadas. 
+Esta adición tampoco representa grandes mejoras en las métricas del modelo. Los valores pueden observarse en la @tbl-ATT-metrics.
+
+::: {#tbl-ATT-metrics}
+
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0048 | 0.0510 | 0.0127 |
+| Validación | 0.0047 | 0.0502 | 0.0143 |
+| Test | 0.0046 | 0.0506 | 0.0127 |
+
+*Fuente: Elaboración propia*
+
+
+Resultados obtenidos con el modelo basado en RNN bidireccionales y la función de Atención para los diferentes conjuntos de datos.
+:::
+
+Igual que en las métricas comentadas, en los espectros usados como punto de control tampoco se aprecian grandes diferencias como se puede observar en las imágenes de la @fig-ATT_10 y @fig-ATT_245. 
+
+:::{#fig-ATT_10}
+
+![](images/ejemplo_10_ATT.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes con una función de Atención.
+:::
+
+:::{#fig-ATT-245}
+
+![](images/ejemplo_245_ATT.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una función de Atención.
+:::
+
+Por último, si nos basamos en los resultados obtenidos de la estimación de características astrofísicas con *iSpec*, las diferencias entre los valores predichos con los espectros de [SDSS]{.acr} reales y los predichos por los modelos son los incluidos en la @tbl-RNN-iSpec:
+
+::: {#tbl-RNN-iSpec}
+
+| Modelo | Error relativo de Teff | Error relativo de log(g) | Error absoluto de M/H |
+|---|---:|---:|---:|
+| GRU | 0.24% | 0.09% | 0.014dex |
+| Bidireccional | 0.32% | 0.11% | 0.019dex |
+| Atención | 0.21% | 0.10% | 0.019dex |
+
+*Fuente: Elaboración propia*
+
+
+Resultados obtenidos con iSpec en los modelos destacados basados en RNNs.
+:::
+
+De estos resultados se aprecia que las arquitecturas con GRU básicas y Atención presentan mejores resultados que el modelo con solo una capa Bidireccional. 
+
 
 ### Comparación entre modelos 
 
+Para comparar la eficacia de cada modelo estudiado, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del cálculo de chi-cuadrado para cada observación en el conjunto de test. 
+La fórmula usada se basó en 
 
 ## Conclusiones y trabajo futuro
 
