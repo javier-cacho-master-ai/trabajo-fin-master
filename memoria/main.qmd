@@ -960,7 +960,7 @@ Esta adición tampoco representa grandes mejoras en las métricas del modelo. Lo
 Resultados obtenidos con el modelo basado en RNN bidireccionales y la función de Atención para los diferentes conjuntos de datos.
 :::
 
-Igual que en las métricas comentadas, en los espectros usados como punto de control tampoco se aprecian grandes diferencias como se puede observar en las imágenes de la @fig-ATT_10 y @fig-ATT_245. 
+Igual que en las métricas comentadas, en los espectros usados como punto de control tampoco se aprecian grandes diferencias como se puede observar en las imágenes de la @fig-ATT_10 y @fig-ATT-245. 
 
 :::{#fig-ATT_10}
 
@@ -1002,7 +1002,41 @@ De estos resultados se aprecia que las arquitecturas con GRU básicas y Atenció
 ### Comparación entre modelos 
 
 Para comparar la eficacia de cada modelo estudiado, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del cálculo de chi-cuadrado para cada observación en el conjunto de test. 
-La fórmula usada se basó en 
+La fórmula usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa (*ivar*). Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error, contribuyen en menor medida en el resultado. 
+
+La fórmula de chi-cuadrado se define como :
+$$ \chi^2 = \sum_{i=1}^{N} \left(F_{\mathrm{real},i}-F_{\mathrm{pred},i}\right)^2\mathrm{ivar}_i $$
+
+donde $F_{\mathrm{real},i}$ y $F_{\mathrm{pred},i}$ representan, respectivamente, el flujo real y predicho en el punto espectral $i$, respectivamente, mientras que $\mathrm{ivar}_i$ es la varianza inversa sacada de los datos de [SDSS]{.acr}.
+
+Por otro lado, como $\chi^2$ también depende del número de puntos de cada espectro, se consideró una versión normalizada dividida por la cantidad de puntos espectrales válidos (con *ivar* mayor que 0). Al normalizarla, facilita la comparación entre los distintos espectros, dado que valores próximos a la unidad indican que las diferencias entre ambos espectros son comparables a la incertidumbre de la muestra, mientras que valores mayores implican discrepancias superiores a las esperadas en los puntos espectrales. 
+Teniendo esto en cuenta, la fórmula final fue:
+
+$$\chi^2_{\mathrm{norm}} = \frac{\chi^2}{N} $$
+
+A partir de la cual se obtuvieron los valores de la @tbl-chi-square:
+
+::: {#tbl-chi-square}
+
+| Modelo | Mediana | Mínimo | Máximo |
+|---|---:|---:|---:|
+| Densa con mediana | 1.4 | 0.47 | 131.91 |
+| Densa con máximo | 5.66 | 0.55 | 69488.31 |
+| RNN con capa de GRU | 1.80 | 0.52 | 192.86 |
+| RNN con capa Bidireccional | 2.26 | 0.66 | 270.30 |
+| RNN con capa de Atención | 2.00 | 0.54 | 199.19 |
+
+*Fuente: Elaboración propia*
+
+
+Chi-cuadrado normalizado aplicado sobre los conjuntos de test predichos por los diversos modelos estudiados.
+:::
+
+Los resultados obtenidos demuestran que la arquitectura densa normalizada con la mediana de cada espectro es la que mejor comportamiento tiene. Los modelos recurrentes no mejoraron este resultado, aunque la arquitectura con una capa de GRU se queda muy próxima. 
+Por otro lado, el modelo denso normalizado con el máximo de cada espectro es la menos estable tal y como se aprecia en la diferencia entre el mínimo y máximo. Presenta una mediana 4 veces superior al modelo con mejores datos, confirmando que es el peor de los modelos destacados en el entrenamiento.
+
+La conclusión extraída con el estadístico chi-cuadrado es la misma que la obtenida de las métricas de entrenamiento y test de los modelos. Si bien es cierto, las diferencias no son muy grandes, pero los valores más pequeños se encuentran en el modelo denso normalizado con la mediana. 
+En cuanto a iSpec, los resultados indican que todos los modelos tienen un comportamiento similar en cuanto a los datos que este aproxima, así que no podemos destacar un modelo en concreto, pero sí afirmar que las predicciones producen datos astrofísicos muy parecidos a los que producen los espectros reales.
 
 ## Conclusiones y trabajo futuro
 
