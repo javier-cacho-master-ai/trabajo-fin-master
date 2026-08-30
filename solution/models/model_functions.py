@@ -1,10 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_training_metrics(model_history):
+def plot_training_metrics(model_history, metrics=None):
     epochs = range(1, len(model_history["loss"]) + 1)
 
-    metrics = ["loss", "mae", "mse"]
+    # Por defecto, las métricas registradas por el modelo: las que tienen su
+    # pareja de validación, de modo que sirve para cualquier compilación
+    if metrics is None:
+        metrics = [
+            metric for metric in model_history
+            if not metric.startswith("val_") and f"val_{metric}" in model_history
+        ]
 
     for metric in metrics:
         plt.figure(figsize=(9, 4))

@@ -595,9 +595,13 @@ Se consideró el optimizador Adam [@kingma2014adam] con una tasa de aprendizaje 
 
 El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana <!--EarlyStopping--> que monitorea la pérdida del set de validación y detiene el entrenamiento si después de 5 épocas no ha mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estanca durante dos épocas. 
 
-#### Modelo convolucional 1D
+#### Modelo convolucional
 
 Como segunda arquitectura se planteó un modelo basado en capas convolucionales de una dimensión. La motivación de este enfoque reside en la propia naturaleza de los espectros: las estructuras que los caracterizan, como las líneas de absorción y emisión o la forma local del continuo, son patrones locales que pueden aparecer en cualquier punto del rango de longitudes de onda. Las convoluciones explotan precisamente esta localidad, ya que aplican los mismos filtros a lo largo de todo el espectro, lo que reduce drásticamente el número de parámetros respecto a una red densa y favorece que el modelo generalice los patrones aprendidos en una zona del espectro a las demás.
+
+De esta arquitectura se desarrollaron dos versiones: el modelo convolucional 1D, una red residual de campo receptivo local, y el modelo convolucional U-Net, que amplía el campo receptivo a todo el espectro e incorpora la información de incertidumbre de ambos instrumentos.
+
+##### Modelo convolucional 1D
 
 El diseño sigue un planteamiento de superresolución análogo al de la primera etapa del modelo de @haghjoo2026learning. En primer lugar, el espectro de Gaia se interpola linealmente sobre la malla de longitudes de onda de [SDSS]{.acr}, obteniendo así una versión de baja resolución alineada punto a punto con la salida esperada. La red recibe este espectro interpolado y aprende únicamente la corrección que debe aplicarse sobre él, gracias a una conexión residual global que suma la entrada interpolada a la salida de la red. De esta forma el modelo no necesita aprender la forma general del continuo, que ya viene dada por la interpolación, y puede concentrar su capacidad en recuperar el detalle espectral que la resolución de Gaia no capta.
 
@@ -606,6 +610,20 @@ En cuanto a la arquitectura interna, el modelo se compone de una capa convolucio
 Respecto a la normalización, en este caso ambos espectros del par se escalan con la mediana del flujo del espectro de Gaia. Al depender únicamente de la entrada, esta estrategia permite deshacer la normalización de la predicción sin necesidad de conocer el espectro real de [SDSS]{.acr}, lo que resulta imprescindible al aplicar el modelo sobre observaciones nuevas.
 
 El resto de la configuración del entrenamiento se mantuvo idéntica a la del modelo base: función de pérdida Huber con $\delta = 1$, optimizador Adam con tasa de aprendizaje de 0.0001 y limitación a 1 de la norma de los gradientes, lotes de 64 muestras, un máximo de 50 épocas y las mismas funciones de parada temprana y reducción de la tasa de aprendizaje.
+
+##### Modelo convolucional U-Net
+
+Como veremos en el apartado de evaluación, el modelo convolucional 1D se estanca en una corrección suave del espectro interpolado. La segunda versión ataca las causas de ese estancamiento incorporando la información de incertidumbre de ambos instrumentos, que hasta ahora no se utilizaba, mediante tres mejoras:
+
+1. **Pérdida ponderada por la varianza inversa de [SDSS]{.acr}**. El espectro objetivo no es el espectro verdadero de la estrella, sino una observación con ruido, y ese ruido varía mucho entre píxeles. Ponderando la pérdida de Huber con la varianza inversa de cada píxel, los puntos ruidosos del objetivo pesan menos y los píxeles marcados como inválidos por [SDSS]{.acr} (varianza inversa nula) quedan enmascarados, de modo que la red aprende el espectro subyacente y no la realización concreta del ruido. Los pesos se reescalan con la normalización de cada espectro, se ajustan para que su media sobre los píxeles válidos sea 1 (así todos los objetos contribuyen por igual y los pesos solo redistribuyen la importancia entre píxeles) y se recortan superiormente para evitar que unos pocos píxeles de varianza muy baja dominen el entrenamiento.
+
+2. **Canal de entrada adicional con el error de flujo de Gaia**. Junto al flujo interpolado, la red recibe el error observacional de Gaia interpolado sobre la misma malla, lo que le permite saber qué zonas de su entrada son fiables y modular la corrección en consecuencia.
+
+3. **Mejora de datos con ruido realista**. En cada época se perturba el flujo de Gaia con ruido gaussiano de amplitud igual a su error observacional, lo que multiplica de forma efectiva el conjunto de entrenamiento y obliga a la red a ser robusta frente al nivel de ruido real del instrumento. Para que esta perturbación sea estadísticamente correcta, se aplica sobre la malla nativa de Gaia y la interpolación se realiza después, en cada época, expresada como una matriz lineal fija dentro del propio flujo de datos de entrenamiento.
+
+La arquitectura evoluciona de la pila de bloques residuales a una U-Net de una dimensión [@ronneberger2015unet]. El codificador parte de una convolución inicial de 64 filtros y encadena tres niveles de submuestreo por convolución con paso 2 (64, 96, 128 y 160 filtros); el cuello de botella aplica dos bloques residuales que ven el espectro completo a un octavo de su resolución; y el decodificador recupera la resolución original en tres niveles de sobremuestreo, concatenando en cada uno la conexión del nivel equivalente del codificador. Cada bloque residual incorpora además atención de canal de tipo *squeeze-and-excitation* [@hu2018squeeze], que recalibra la importancia relativa de los filtros en función del contenido global del espectro. Con los tres niveles de submuestreo, el campo receptivo cubre todo el rango de longitudes de onda, por lo que la red puede corregir tanto el detalle de las líneas como el desajuste de continuo a gran escala entre Gaia y [SDSS]{.acr}, algo fuera del alcance del campo receptivo local del modelo 1D. Se mantiene la conexión residual global sobre el espectro interpolado, y el modelo alcanza aproximadamente 2,3 millones de parámetros entrenables, una capacidad muy superior a la del modelo convolucional 1D aunque todavía del orden de la mitad que la del modelo denso.
+
+La configuración del entrenamiento conserva la función de pérdida Huber con $\delta = 1$ (ahora ponderada por píxel), las mismas métricas [MAE]{.acr} y [MSE]{.acr} sin ponderar para mantener la comparabilidad con el resto de modelos, el optimizador Adam con limitación a 1 de la norma de los gradientes y los lotes de 64 muestras. Al ser un modelo de mayor capacidad, se amplió el presupuesto de entrenamiento: tasa de aprendizaje inicial de 0.0003, un máximo de 100 épocas, parada temprana con paciencia de 10 épocas y reducción de la tasa de aprendizaje a la mitad tras 4 épocas sin mejora.
 
 #### Modelo recurrente
 Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró como una secuencia en función de la longitud de onda, donde cada longitud de onda era un paso de la secuencia, y el flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
@@ -870,7 +888,11 @@ Resultados obtenidos incluyendo la SNR de la muestra de Gaia como entrada del mo
 
 Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicional de entrada no produce una mejora significativa en el modelo. Los valores de pérdida, [MAE]{.acr} y [MSE]{.acr} son prácticamente los mismos a los obtenidos en pruebas anteriores y visualmente tampoco se aprecia una mejora de la captación de tendencias del espectro. Por este motivo, se decidió no incluir esta variable en el modelo final.
 
-### Resultados obtenidos con el modelo convolucional 1D
+### Resultados obtenidos con los modelos convolucionales
+
+Se presentan por separado los resultados de las dos versiones del modelo convolucional: el modelo convolucional 1D y el modelo convolucional U-Net. Ambas comparten la misma normalización (la mediana del flujo de Gaia de cada par), por lo que, a diferencia de lo que ocurre con el modelo denso, sus métricas sí son directamente comparables entre sí.
+
+#### Modelo convolucional 1D
 
 En el caso del modelo convolucional residual, el entrenamiento se detuvo en la época 11 por la función de parada temprana. La evolución de las métricas, representada en la @fig-loss-evolution-cnn, @fig-mse-evolution-cnn y @fig-mae-evolution-cnn, muestra un descenso muy rápido durante las dos primeras épocas seguido de un estancamiento, a pesar de las sucesivas reducciones de la tasa de aprendizaje aplicadas durante el proceso.
 
@@ -939,6 +961,72 @@ Ejemplo 2 del espectro generado por el modelo convolucional 1D.
 :::
 
 En ambos ejemplos se observa que el espectro predicho se mantiene muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llega a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
+
+#### Modelo convolucional U-Net
+
+El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al del modelo convolucional 1D. Lejos de estancarse en las primeras épocas, la pérdida de validación siguió mejorando de forma sostenida: la función de reducción de la tasa de aprendizaje llegó a actuar cuatro veces (de 0.0003 hasta 0.000019) y cada reducción desbloqueó una nueva fase de mejora. El entrenamiento se interrumpió en la época 48, cuando la pérdida de validación llevaba varias épocas prácticamente estabilizada; gracias al guardado del mejor modelo en cada época, se conservan los pesos de la época 47, la de mejor validación. La evolución de las métricas se muestra en la @fig-loss-evolution-cnn-v2, @fig-mse-evolution-cnn-v2 y @fig-mae-evolution-cnn-v2, donde de nuevo las curvas de entrenamiento y validación permanecen próximas entre sí, sin indicios de sobreajuste.
+
+:::{#fig-loss-evolution-cnn-v2}
+
+![](_partials/assets/loss_function_evolution_cnn_v2.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución de la función de pérdida del modelo convolucional U-Net
+:::
+
+:::{#fig-mse-evolution-cnn-v2}
+
+![](_partials/assets/mse_evolution_cnn_v2.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MSE del modelo convolucional U-Net
+:::
+
+:::{#fig-mae-evolution-cnn-v2}
+
+![](_partials/assets/mae_evolution_cnn_v2.png)
+
+*Fuente: Elaboración propia*
+
+Gráfica de la evolución del MAE del modelo convolucional U-Net
+:::
+
+Las métricas obtenidas sobre el conjunto de test se recogen en la @tbl-test-cnn-v2. Junto a las métricas sin ponderar, comparables con las del resto de modelos, se incluyen sus variantes ponderadas por la varianza inversa de [SDSS]{.acr}, que reflejan el objetivo que la red optimiza. La pérdida, al estar ponderada, no es comparable con la de las arquitecturas anteriores.
+
+::: {#tbl-test-cnn-v2}
+
+| Pérdida | [MAE]{.acr} | [MSE]{.acr} | [MAE]{.acr} ponderado | [MSE]{.acr} ponderado |
+|---|---:|---:|---:|---:|
+| 0.0055 | 0.0786 | 0.0165 | 0.0704 | 0.0112 |
+
+*Fuente: Elaboración propia*
+
+Resultados obtenidos sobre el conjunto de test con el modelo convolucional U-Net.
+:::
+
+La comparación con la @tbl-test-cnn es directa por compartir normalización: el [MAE]{.acr} sobre test baja de 0.1137 a 0.0786 (una mejora del 31 %) y el [MSE]{.acr} de 0.0352 a 0.0165 (un 53 %). En la @fig-generado_cnn_v2_123 y la @fig-generado_cnn_v2_191 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
+
+:::{#fig-generado_cnn_v2_123}
+
+![](_partials/assets/espectro_predicho_123_full_cnn_v2.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 1 del espectro generado por el modelo convolucional U-Net.
+:::
+
+:::{#fig-generado_cnn_v2_191}
+
+![](_partials/assets/espectro_predicho_191_full_cnn_v2.png)
+
+*Fuente: Elaboración propia*
+
+Ejemplo 2 del espectro generado por el modelo convolucional U-Net.
+:::
+
+A diferencia del modelo convolucional 1D, la U-Net no se limita a una corrección suave del continuo: la predicción reconstruye parte de la estructura espectral fina del espectro de [SDSS]{.acr}, incluidas líneas de absorción que no son visibles en la entrada de Gaia interpolada. Este salto cualitativo es coherente con las mejoras introducidas: el campo receptivo global permite corregir el continuo a todas las escalas, y la pérdida ponderada concentra la capacidad del modelo en los píxeles fiables del objetivo en lugar de en reproducir su ruido.
 
 ### Resultados obtenidos con el modelo recurrente
 
