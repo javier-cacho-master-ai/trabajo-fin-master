@@ -535,25 +535,21 @@ A diferencia de Gaia, el error relativo se mantiene mayormente constante a lo la
 Por otro lado, el mínimo se alcanza entre los 6000 y 7500 Å. 
 A partir de los 9000 Å la mediana es más inestable y la banda de los percentiles 25 y 75 se ensancha. Este dato implica que los datos son menos precisos en el extremo rojo del flujo. 
 
-Sobreponiendo el espectro del mismo objeto observado por Gaia y [SDSS]{.acr} con su respectiva banda +-error, obtenemos gráficos como los observados en la @fig-error-margin1 y @fig-error-margin2 .
+Sobreponiendo el espectro del mismo objeto observado por Gaia y [SDSS]{.acr} con su respectiva banda +-error, obtenemos gráficos como los observados en la @fig-error-margins. 
 
+:::{#fig-error-margins}
 
-:::{#fig-error-margin1}
+::::{layout-row="[[1],[1]]"}
 
 ![](_partials/assets/error_margin_1.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 de los espectros observados por Gaia y SDSS con bandas de error
-:::
-
-:::{#fig-error-margin2}
-
 ![](_partials/assets/error_margin_2.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 de los espectros observados por Gaia y SDSS con bandas de error
+Ejemplos de los espectros observados por Gaia y SDSS con bandas de error
 :::
 
 En estos se observa como la banda de error de Gaia tiende a ser más ancha y constante, mientras que [SDSS]{.acr} tiene picos donde la imprecisión es destacable.
@@ -652,29 +648,19 @@ Por último, se empleará la librería *ISpec* [@blancocuaresma2014ispec] para e
 
 ### Resultados obtenidos con el modelo base
 
-Durante el entrenamiento del modelo basado en capas densas con normalización a partir de la mediana global de los datos, se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-loss-evolution, @fig-mse-evolution y @fig-mae-evolution .
+Durante el entrenamiento del modelo basado en capas densas con normalización a partir de la mediana global de los datos, se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-metricas-red-densa.
 
-:::{#fig-loss-evolution}
+:::{#fig-metricas-red-densa}
+
+::::{layout="[[1,1],[-1,2,-1]]"}
 
 ![](images/evo_loss_dense_global.png)
 
-*Fuente: Elaboración propia*
-
-Gráfica de la evolución de la función de pérdida en el modelo de redes neuronales densas con normalización global.
-:::
-
-:::{#fig-mse-evolution}
-
 ![](images/evo_mse_dense_global.png)
 
-*Fuente: Elaboración propia*
-
-Gráfica de la evolución del MSE en el modelo de redes neuronales densas con normalización global.
-:::
-
-:::{#fig-mae-evolution}
-
 ![](images/evo_mae_dense_global.png)
+
+::::
 
 *Fuente: Elaboración propia*
 
@@ -686,24 +672,21 @@ Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el 
 
 Cabe destacar que las métricas calculadas se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
-En las gráficas detalladas de la @fig-generado_global_10 y la @fig-generado_global_245, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. Las observaciones representadas formaron parte del conjunto de test.  
+En las gráficas detalladas de la @fig-generados_global, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. Las observaciones representadas formaron parte del conjunto de test.  
 
-:::{#fig-generado_global_10}
+:::{#fig-generados_global}
+
+::::{layout-nrow="2"}
 
 ![](images/ejemplo_10_global_dense.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.
-:::
-
-:::{#fig-generado_global_245}
-
 ![](images/ejemplo_245_global_dense.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana del conjunto de entrenamiento.
+Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana del conjunto de entrenamiento.
 :::
 
 Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de [SDSS]{.acr} una vez han sido recortados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usan escalas diferentes. 
@@ -713,75 +696,59 @@ En gran parte de los gráficos observados, el modelo reproduce la morfología ge
 Si bien es cierto, hay puntos que no puede inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
 Durante las comparaciones que se harán a continuación, siempre se usarán los mismos objetos, identificados por los id que aparecen en los gráficos recientemente comentados.
 
-Por otro lado, al usar una normalización basada en la mediana por espectro, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar tal y como observamos en las gráficas representadas en las imágenes @fig-loss-evolution-spec-medi, @fig-mse-evolution-spec-medi y @fig-mae-evolution-spec-medi .
+Por otro lado, al usar una normalización basada en la mediana por espectro, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar tal y como observamos en las gráficas representadas en las imágenes @fig-metricas-red-densa-normalizada.
 
-:::{#fig-loss-evolution-spec-medi}
+:::{#fig-metricas-red-densa-normalizada}
+
+::::{layout="[[1,1],[-1,2,-1]]"}
 
 ![](images/evo_loss_dense_spec_mean.png)
 
-*Fuente: Elaboración propia*
-
-Gráfica de la evolución de la función de pérdida en el modelo de redes neuronales densas con normalización por espectro con su mediana.
-:::
-
-:::{#fig-mse-evolution-spec-medi}
-
 ![](images/evo_mse_dense_spec_mean.png)
-
-*Fuente: Elaboración propia*
-
-Gráfica de la evolución del MSE en el modelo de redes neuronales densas con normalización por espectro con su mediana.
-:::
-
-:::{#fig-mae-evolution-spec-medi}
 
 ![](images/evo_mae_dense_spec_mean.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Gráfica de la evolución del MAE en el modelo de redes neuronales densas con normalización por espectro con su mediana.
+Gráficas de evolución de las métricas de entrenamiento en la red densa.
 :::
 
-Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre las mismas observaciones que el modelo anterior fueron las observadas en la @fig-generado_mediana_espectro_10 y @fig-generado_mediana_espectro_245:
+Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre las mismas observaciones que el modelo anterior fueron las observadas en la @fig-espectros-generados-red-densa:
 
-:::{#fig-generado_mediana_espectro_10}
+:::{#fig-espectros-generados-red-densa}
+
+:::: {layout-nrow="2"}
 
 ![](images/ejemplo_10_spec_mean_dense.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.
-:::
-
-:::{#fig-generado_mediana_espectro_245}
-
 ![](images/ejemplo_245_spec_mean_dense.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en la mediana de cada espectro.
+Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro.
 :::
 
 Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. 
 
-Por último, si nos fijamos en las figuras @fig-generado_maximo_espectro_10 y @fig-generado_maximo_espectro_245 , observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
+Por último, si nos fijamos en las figuras @fig-espectros-generados_maximo_espectro, observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
 
-:::{#fig-generado_maximo_espectro_10}
+:::{#fig-espectros-generados_maximo_espectro}
+
+:::: {layout-nrow="2"}
 
 ![](images/ejemplo_10_spec_max_dense.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.
-:::
-
-:::{#fig-generado_maximo_espectro_245}
-
 ![](images/ejemplo_245_spec_max_dense.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo de redes neuronales densas y una normalización basada en el máximo de cada espectro.
+Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en el máximo de cada espectro.
 :::
 
 A partir de las gráficas observadas, parece que la opción con mejores resultados es la segunda, dado que es la que obtiene espectros más cercanos a los reales. Ahora bien, comprobemos métricas para obtener resultados más concluyentes.
@@ -816,33 +783,23 @@ A partir de los datos iniciales, mallas e información base mencionada, se ajust
 
 Para comprobar el funcionamiento del modelo de redes neuronales, se tomó los resultados del espectro real de [SDSS].{acr} como los verdaderos, y se comparó los predichos con estos, calculando las diferencias entre los datos obtenidos, sus errores absolutos y relativos. 
 
-Analizamos muestras aleatorias de 250 espectros para cada modelo denso. El resultado se resume en las gráficas observadas en las figuras @fig-logg_ispec_dense, @fig-teff_ispec_dense y @fig-mh_ispec_dense.
+Analizamos muestras aleatorias de 250 espectros para cada modelo denso. El resultado se resume en las gráficas observadas en las figuras @fig-ispec-errors.
 
-:::{#fig-logg_ispec_dense}
+:::{#fig-ispec-errors}
+
+::::{layout="[[1,1],[-1,2,-1]]"}
 
 ![](images/iSpec_dense_logg.png)
-
-*Fuente: Elaboración propia*
-
-Gráfico de barras del error relativo de la gravedad superficial obtenida con iSpec entre los espectros reales de SDSS y los predichos.
-:::
-
-:::{#fig-teff_ispec_dense}
 
 ![](images/iSpec_dense_teff.png)
 
-*Fuente: Elaboración propia*
-
-Gráfico de barras del error relativo de la temperatura obtenida con iSpec entre los espectros reales de SDSS y los predichos.
-:::
-
-:::{#fig-mh_ispec_dense}
-
 ![](images/iSpec_dense_logg.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Gráfico de barras del error absoluto de la metalicidad obtenida con iSpec entre los espectros reales de SDSS y los predichos.
+Gráficos de barras de errores absolutos respecto iSpec entre los espectros reales de SDSS y los predichos.
 :::
 
 
@@ -852,24 +809,21 @@ Se aprecia como la mediana del error de la temperatura se ubica en todos los mod
 Estos valores indican una relación de similitud entre las propiedades físicas de ambos espectros, por lo que podemos afirmar que los modelos densos estudiados conllevan una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con iSpec en rangos de error pequeños. 
 
 <!-- TO DO falta ejecutar el SNR de nuevo-->
-Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-generado_snr_10 y @fig-generado_snr_245.
+Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-espectros-generados-snr.
 
-:::{#fig-generado_snr_10}
+:::{#fig-espectros-generados-snr}
+
+:::: {layout-nrow="2"}
 
 ![](images/ejemplo_10_snr.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.
-:::
-
-:::{#fig-generado_snr_245}
-
 ![](images/ejemplo_245_snr.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo de redes neuronales densas con la variable SNR como entrada.
+Ejemplos de espectros generados por el modelo de redes neuronales densas con la variable SNR como entrada.
 :::
 
 Por otro lado, las métricas obtenidas se encuentran en la @tbl-snr-gaia: 
@@ -894,34 +848,23 @@ Se presentan por separado los resultados de las dos versiones del modelo convolu
 
 #### Modelo convolucional 1D
 
-En el caso del modelo convolucional residual, el entrenamiento se detuvo en la época 11 por la función de parada temprana. La evolución de las métricas, representada en la @fig-loss-evolution-cnn, @fig-mse-evolution-cnn y @fig-mae-evolution-cnn, muestra un descenso muy rápido durante las dos primeras épocas seguido de un estancamiento, a pesar de las sucesivas reducciones de la tasa de aprendizaje aplicadas durante el proceso.
+En el caso del modelo convolucional residual, el entrenamiento se detuvo en la época 11 por la función de parada temprana. La evolución de las métricas, representada en la @fig-training-metrics-cnn, muestra un descenso muy rápido durante las dos primeras épocas seguido de un estancamiento, a pesar de las sucesivas reducciones de la tasa de aprendizaje aplicadas durante el proceso.
 
-:::{#fig-loss-evolution-cnn}
+:::{#fig-training-metrics-cnn}
 
+::::{layout="[[1,1],[-1,2,-1]]"}
 ![](_partials/assets/loss_function_evolution_cnn.png)
-
-*Fuente: Elaboración propia*
-
-Gráfica de la evolución de la función de pérdida del modelo convolucional 1D
-:::
-
-:::{#fig-mse-evolution-cnn}
 
 ![](_partials/assets/mse_evolution_cnn.png)
 
-*Fuente: Elaboración propia*
-
-Gráfica de la evolución del MSE del modelo convolucional 1D
-:::
-
-:::{#fig-mae-evolution-cnn}
-
 ![](_partials/assets/mae_evolution_cnn.png)
+::::
 
 *Fuente: Elaboración propia*
 
-Gráfica de la evolución del MAE del modelo convolucional 1D
+Gráficas de las métricas de evolución de entranamiento en modelo convolucional 1D
 :::
+
 
 Este comportamiento sugiere que la red converge casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación permanecen muy próximas entre sí durante todo el proceso, por lo que tampoco en esta arquitectura se aprecian indicios de sobreajuste.
 
@@ -940,57 +883,44 @@ Resultados obtenidos sobre el conjunto de test con el modelo convolucional 1D.
 
 Cabe recordar que estas métricas se calculan sobre espectros normalizados con la mediana del flujo de Gaia, una estrategia distinta a las empleadas en el modelo denso, por lo que los valores no son directamente comparables con los de las tablas anteriores.
 
-En la @fig-generado_cnn_123 y la @fig-generado_cnn_191 se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, una vez deshecha la normalización.
+En la @fig-generado_cnn se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, una vez deshecha la normalización.
 
-:::{#fig-generado_cnn_123}
+:::{#fig-generado_cnn}
+
+::::{layout-nrow="2"}
 
 ![](_partials/assets/espectro_predicho_123_full_cnn.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 del espectro generado por el modelo convolucional 1D.
-:::
-
-:::{#fig-generado_cnn_191}
-
 ![](_partials/assets/espectro_predicho_191_full_cnn.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo convolucional 1D.
+Ejemplos de espectros generados por el modelo convolucional 1D.
 :::
 
 En ambos ejemplos se observa que el espectro predicho se mantiene muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llega a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
 
 #### Modelo convolucional U-Net
 
-El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al del modelo convolucional 1D. Lejos de estancarse en las primeras épocas, la pérdida de validación siguió mejorando de forma sostenida: la función de reducción de la tasa de aprendizaje llegó a actuar cuatro veces (de 0.0003 hasta 0.000019) y cada reducción desbloqueó una nueva fase de mejora. El entrenamiento se interrumpió en la época 48, cuando la pérdida de validación llevaba varias épocas prácticamente estabilizada; gracias al guardado del mejor modelo en cada época, se conservan los pesos de la época 47, la de mejor validación. La evolución de las métricas se muestra en la @fig-loss-evolution-cnn-v2, @fig-mse-evolution-cnn-v2 y @fig-mae-evolution-cnn-v2, donde de nuevo las curvas de entrenamiento y validación permanecen próximas entre sí, sin indicios de sobreajuste.
+El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al del modelo convolucional 1D. Lejos de estancarse en las primeras épocas, la pérdida de validación siguió mejorando de forma sostenida: la función de reducción de la tasa de aprendizaje llegó a actuar cuatro veces (de 0.0003 hasta 0.000019) y cada reducción desbloqueó una nueva fase de mejora. El entrenamiento se interrumpió en la época 48, cuando la pérdida de validación llevaba varias épocas prácticamente estabilizada; gracias al guardado del mejor modelo en cada época, se conservan los pesos de la época 47, la de mejor validación. La evolución de las métricas se muestra en la @fig-loss-evolution-cnn-v2 donde de nuevo las curvas de entrenamiento y validación permanecen próximas entre sí, sin indicios de sobreajuste.
 
 :::{#fig-loss-evolution-cnn-v2}
 
+::::{layout="[[1,1],[-1,2,-1]]"}
+
 ![](_partials/assets/loss_function_evolution_cnn_v2.png)
-
-*Fuente: Elaboración propia*
-
-Gráfica de la evolución de la función de pérdida del modelo convolucional U-Net
-:::
-
-:::{#fig-mse-evolution-cnn-v2}
 
 ![](_partials/assets/mse_evolution_cnn_v2.png)
 
-*Fuente: Elaboración propia*
-
-Gráfica de la evolución del MSE del modelo convolucional U-Net
-:::
-
-:::{#fig-mae-evolution-cnn-v2}
-
 ![](_partials/assets/mae_evolution_cnn_v2.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Gráfica de la evolución del MAE del modelo convolucional U-Net
+Gráficas de la evolución de las métricas de entrenamiento del modelo convolucional U-Net
 :::
 
 Las métricas obtenidas sobre el conjunto de test se recogen en la @tbl-test-cnn-v2. Junto a las métricas sin ponderar, comparables con las del resto de modelos, se incluyen sus variantes ponderadas por la varianza inversa de [SDSS]{.acr}, que reflejan el objetivo que la red optimiza. La pérdida, al estar ponderada, no es comparable con la de las arquitecturas anteriores.
@@ -1006,24 +936,21 @@ Las métricas obtenidas sobre el conjunto de test se recogen en la @tbl-test-cnn
 Resultados obtenidos sobre el conjunto de test con el modelo convolucional U-Net.
 :::
 
-La comparación con la @tbl-test-cnn es directa por compartir normalización: el [MAE]{.acr} sobre test baja de 0.1137 a 0.0786 (una mejora del 31 %) y el [MSE]{.acr} de 0.0352 a 0.0165 (un 53 %). En la @fig-generado_cnn_v2_123 y la @fig-generado_cnn_v2_191 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
+La comparación con la @tbl-test-cnn es directa por compartir normalización: el [MAE]{.acr} sobre test baja de 0.1137 a 0.0786 (una mejora del 31 %) y el [MSE]{.acr} de 0.0352 a 0.0165 (un 53 %). En la @fig-espectros-generados_cnn_v2 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
 
-:::{#fig-generado_cnn_v2_123}
+:::{#fig-espectros-generados_cnn_v2}
+
+::::{layout-nrow="2"}
 
 ![](_partials/assets/espectro_predicho_123_full_cnn_v2.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 del espectro generado por el modelo convolucional U-Net.
-:::
-
-:::{#fig-generado_cnn_v2_191}
-
 ![](_partials/assets/espectro_predicho_191_full_cnn_v2.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo convolucional U-Net.
+Ejemplos de espectros generados por el modelo convolucional U-Net.
 :::
 
 A diferencia del modelo convolucional 1D, la U-Net no se limita a una corrección suave del continuo: la predicción reconstruye parte de la estructura espectral fina del espectro de [SDSS]{.acr}, incluidas líneas de absorción que no son visibles en la entrada de Gaia interpolada. Este salto cualitativo es coherente con las mejoras introducidas: el campo receptivo global permite corregir el continuo a todas las escalas, y la pérdida ponderada concentra la capacidad del modelo en los píxeles fiables del objetivo en lugar de en reproducir su ruido.
@@ -1092,26 +1019,22 @@ Resultados obtenidos con el modelo basado en RNN bidireccionales para los difere
 Estos valores son muy similares a los obtenidos en el modelo anterior, siendo entre un 0.001 y 0.01 más altos según la métrica. Siguen siendo buenas aproximaciones e indicando un buen comportamiento del modelo, pero no presentan una mejora significativa comparado con el anterior. 
 
 
-Los ejemplos usados para la representación visual de las aproximaciones, tampoco presentan grandes diferencias, tal y como observamos en las figuras @fig-BIRNN_10 y @fig-birnn-245
+Los ejemplos usados para la representación visual de las aproximaciones, tampoco presentan grandes diferencias, tal y como observamos en las figuras @fig-BIRNN
 
-:::{#fig-BIRNN_10}
+:::{#fig-BIRNN}
+
+:::: {layout-nrow="2"}
 
 ![](images/ejemplo_10_BIRNN.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes con una capa bidireccional.
-:::
-
-:::{#fig-birnn-245}
-
 ![](images/ejemplo_245_BIRNN.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una capa bidireccional.
+Ejemplos de espectros generado por el modelo de redes neuronales recurrentes con una capa bidireccional.
 :::
-
 
 El último modelo destacable de los estudiados en este apartado, se basa en dos capas Bidireccionales y la aplicación de la función de Atención sobre todos los puntos del espectro junto a las capas densas anteriormente mencionadas. 
 Esta adición tampoco representa grandes mejoras en las métricas del modelo. Los valores pueden observarse en la @tbl-ATT-metrics.
@@ -1130,24 +1053,21 @@ Esta adición tampoco representa grandes mejoras en las métricas del modelo. Lo
 Resultados obtenidos con el modelo basado en RNN bidireccionales y la función de Atención para los diferentes conjuntos de datos.
 :::
 
-Igual que en las métricas comentadas, en los espectros usados como punto de control tampoco se aprecian grandes diferencias como se puede observar en las imágenes de la @fig-ATT_10 y @fig-ATT-245. 
+Igual que en las métricas comentadas, en los espectros usados como punto de control tampoco se aprecian grandes diferencias como se puede observar en las imágenes de la @fig-ATT. 
 
-:::{#fig-ATT_10}
+:::{#fig-ATT}
+
+:::: {layout-nrow="2"}
 
 ![](images/ejemplo_10_ATT.png)
 
-*Fuente: Elaboración propia*
-
-Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes con una función de Atención.
-:::
-
-:::{#fig-ATT-245}
-
 ![](images/ejemplo_245_ATT.png)
 
+::::
+
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una función de Atención.
+Ejemplos de espectros generados por el modelo de redes neuronales recurrentes con una función de Atención.
 :::
 
 Por último, si nos basamos en los resultados obtenidos de la estimación de características astrofísicas con *iSpec*, las diferencias entre los valores predichos con los espectros de [SDSS]{.acr} reales y los predichos por los modelos son los incluidos en la @tbl-RNN-iSpec:
