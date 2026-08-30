@@ -347,11 +347,16 @@ De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar 
 
 6. Entrenamiento, refinamiento y validación del modelo: proceso iterativo de optimización y ajuste de hiperparámetros, evaluando el modelo sobre el conjunto de validación y reservando el conjunto de test para la evaluación final.
 
-## Identificación de requisitos
 
-Para un correcto desarrollo del proyecto, es necesario garantizar una serie de requisitos mínimos. Estos se describen a continuación según el ámbito al que hacen referencia.
+## Descripción del experimento
 
-### Requisitos del conjunto de datos
+En este capítulo se describe el trabajo realizado en cada una de las etapas definidas en la metodología.
+
+### Definición de los requisitos
+
+Para un correcto desarrollo del experimento, es necesario garantizar una serie de requisitos mínimos. Estos se describen a continuación según el ámbito al que hacen referencia.
+
+#### Requisitos del conjunto de datos
 
 El conjunto de datos usado para el entrenamiento del modelo debe estar formado por pares de espectros de Gaia y [SDSS]{.acr} que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos, en concreto, la tabla de mejores vecinos entre Gaia DR3 y [SDSS]{.acr} DR13. 
 
@@ -362,7 +367,7 @@ El conjunto de datos original deberá ser almacenado en un formato que sea efici
 
 Por último, será necesaria la aplicación de criterios de calidad y el preprocesado del conjunto de datos a usar.
 
-### Requisitos de calidad
+#### Requisitos de calidad
 
 Una vez extraído el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento del modelo.
 
@@ -395,7 +400,7 @@ Asimismo, deberá tenerse en cuenta la [SNR]{.acr} de las observaciones. Este da
 
 Finalmente, los espectros se recortarán a los rangos de longitud de onda comunes entre Gaia y [SDSS]{.acr} y así se evitará que la generación de datos de salida se vea afectada por la falta de datos de entrada. Al mismo tiempo, se descartarán los intervalos iniciales y finales del rango espectral, ya que en estas zonas suelen aparecer con mayor frecuencia anomalías u observaciones de artefactos. En concreto, se restringirá el intervalo de entrenamiento entre los 500 y 900 nm. 
 
-### Requisitos del modelo
+#### Requisitos del modelo
 
 El modelo basado en redes neuronales debe resolver un problema de regresión multivariante, en el que la entrada sea un vector de flujo de Gaia y la salida se corresponda con el espectro de [SDSS]{.acr}. 
 
@@ -408,10 +413,6 @@ La arquitectura y diseño del modelo deberá tener capacidad suficiente como par
 
 El modelo deberá evaluarse con métricas cuantitativas apropiadas al tipo de dato y al mismo tiempo con un análisis visual de los resultados. 
 
-
-## Proyecto piloto
-
-En este capítulo se describe el trabajo realizado en cada una de las etapas definidas en la metodología.
 
 ### Preparación del conjunto de datos
 
@@ -636,7 +637,7 @@ Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017
 En todas las arquitecturas probadas, la capa de salida del modelo tenía dimensión igual al número de puntos del espectro real de [SDSS]{.acr}. 
 
 
-## Evaluación
+## Descripción de los resultados
 
 Una vez entrenadas las distintas opciones de red neuronal, es necesario evaluar el rendimiento para determinar que aproximación es la más adecuada al problema que se ha planteado. 
 
@@ -1089,7 +1090,7 @@ Resultados obtenidos con iSpec en los modelos destacados basados en RNNs.
 De estos resultados se aprecia que las arquitecturas con GRU básicas y Atención presentan mejores resultados que el modelo con solo una capa Bidireccional. 
 
 
-### Comparación entre modelos 
+## Discusión
 
 Para comparar la eficacia de cada modelo estudiado, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del cálculo de chi-cuadrado para cada observación en el conjunto de test. 
 La fórmula usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa (*ivar*). Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error, contribuyen en menor medida en el resultado. 
