@@ -36,24 +36,24 @@ requerido por la plantilla grupal (páginas VII-VIII). Columna
 Este trabajo ha sido desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se han mantenido reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se ha empleado un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se han integrado mediante revisiones cruzadas.
 
 En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación del proceso de extracción de los datos para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
-En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de la red neuronal, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. 
+En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de las redes neuronales densas y recurrentes, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. Javier intervino en la creación de las arquitecturas Convolucionales estudiadas.
 
-Por otro lado, la elaboración de la memoria también se repartió entre los dos autores. Carla desarrolló los apartados de introducción, contexto y conclusiones. Mientras que Javier trabajó en el estado del arte, metodología y objetivos. 
+Por otro lado, la elaboración de la memoria también se repartió entre los dos autores. Carla desarrolló los apartados de introducción, contexto, discusión y conclusiones. Mientras que Javier trabajó en el estado del arte, metodología y objetivos. 
 
-El capítulo 6, llamado *Proyecto piloto*, fue redactado por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
+Los capítulos 4 y 5, llamado *Descripción del experiento* y *Descipción de los resultados*, fueron redactados por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
 
-Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha llevado a cabo de forma completamente independiente. Tanto la memoria como el código utilizado han sido revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes hayan sido desarrolladas únicamente por esa persona. Gracias a las revisiones se han detectado errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
+Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha llevado a cabo de forma independiente. Tanto la memoria como el código utilizado han sido revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes hayan sido desarrolladas únicamente por esa persona. Gracias a las revisiones se han detectado errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
 
 
 | Apartado de la memoria | Responsables |
 |---|---|
-| Introducción | Alumno 1, Alumno 2 |
-| Contexto y estado del arte | Alumno 1, Alumno 2 |
-| Objetivos concretos y metodología de trabajo | Alumno 1, Alumno 2 |
-| Identificación de requisitos | Alumno 1, Alumno 2 |
-| Proyecto piloto | Alumno 1, Alumno 2 |
-| Evaluación | Alumno 1, Alumno 2 |
-| Conclusiones y trabajo futuro | Alumno 1, Alumno 2 |
+| Introducción | Carla Sequero|
+| Contexto y estado del arte | J. Javier Cacho |
+| Objetivos concretos y metodología de trabajo | J. Javier Cacho |
+| Descripción del experimento | Carla Sequero, J. Javier Cacho |
+| Descripción de los resultados | Carla Sequero, J. Javier Cacho |
+| Discusión | Carla Sequero |
+| Conclusiones y trabajo futuro | Carla Sequero |
 
 <!--
 El "Índice de acrónimos" se genera en las páginas preliminares (tras el Índice
@@ -120,11 +120,11 @@ En el Capítulo 2 se explican los fundamentos teóricos necesarios para entender
 
 En el Capítulo 3 se definen el objetivo general y los objetivos específicos del trabajo, así como la metodología seguida para alcanzarlos, aportando detalles acerca de los datos y librerías usadas.
 
-En el Capítulo 4 se identifican los requisitos del sistema desarrollado.
+En el Capítulo 4 se describe el proyecto piloto a realizar, junto con los requisitos mínimos aplicados sobre los datos y los modelos estudiados, el trabajo realizado en cada etapa de la metodología , la herramienta *software* construida para la extracción de los datos y el entrenamiento del modelo.
 
-En el Capítulo 5 se describe el proyecto piloto desarrollado: el trabajo realizado en cada etapa de la metodología y la herramienta *software* construida para la extracción de los datos, el entrenamiento del modelo y su puesta en servicio.
+En el Capítulo 5 se evalúan los resultados obtenidos por cada uno de los modelos estudiados frente a las observaciones reales de [SDSS]{.acr}.
 
-En el Capítulo 6 se evalúan los resultados obtenidos por el modelo frente a las observaciones reales de [SDSS]{.acr}.
+En el Capítulo 6 se realiza una discusión acerca de los resultados obtenidos en el apartado anterior, comparando los datos de cada modelo.
 
 Finalmente, en el Capítulo 7 se recogen las conclusiones del trabajo y se proponen posibles líneas de trabajo futuro.
 
@@ -192,7 +192,6 @@ El satélite en cuestión se encuentra en una posición espacial conocida como e
 La espectrofotometría en la que nos basaremos durante el desarrollo de este trabajo es la [BP/RP]{.acr}, también denominada espectro [XP]{.acr}. Como hemos comentado, estos datos proceden del fotómetro azul y del rojo, lo que permite cubrir entre los 330 y 680 nm gracias al espectro azul y de los 640 a 1050 nm gracias al rojo [@zhang2023parameters]. 
 Estos datos se representan por aproximadamente 110 elementos efectivos de resolución [@deangeli2023bprp], con un poder de resolución variable según la longitud de onda de aproximadamente R $\sim$ 50 - 160. 
 Este detalle conlleva que en la tercera liberación de datos de Gaia no obtengamos directamente una tabla de relación flujo - longitud de onda, sino que los espectros vienen dados por coeficientes [XP]{.acr} que deben transformarse con ayuda de librerías como *GaiaXPy* [@deangeli2022gaiabprp].
-
 
 
 
@@ -327,9 +326,6 @@ Para el caso expuesto se considera que las redes neuronales pueden aportar una s
 
 La red neuronal entrenada requerirá de un proceso de optimización y ajuste de los hiperparámetros para dar una solución satisfactoria. Asimismo, se llevará un proceso de validación de los resultados a partir del conjunto de datos creado.
 
-- Puesta en servicio del modelo:
-
-Una vez ajustado el modelo, el objetivo será proporcionar una manera sencilla e intuitiva de acceder a él. 
 
 ### Metodología de trabajo
 
@@ -450,9 +446,11 @@ Para analizar la distribución física de los datos usados en el entrenamiento d
 
 En concreto, se considera la fuente de datos de Gaia. En el eje horizontal se grafica la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
-En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia, por lo que para convertirlos a la misma escala y obtener la magnitud absoluta de cada observación, se usó el paralaje de cada una. 
+En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia y la luminosidad de la estrella, aunque también se puede ver afectado por la extinción y absorción estelar. 
+Dado que el diagrama [HR]{.acr} se usa meramente con objetivos descriptivos, para eliminar el efecto debido a la distancia y obtener la magnitud absoluta, se usó el paralaje de cada una, sin tener en cuenta el efecto de la extinción estelar.
 
-La fórmula usada parte de la representación del diagrama [HR]{.acr} realizada en el trabajo de @GaiaCollaboration2018HRD. En este artículo se usa la siguiente fórmula para representar todas las observaciones en la misma escala: 
+
+La fórmula usada parte de la representación del diagrama [HR]{.acr} realizada en el trabajo de @GaiaCollaboration2018HRD. En este artículo se usa la siguiente fórmula para representar todas las observaciones como si se encontrasen a una misma distancia de referencia: 
 $$ M_G = G + 5 + 5\log_{10}\left(\frac{\varpi}{1000}\right) $$
 
 Aplicando las propiedades de los logaritmos a la fórmula anterior:
@@ -483,15 +481,21 @@ Diagrama HR de las observaciones de Gaia contenidas en la base de datos
 :::
 
 
-En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que presenta objetos con propiedades físicas diferentes. Si bien es cierto, destaca un grupo mayoritario tal y como se aprecia en la parte media izquierda del gráfico. 
-Debido a esta diversidad, el modelo debe adaptarse a fuentes de distintas características, con lo que no es un entrenamiento especializado en un solo tipo de estrella. 
-Al mismo tiempo, se observan algunos datos dispersos y distantes de las regiones más ocupadas, los cuales podrían considerarse anomalías para el modelo a entrenar.
+En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que presenta objetos con propiedades físicas diferentes. Si bien es cierto, destaca un grupo mayoritario correspondiente a la secuencia principal, tal y como se aprecia en la parte central del gráfico. 
+Además, se aprecia un segundo grupo menos numeroso en la parte inferior izquierda, indicando la presencia de enanas blancas en el conjunto de datos.
+
+En contraposición a estos grupos de observaciones, las estrellas gigantes parecen estar representadas en menor grado, no se observa una acumulación de puntos por encima de la secuencia principal.
+Esto implica que el modelo desarrollado estará entrenado principalmente sobre enanas blancas y estrellas de la secuencia principal. Para extender su aplicación a estrellas gigantes, debería incorporarse una muestra representativa de este tipo de cuerpo estelar y entrenar el modelo de nuevo.
+
+Debido a esta diversidad, el modelo debe adaptarse a fuentes de distintas características, con lo que no es un entrenamiento especializado en un solo tipo de estrella. Sin embargo, la capacidad de predicción podría verse afectada por el porcentaje de representación de cada población.
+
+Al mismo tiempo, se observan algunos datos dispersos y distantes de las regiones más pobladas, los cuales podrían corresponder a objetos con menos representación en la base de datos, es decir, observaciones atípicas para el modelo.
 
 ### Análisis de la [SNR]{.acr} de los datos obtenidos
 
 Una vez creado y filtrado el conjunto de datos, para analizar la calidad de los espectros, se usó la [SNR]{.acr} y el error relativo. 
-En primer lugar, para los espectros de Gaia, se calculó a partir del flujo y de la incertidumbre proporcionada por la librería *GaiaXPy*. La mediana obtenida fue de 20.04, representando un error relativo del 5%. 
-Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a parir del flujo y la varianza inversa, definiendo el error como $\sigma = 1/\sqrt{\mathrm{ivar}}$. Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde $ivar$ era cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
+En primer lugar, para los espectros de Gaia, se calculó la [SNR]{.acr} a partir del flujo y de la incertidumbre proporcionada por la librería *GaiaXPy*. La mediana obtenida fue de 20.04, representando un error relativo del 5%. 
+Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a partir del flujo y la varianza inversa, definiendo el error como $\sigma = 1/\sqrt{\mathrm{ivar}}$. Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde $ivar$ era cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
 
 Observamos a continuación en la @fig-SNR-gaia-sdss la distribución del [SNR]{.acr} en los espectros de Gaia y SDSS. 
 
@@ -517,9 +521,9 @@ Por otro lado, valoramos el error relativo mediano según la longitud de onda. E
 Distribución del error relativo según la longitud de onda de los espectros de Gaia
 :::
 
-La evolución del error relativo no es uniforme. Cerca de los 6500 Å se observa un salto, coincidiendo con el rango en el que se solapan las mediciones de BP y RP. Esta discontinuidad puede deberse al proceso con el que se solapan ambos espectros, y por lo tanto no se considera una característica de los espectros. 
-Además, cabe destacar que los valores menores se encuentran en la zona del salto, alcanzando el mínimo sobre los 6400Å. Después del salto, en el que el error incrementa bruscamente, el error relativo vuelve desciende y parece mantenerse constante en la zona central del RS, volviendo a aumentar en las longitudes de onda más elevadas.
-Asimismo, los percentiles 25 y 75 indican que la variabilidad es más alta en la zona del salto que en los extremos de la longitud espectral analizada y menor cerca del final del rango del BS. 
+La evolución del error relativo no es uniforme. Cerca de los 6500 Å se observa un salto. Este hecho coincide con el rango en el que se solapan las mediciones de BP y RP. La discontinuidad puede deberse al proceso con el que se solapan ambos espectros. 
+Además, cabe destacar que los valores menores se encuentran en la zona del salto, alcanzando el mínimo sobre los 6400Å. Después del salto, en el que el error incrementa bruscamente, el error relativo vuelve a ser descendiente y parece mantenerse constante en la zona central del espectro rojo, volviendo a aumentar en las longitudes de onda más elevadas.
+Asimismo, los percentiles 25 y 75 indican que la variabilidad es más alta en la zona del salto que en los extremos de la longitud espectral analizada y menor cerca del final del rango del espectro azul. 
 
 En la @fig-error-rel-sdss encontramos la distribución de [SDSS]{.acr}. 
 
@@ -576,7 +580,7 @@ Probamos también la adición de los datos de la relación señal-ruido del espe
 
 #### Modelo base: red neuronal densa
 Después de un procedimiento de prueba y error, el modelo que mejores resultados obtuvo dentro en la categoría de red neuronal densa, estaba formado por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
-Además, se probaron diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos. En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
+Además, se probaron diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos, a diferencia de ReLU, cuyo uso fue descartado . En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
 
 La función de pérdida definida fue Huber [@huber1964robust], que combina el error cuadrático medio para errores pequeños, y el error absoluto medio para errores más grandes. La función matemática que la define es la siguiente:
 $$L_{\delta}(a)=
@@ -623,16 +627,18 @@ La arquitectura evoluciona de la pila de bloques residuales a una U-Net de una d
 La configuración del entrenamiento conserva la función de pérdida Huber con $\delta = 1$ (ahora ponderada por píxel), las mismas métricas [MAE]{.acr} y [MSE]{.acr} sin ponderar para mantener la comparabilidad con el resto de modelos, el optimizador Adam con limitación a 1 de la norma de los gradientes y los lotes de 64 muestras. Al ser un modelo de mayor capacidad, se amplió el presupuesto de entrenamiento: tasa de aprendizaje inicial de 0.0003, un máximo de 100 épocas, parada temprana con paciencia de 10 épocas y reducción de la tasa de aprendizaje a la mitad tras 4 épocas sin mejora.
 
 #### Modelo recurrente
-Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró como una secuencia en función de la longitud de onda, donde cada longitud de onda era un paso de la secuencia, y el flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
+Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró cada longitud de onda como un paso de la secuencia, y el flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
 
-Los primeros intentos de arquitectura recurrente se basaron en capas recurrentes simples y [GRU]{.acr}.
-En los primeros intentos, las funciones de pérdida, optimizador y parada temprana se mantuvieron igual que las descritas en las redes neuronales densas, dado que habían presentado un buen funcionamiento con estos modelos. Pero finalmente se redujo las épocas de espera dado que la diferencia entre esperar 2 o 4 épocas no reflejaba mejoras en las estadísticas pero sí en el tiempo de entrenamiento.
+Los primeros intentos de arquitectura recurrente se basaron en capas recurrentes simples y [GRU]{.acr}. A diferencia de las capas recurrentes simples, las [GRU]{.acr} incluyen mecanismos internos que condicionan que información de los pasos anteriores debe descartarse y cuál conservarse.
+En estas, las funciones de pérdida, optimizador y parada temprana se mantuvieron igual que las descritas en las redes neuronales densas, dado que habían presentado un buen funcionamiento con estos modelos. 
 
 La arquitectura usada para los modelos más simples incorporaban capas densas similares a las que anteriormente habían sido definidas pero con la adición de una capa recurrente simple de dimensión 128, o dos capas de [GRU]{.acr} de dimensión 128 consecutivas, configurando la primera como *return_sequences = True* para que devolviese la representación de cada punto y la otra como *False* para que devolviese el último estado de la secuencia y que este vector fuese usado como entrada a las capas densas.
 
 Por otro lado, se probaron variantes bidireccionales de la arquitectura recurrente [@schuster1997bidirectional]. Esta capa procesa la secuencia de puntos en ambos sentidos, en sentido creciente y decreciente de longitud de onda. Se incluyeron versiones con y sin capas de normalización internas.
 
-Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resuma el entreno en el último estado recurrente, sino que el modelo conserva información de todos los pasos de la secuencia y asigna pesos a aquellas regiones del espectro que se consideran más importantes para la predicción.  
+Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resuma el entreno en el último estado recurrente, sino que el modelo conserva información de todos los pasos de la secuencia y asigne pesos a aquellas regiones del espectro que se consideran más importantes para la predicción.  
+
+En la arquitectura de estos dos últimos modelos mencionados, se redujo las épocas de espera dado que la diferencia entre esperar 2 o 4 épocas no reflejaba mejoras en las estadísticas pero sí en el tiempo de entrenamiento.
 
 En todas las arquitecturas probadas, la capa de salida del modelo tenía dimensión igual al número de puntos del espectro real de [SDSS]{.acr}. 
 
@@ -775,10 +781,10 @@ La última comparación vendrá dada por la librería *ISpec*. Con esta estimamo
 Para ello primero transformamos cada espectro en el formato requerido por iSpec, teniendo que añadir para cada punto el flujo, longitud de onda y error asociado. El análisis se realizó sin incertidumbre asignada a cada punto, con lo que se asignó un valor unitario de error a todos los puntos de modo que todos partiesen del mismo peso.
 Una vez teníamos la estructura requerida, normalizamos al continuo los espectros con la función propia de iSpec.
 
-Además, los puntos iniciales de testeo de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto en todos los espectros. 
+Además, los puntos iniciales de testeo de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto. 
 
-En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES*, pero se observaron advertencias de que los valores quedaba fuera del rango disponible, así que se usó *ATLAS9.Castelli*, que eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD*, cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen. 
-Se usaron las abundancias solares de Grevesse como referencia de la metalicidad y la información isotópica de *SPECTRUM*.
+En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES* [@Gustafsson2008], pero se observaron advertencias de que los valores quedaba fuera del rango disponible, así que se usó *ATLAS9.Castelli* [@CastelliKurucz2003], que prácticamente eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD* [@Piskunov1995], cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen e incluye parametros necesarios para la síntesis espectral. 
+Se usaron las abundancias solares de Grevesse[@Grevesse2007] como referencia de la metalicidad y la información isotópica de *SPECTRUM* [@GrayCorbally1994].
 
 A partir de los datos iniciales, mallas e información base mencionada, se ajustó la temperatura, gravedad superficial y metalicidad de las estrellas.
 
@@ -800,7 +806,7 @@ Analizamos muestras aleatorias de 250 espectros para cada modelo denso. El resul
 
 *Fuente: Elaboración propia*
 
-Gráficos de barras de errores absolutos respecto iSpec entre los espectros reales de SDSS y los predichos.
+Gráficos de barras de errores absolutos dados por iSpec entre los espectros reales de SDSS y los predichos.
 :::
 
 
@@ -809,7 +815,6 @@ Encontramos destacada la mediana de los valores obtenidos y la distribución en 
 Se aprecia como la mediana del error de la temperatura se ubica en todos los modelos alrededor del 0.25%, mientras que la de la gravedad superficial cerca del 0.10% y el error absoluto de la temperatura cerca de los 0.017. 
 Estos valores indican una relación de similitud entre las propiedades físicas de ambos espectros, por lo que podemos afirmar que los modelos densos estudiados conllevan una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con iSpec en rangos de error pequeños. 
 
-<!-- TO DO falta ejecutar el SNR de nuevo-->
 Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-espectros-generados-snr.
 
 :::{#fig-espectros-generados-snr}
@@ -960,6 +965,7 @@ A diferencia del modelo convolucional 1D, la U-Net no se limita a una correcció
 
 Después de entrenar diversas combinaciones de las características descritas para los modelos en el apartado de redes recurrentes, podemos destacar 3 modelos que obtuvieron los mejores resultados entre los estudiados. 
 
+#### Modelo basado en una capa GRU
 La primera arquitectura destacable, formada por una capa de [GRU]{.acr} y dos densas con función de activación ReLU, junto a las mismas funciones de disminución de la tasa de aprendizaje y parada temprana que los modelos basados únicamente en redes neuronales densas. Después de 23 épocas se obtuvieron las  métricas de entrenamiento, validación y test descritas en la @tbl-GRU-metrics:
 
 ::: {#tbl-GRU-metrics}
@@ -997,9 +1003,10 @@ Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes co
 Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una capa de GRU.
 :::
 
+#### Modelo basado en una capa Bidireccional
 Los siguientes modelos a mencionar, usaron funciones de parada temprana con espera de 2 épocas y reducción de la tasa de aprendizaje con 1 época. 
 
-La siguiente arquitectura usó una capa Bidireccional después de la de entrada, y a continuación, 4 capas densas con capas de funciones de activación ReLU. 
+La siguiente arquitectura usó una capa Bidireccional después de la de entrada, y a continuación, 4 capas densas con capas de funciones de activación LeakyReLU. 
 
 Las métricas obtenidas tras el entrenamiento de las 6 épocas del modelo fueron los incluidos en la @tbl-BIRNN-metrics :
 
@@ -1037,6 +1044,8 @@ Los ejemplos usados para la representación visual de las aproximaciones, tampoc
 Ejemplos de espectros generado por el modelo de redes neuronales recurrentes con una capa bidireccional.
 :::
 
+#### Modelo basado en capas Bidireccionales y función de Atención
+
 El último modelo destacable de los estudiados en este apartado, se basa en dos capas Bidireccionales y la aplicación de la función de Atención sobre todos los puntos del espectro junto a las capas densas anteriormente mencionadas. 
 Esta adición tampoco representa grandes mejoras en las métricas del modelo. Los valores pueden observarse en la @tbl-ATT-metrics.
 
@@ -1070,6 +1079,8 @@ Igual que en las métricas comentadas, en los espectros usados como punto de con
 
 Ejemplos de espectros generados por el modelo de redes neuronales recurrentes con una función de Atención.
 :::
+
+#### Comparación entre los modelos recurrentes con iSpec
 
 Por último, si nos basamos en los resultados obtenidos de la estimación de características astrofísicas con *iSpec*, las diferencias entre los valores predichos con los espectros de [SDSS]{.acr} reales y los predichos por los modelos son los incluidos en la @tbl-RNN-iSpec:
 
@@ -1128,6 +1139,18 @@ Por otro lado, el modelo denso normalizado con el máximo de cada espectro es la
 
 La conclusión extraída con el estadístico chi-cuadrado es la misma que la obtenida de las métricas de entrenamiento y test de los modelos. Si bien es cierto, las diferencias no son muy grandes, pero los valores más pequeños se encuentran en el modelo denso normalizado con la mediana. 
 En cuanto a iSpec, los resultados indican que todos los modelos tienen un comportamiento similar en cuanto a los datos que este aproxima, así que no podemos destacar un modelo en concreto, pero sí afirmar que las predicciones producen datos astrofísicos muy parecidos a los que producen los espectros reales.
+
+Si nos centramos en los resultados obtenidos por la red que mejores estadísticas presenta generalmente, es decir, la red neuronal Densa con la normalización por la mediana, observamos en la @fig-HR-CHI-dense que no destaca una categoría de estrellas donde el modelo haya funcionado mejor.
+
+:::{#fig-HR-CHI-dense}
+
+![](images/chicuadrado-HR-densa.png)
+
+*Fuente: Elaboración propia*
+
+Diagrama HR del estadístico Chi-cuadrado aplicado sobre la muestra de test en el modelo denso.
+:::
+
 
 ## Conclusiones y trabajo futuro
 

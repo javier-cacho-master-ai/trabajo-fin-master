@@ -138,3 +138,63 @@ def calculate_all_chi2(y_real, y_pred, y_ivar, plot=True):
         print(f"Máximo: {maximum_chi2: .2f}")
 
     return chi2_values
+
+
+def plot_hr_chi2_hexbin(
+    bp_rp,
+    g_mag,
+    parallax,
+    chi2_red,
+    gridsize=60,
+    mincnt=1,
+    figsize=(8, 8)
+):
+
+    bp_rp = np.asarray(bp_rp)
+    g_mag = np.asarray(g_mag)
+    parallax = np.asarray(parallax)
+    chi2_red = np.asarray(chi2_red)
+
+    # Valores válidos
+    valid = (
+        np.isfinite(bp_rp)
+        & np.isfinite(g_mag)
+        & np.isfinite(parallax)
+        & np.isfinite(chi2_red)
+        & (parallax > 0)
+        & (chi2_red > 0)
+    )
+
+    # Corrección de la distancia en la magnitud absoluta G
+    abs_g_mag = (g_mag[valid]+ 5 * np.log10(parallax[valid]) - 10)
+
+    chi2_valid = chi2_red[valid]
+
+    plt.figure(figsize=figsize)
+
+    hb = plt.hexbin(
+        bp_rp[valid],
+        abs_g_mag,
+        C=chi2_valid,
+        gridsize=gridsize,
+        reduce_C_function=np.median,
+        mincnt=mincnt
+    )
+
+    cbar = plt.colorbar(hb)
+
+    cbar.set_label(
+        r"Mediana de $\chi^2_{\mathrm{red}}$"
+    )
+
+    plt.gca().invert_yaxis()
+
+    plt.xlabel("BP - RP")
+    plt.ylabel(r"$M_G$")
+
+    plt.title(
+        r"Distribución del $\chi^2$ en el diagrama HR"
+    )
+
+    plt.tight_layout()
+    plt.show()
