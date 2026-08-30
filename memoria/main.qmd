@@ -880,17 +880,19 @@ Gráficas de las métricas de evolución de entranamiento en modelo convoluciona
 
 Este comportamiento sugiere que la red converge casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación permanecen muy próximas entre sí durante todo el proceso, por lo que tampoco en esta arquitectura se aprecian indicios de sobreajuste.
 
-Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de test, obteniendo las métricas recogidas en la @tbl-test-cnn, muy similares a las del conjunto de validación.
+Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de test, obteniendo las métricas recogidas en la @tbl-test-cnn, muy similares a las de los conjuntos de entrenamiento y validación de la mejor época.
 
 ::: {#tbl-test-cnn}
 
-| Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|
-| 0.0153 | 0.1137 | 0.0352 |
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0129 | 0.1044 | 0.0286 |
+| Validación | 0.0129 | 0.1051 | 0.0311 |
+| Test | 0.0128 | 0.1047 | 0.0272 |
 
 *Fuente: Elaboración propia*
 
-Resultados obtenidos sobre el conjunto de test con el modelo convolucional 1D.
+Resultados obtenidos con el modelo convolucional 1D para los diferentes conjuntos de datos.
 :::
 
 Cabe recordar que estas métricas se calculan sobre espectros normalizados con la mediana del flujo de Gaia, una estrategia distinta a las empleadas en el modelo denso, por lo que los valores no son directamente comparables con los de las tablas anteriores.
@@ -935,20 +937,22 @@ El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al 
 Gráficas de la evolución de las métricas de entrenamiento del modelo convolucional U-Net
 :::
 
-Las métricas obtenidas sobre el conjunto de test se recogen en la @tbl-test-cnn-v2. Junto a las métricas sin ponderar, comparables con las del resto de modelos, se incluyen sus variantes ponderadas por la varianza inversa de [SDSS]{.acr}, que reflejan el objetivo que la red optimiza. La pérdida, al estar ponderada, no es comparable con la de las arquitecturas anteriores.
+Las métricas de entrenamiento, validación y test de la mejor época se recogen en la @tbl-test-cnn-v2. Junto a las métricas sin ponderar, comparables con las del resto de modelos, se incluyen sus variantes ponderadas por la varianza inversa de [SDSS]{.acr}, que reflejan el objetivo que la red optimiza. La pérdida, al estar ponderada, no es comparable con la de las arquitecturas anteriores.
 
 ::: {#tbl-test-cnn-v2}
 
-| Pérdida | [MAE]{.acr} | [MSE]{.acr} | [MAE]{.acr} ponderado | [MSE]{.acr} ponderado |
-|---|---:|---:|---:|---:|
-| 0.0055 | 0.0786 | 0.0165 | 0.0704 | 0.0112 |
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} | [MAE]{.acr} ponderado | [MSE]{.acr} ponderado |
+|---|---:|---:|---:|---:|---:|
+| Entrenamiento | 0.0054 | 0.0779 | 0.0173 | 0.0697 | 0.0110 |
+| Validación | 0.0056 | 0.0794 | 0.0204 | 0.0711 | 0.0114 |
+| Test | 0.0055 | 0.0786 | 0.0165 | 0.0704 | 0.0112 |
 
 *Fuente: Elaboración propia*
 
-Resultados obtenidos sobre el conjunto de test con el modelo convolucional U-Net.
+Resultados obtenidos con el modelo convolucional U-Net para los diferentes conjuntos de datos.
 :::
 
-La comparación con la @tbl-test-cnn es directa por compartir normalización: el [MAE]{.acr} sobre test baja de 0.1137 a 0.0786 (una mejora del 31 %) y el [MSE]{.acr} de 0.0352 a 0.0165 (un 53 %). En la @fig-espectros-generados_cnn_v2 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
+La comparación con la @tbl-test-cnn es directa por compartir normalización: el [MAE]{.acr} sobre test baja de 0.1047 a 0.0786 (una mejora del 25 %) y el [MSE]{.acr} de 0.0272 a 0.0165 (un 39 %). En la @fig-espectros-generados_cnn_v2 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
 
 :::{#fig-espectros-generados_cnn_v2}
 
