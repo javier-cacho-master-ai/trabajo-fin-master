@@ -1,10 +1,10 @@
 # %% [markdown]
 # # Modelo convolucional 1D
-# 
+#
 # Entrenamiento del modelo convolucional descrito en la memoria (apartado *Modelo convolucional 1D*).
-# 
+#
 # Planteamiento de superresolución:
-# 
+#
 # 1. El espectro de Gaia se interpola linealmente sobre la malla de longitudes de onda de SDSS, de modo que entrada y salida quedan alineadas punto a punto.
 # 2. Una red convolucional residual aprende la **corrección** que hay que aplicar sobre el espectro interpolado (conexión residual global), en lugar de generar el espectro completo desde cero.
 # 3. Cada par de espectros se normaliza con la mediana del flujo de Gaia, por lo que la normalización puede deshacerse usando solo la entrada (aplicable a observaciones nuevas sin conocer el espectro de SDSS).
@@ -28,12 +28,11 @@ SOLUTION_DIR = next(
 DATA_DIR = SOLUTION_DIR / "data"
 MODELS_DIR = SOLUTION_DIR / "models"
 CNN_DIR = MODELS_DIR / "cnn"
-ISPEC_DIR = SOLUTION_DIR / "lib" / "iSpec"
 
-# 'services' está en la carpeta de este cuaderno, 'model_functions' e
-# 'iSpec_functions' en 'models' e iSpec no se instala como dependencia: todos se
-# importan desde su carpeta
-sys.path[:0] = [str(CNN_DIR), str(MODELS_DIR), str(ISPEC_DIR)]
+# 'services', 'model_functions' e 'iSpec_functions' están en 'models', así que se
+# importan desde su carpeta. iSpec tampoco se instala como dependencia, pero de
+# montarlo se encarga 'iSpec_functions', que lo añade a 'sys.path' al importarse.
+sys.path.insert(0, str(MODELS_DIR))
 
 # Ficheros de checkpoint. Esta celda no carga datos, de modo que la recarga de
 # una sesión anterior solo necesita ejecutar esta celda y la de recarga.
@@ -41,6 +40,11 @@ MODEL_PATH = CNN_DIR / "cnn_v1.keras"
 HISTORY_PATH = CNN_DIR / "cnn_v1_training_history.csv"
 SUMMARY_PATH = CNN_DIR / "cnn_v1_training_summary.json"
 TEST_DATA_PATH = CNN_DIR / "cnn_v1_test_data.npz"
+
+# Predicciones sobre el conjunto de test. No son un checkpoint del
+# entrenamiento, sino el dato que consume la comparativa entre arquitecturas,
+# así que van en 'data/predictions' y no en esta misma carpeta.
+PREDICTIONS_PATH = DATA_DIR / "predictions" / "cnn_v1_predictions.npz"
 
 # Tamaño de lote del entrenamiento, guardado también en el resumen
 batch_size = 64
@@ -106,7 +110,7 @@ y_test_norm = y_test / X_scale_test
 # Interpolamos el espectro de Gaia sobre la malla de longitudes de onda de SDSS. Esta versión interpolada es la entrada de la red y también la base sobre la que se aplica la corrección residual.
 
 # %%
-from services.persistence import save_test_data
+from services.checkpoints import save_test_data
 
 
 def interpolate_to_sdss_grid(spectra):
@@ -187,13 +191,13 @@ model_cnn.summary()
 # - `cnn_v1_training_summary.json`: el resumen del entrenamiento (mejor época, tamaño de lote y métricas de test). Son **datos sueltos y heterogéneos** que no caben en una tabla ni en un contenedor de arrays, y en JSON siguen siendo legibles y versionables en Git.
 # - `cnn_v1_test_data.npz`: las variables del conjunto de test que consumen las celdas posteriores. Son **arrays** de más de cien megabytes en total, para los que `.npz` es el único formato razonable de los tres: conserva forma y `dtype` sin código de conversión y se escribe y lee en menos de un segundo, mientras que en JSON o CSV los mismos datos ocuparían varias veces más en texto. Sobre todo, conserva los identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la mitad no se representan de forma exacta en el `float64` al que los llevaría un CSV o un JSON leído como decimal.
 #
-# La lógica de guardado y recarga vive en `services/persistence.py`.
+# La lógica de guardado y recarga vive en `models/services/checkpoints.py`, compartida por todos los cuadernos de entrenamiento. De las predicciones se ocupa `models/services/predictions.py`, que las guarda aparte, en `data/predictions/cnn_v1_predictions.npz`: no son un checkpoint del entrenamiento sino el dato que consume la comparativa entre arquitecturas.
 #
 
 # %%
 from tensorflow.keras.callbacks import CSVLogger, ModelCheckpoint
 
-from services.persistence import save_training_summary
+from services.checkpoints import save_training_summary
 
 early_stop = EarlyStopping(
     monitor="val_loss",
@@ -249,7 +253,7 @@ save_training_summary(
 #
 
 # %%
-from services.persistence import load_checkpoint, load_test_data
+from services.checkpoints import load_checkpoint, load_test_data
 
 model_cnn, training_history, training_summary = load_checkpoint(
     MODEL_PATH, HISTORY_PATH, SUMMARY_PATH
@@ -289,7 +293,7 @@ plot_training_metrics(training_history)
 
 
 # %%
-from services.persistence import save_training_summary
+from services.checkpoints import save_training_summary
 
 test_metrics = model_cnn.evaluate(
     X_test_interp[..., None],
@@ -311,10 +315,22 @@ save_training_summary(
 print(test_metrics)
 
 # %%
-y_pred_norm = model_cnn.predict(X_test_interp[..., None])
+from services.predictions import predict_test_set, save_predictions
 
-# Deshacemos la normalización solo con la escala de la entrada de Gaia
-y_pred = y_pred_norm * X_scale_test
+# Predicciones sobre el conjunto de test. La celda parte del `.keras` del modelo
+# y del `.npz` de test, así que se ejecuta suelta tras la de rutas: no
+# reentrena, no vuelve a cargar el `.npz` de datos completo y no necesita las
+# variables que dejen en memoria las demás celdas del cuaderno.
+y_pred = predict_test_set(
+    MODEL_PATH,
+    TEST_DATA_PATH,
+    build_input=lambda test: test["X_test_interp"][..., None],
+    # La normalización se deshace solo con la escala de la entrada de Gaia
+    denormalize=lambda y_norm, test: y_norm * test["X_scale_test"]
+)
+
+# Las guardamos para la comparativa entre arquitecturas, en su propio cuaderno
+save_predictions(PREDICTIONS_PATH, y_pred=y_pred)
 
 # %%
 # Mismos objetos usados en las comparativas de la memoria
@@ -360,42 +376,28 @@ model_cnn.save(MODEL_PATH)
 
 # %% [markdown]
 # Validación física con iSpec: analizamos una muestra de espectros de test comparando los parámetros estelares (Teff, log g, [M/H]) derivados del espectro SDSS real frente a los derivados del espectro predicho por la red.
-# 
-# Esta celda carga el modelo guardado (`cnn_v1.keras`) y genera sus propias predicciones, por lo que no requiere haber entrenado en esta sesión: basta con ejecutar antes las celdas de preparación de datos (carga, normalización e interpolación).
+#
+# El proceso se reparte en tres celdas independientes —importaciones, recursos y análisis— para que repetir el análisis, que es con diferencia lo más lento, no vuelva a cargar los recursos.
+#
+# Las predicciones son las de la celda de predicción, que carga el modelo guardado (`cnn_v1.keras`) y no requiere haber entrenado en esta sesión.
 
 # %%
 # Funciones de iSpec (el módulo está en 'models', ya añadido a sys.path)
 from iSpec_functions import (
     load_ispec_resources,
+    load_gaia_table,
     analyze_sample_real_vs_pred,
     analyze_ispec_errors
 )
 
-import tensorflow as tf
-from astropy.table import Table
-
-# Cargamos el modelo entrenado y generamos las predicciones sobre test
-model_cnn = tf.keras.models.load_model(MODEL_PATH)
-
-y_pred_norm = model_cnn.predict(X_test_interp[..., None])
-
-# Deshacemos la normalización solo con la escala de la entrada de Gaia
-y_pred = y_pred_norm * X_scale_test
-
-# Cargamos los recursos de iSpec
+# %%
+# Recursos de iSpec y tabla de Gaia. Las dos cargas están cacheadas en
+# 'iSpec_functions', de modo que repetir esta celda no vuelve a leer de disco
 resources = load_ispec_resources()
 
-# Cargamos la tabla de Gaia guardada en local
-gaia_data_path = DATA_DIR / "gaia_data.ecsv"
+gaia_data_df = load_gaia_table()
 
-gaia_data_table = Table.read(
-    gaia_data_path,
-    format="ascii.ecsv"
-)
-
-# Pasamos a dataframe
-gaia_data_df = gaia_data_table.to_pandas()
-
+# %%
 # Analizamos con iSpec una muestra de espectros reales frente a predichos
 results_df_cnn = analyze_sample_real_vs_pred(
     y_test,
@@ -408,5 +410,3 @@ results_df_cnn = analyze_sample_real_vs_pred(
 )
 
 error_df_cnn = analyze_ispec_errors(results_df_cnn)
-
-

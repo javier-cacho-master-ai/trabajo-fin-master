@@ -1,0 +1,13 @@
+{
+  "model": "birnn.keras",
+  "history": "birnn_training_history.csv",
+  "updated": "2026-09-02T01:43:14",
+  "batch_size": 64,
+  "epochs_completed": 8,
+  "best_epoch": 8,
+  "test_metrics": {
+    "loss": 0.004389064386487007,
+    "mae": 0.05004473030567169,
+    "mse": 0.010995296761393547
+  }
+}
