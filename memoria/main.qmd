@@ -11,14 +11,14 @@ keywords_en : [generative ai, machine learning, blue spectrum, red spectrum, gai
 
 ## Resumen
 
-En este trabajo se propone un enfoque basado en aprendizaje profundo para mejorar la calidad de los espectros de baja resolución captados por los fotómetros azul (BP) y rojo (RP) del satélite Gaia, aproximándolos a espectros de mayor resolución equivalentes a los del *Sloan Digital Sky Survey* (SDSS). Para ello se ha construido un conjunto de datos propio con más de 55 000 pares de espectros emparejados de Gaia y SDSS, obtenido al cruzar la tercera liberación de datos de Gaia (DR3) con la decimotercera de SDSS (DR13) mediante la tabla oficial de mejores vecinos, y depurado con criterios de calidad basados en la relación señal-ruido y en la coherencia entre ambas fuentes. Sobre este conjunto se han entrenado y comparado tres arquitecturas de red neuronal: una red densa, una red convolucional unidimensional (CNN) y una red recurrente (RNN).
+En este trabajo se propone un enfoque basado en aprendizaje profundo para mejorar la calidad de los espectros de baja resolución captados por los fotómetros azul (BP) y rojo (RP) del satélite Gaia, aproximándolos a espectros de mayor resolución equivalentes a los del *Sloan Digital Sky Survey* (SDSS). Para ello se ha construido un conjunto de datos propio con más de 55 000 pares de espectros emparejados de Gaia y SDSS, obtenido al cruzar la tercera liberación de datos de Gaia (DR3) con la decimotercera de SDSS (DR13) mediante la tabla oficial de mejores vecinos, y depurado con criterios de calidad basados en la relación señal-ruido y en la coherencia entre ambas fuentes. Sobre este conjunto se han entrenado y comparado tres arquitecturas de red neuronal: una red densa, una red convolucional unidimensional ([CNN]{.acr}) y una red recurrente ([RNN]{.acr}).
 
 Los resultados muestran que la red densa, combinada con una normalización por la mediana de cada espectro, proporciona las mejores aproximaciones: las predicciones reproducen la morfología general del espectro de SDSS, incluidos sus picos más acentuados, y la similitud de las métricas obtenidas en entrenamiento, validación y test descarta el sobreajuste. Además de la comparación directa con las observaciones reales, los espectros generados se han validado estimando con la librería iSpec parámetros astrofísicos como la temperatura efectiva, la gravedad superficial y la metalicidad, con errores relativos medianos inferiores al 1% en temperatura y gravedad respecto a los derivados de los espectros reales de SDSS. Estos resultados demuestran la viabilidad de emplear redes neuronales para trasladar el detalle de las observaciones terrestres de alta resolución al extenso catálogo de Gaia.
 
 
 ## Abstract
 
-This work proposes a deep learning-based approach to improve the quality of the low-resolution spectra captured by the blue (BP) and red (RP) photometers of the Gaia satellite, approximating them to higher-resolution spectra equivalent to those of the *Sloan Digital Sky Survey* (SDSS). To this end, a dedicated dataset of more than 55,000 matched pairs of Gaia and SDSS spectra has been built by cross-matching the third Gaia data release (DR3) with the thirteenth SDSS data release (DR13) through the official best-neighbour table, and refined with quality criteria based on the signal-to-noise ratio and on the consistency between both sources. Three neural network architectures have been trained and compared on this dataset: a dense network, a one-dimensional convolutional network (CNN), and a recurrent network (RNN).
+This work proposes a deep learning-based approach to improve the quality of the low-resolution spectra captured by the blue (BP) and red (RP) photometers of the Gaia satellite, approximating them to higher-resolution spectra equivalent to those of the *Sloan Digital Sky Survey* (SDSS). To this end, a dedicated dataset of more than 55,000 matched pairs of Gaia and SDSS spectra has been built by cross-matching the third Gaia data release (DR3) with the thirteenth SDSS data release (DR13) through the official best-neighbour table, and refined with quality criteria based on the signal-to-noise ratio and on the consistency between both sources. Three neural network architectures have been trained and compared on this dataset: a dense network, a one-dimensional convolutional network ([CNN]{.acr}), and a recurrent network ([RNN]{.acr}).
 
 The results show that the dense network, combined with a per-spectrum median normalization, provides the best approximations: the predictions reproduce the overall morphology of the SDSS spectrum, including its most prominent peaks, and the similarity of the metrics obtained on the training, validation, and test sets rules out overfitting. In addition to the direct comparison against real observations, the generated spectra have been validated by estimating astrophysical parameters with the iSpec library, such as the effective temperature, the surface gravity, and the metallicity, with median relative errors below 1% in temperature and gravity with respect to those derived from the real SDSS spectra. These results demonstrate the feasibility of using neural networks to transfer the detail of high-resolution ground-based observations to the vast Gaia catalogue.
 
@@ -655,6 +655,10 @@ Por último, se empleará la librería *ISpec* [@blancocuaresma2014ispec] para e
 
 ### Resultados obtenidos con el modelo base
 
+En este aparado se comentan los resultados más significativos obtenidos del entrenamiento de una arquitectura de red neuronal densa y la adición de la [SNR]{.acr}.
+
+#### Arquitectura densa con diferentes normalizaciones
+
 Durante el entrenamiento del modelo basado en capas densas con normalización a partir de la mediana global de los datos, se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-metricas-red-densa.
 
 :::{#fig-metricas-red-densa}
@@ -814,6 +818,8 @@ Encontramos destacada la mediana de los valores obtenidos y la distribución en 
 
 Se aprecia como la mediana del error de la temperatura se ubica en todos los modelos alrededor del 0.25%, mientras que la de la gravedad superficial cerca del 0.10% y el error absoluto de la temperatura cerca de los 0.017. 
 Estos valores indican una relación de similitud entre las propiedades físicas de ambos espectros, por lo que podemos afirmar que los modelos densos estudiados conllevan una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con iSpec en rangos de error pequeños. 
+
+#### Modelo denso con SNR
 
 Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-espectros-generados-snr.
 
@@ -1103,7 +1109,7 @@ De estos resultados se aprecia que las arquitecturas con GRU básicas y Atenció
 
 ## Discusión
 
-Para comparar la eficacia de cada modelo estudiado, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del cálculo de chi-cuadrado para cada observación en el conjunto de test. 
+Para comparar la eficacia de cada modelo estudiado con estadísticas añadidas a las ya utilizadas, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del cálculo de chi-cuadrado para cada observación en el conjunto de test. 
 La fórmula usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa (*ivar*). Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error, contribuyen en menor medida en el resultado. 
 
 La fórmula de chi-cuadrado se define como :
@@ -1151,6 +1157,8 @@ Si nos centramos en los resultados obtenidos por la red que mejores estadística
 Diagrama HR del estadístico Chi-cuadrado aplicado sobre la muestra de test en el modelo denso.
 :::
 
+Aún así, cabe destacar que la cantidad de espectros analizados en la secuencia principal es mucho mayor a los de enanas blancas, así que no disponemos de una muestra suficientemente representativa para asegurar un comportamiento igualitario ante ambos conjuntos.
+
 
 ## Conclusiones y trabajo futuro
 
@@ -1160,17 +1168,21 @@ En este capítulo se incluyen las conclusiones obtenidas tras el desarrollo del 
 
 A lo largo del trabajo hemos llevado a cabo todo el desarrollo necesario para poder entrenar un modelo de redes neuronales, partiendo desde la creación de la base de datos de espectros de Gaia y [SDSS]{.acr} hasta su uso para la validación del modelo generado. 
 
-En primer lugar, la creación de la base de datos resultó no ser algo trivial. Diseñamos un proceso por etapas que nos permitió obtener a partir de espectros y datos de [SDSS]{.acr}, la información captada por Gaia del cuerpo que categorizaba como el vecino más cercano. Se observaron diversas limitaciones en este proceso, en gran medida debido a la estructura y capacidad de los servicios de consulta que disponen ambos instrumentos. Por este motivo, una parte importante del trabajo se basó en conseguir un método robusto y reproducible que nos permitiese crear la base de datos inicial. 
-Al mismo tiempo, la calidad de los pares de espectros también influyó en el estudio, se tuvieron que descartar algunos datos debido a escalas incompatibles, artefactos, relaciones señal-ruido de mala calidad o valores completamente anómalos, como por ejemplo con espectros constantes o nulos a lo largo de la longitud de onda observada.
+En primer lugar, la creación de la base de datos resultó no ser algo trivial. Diseñamos un proceso por etapas que nos permitió obtener, a partir de espectros y datos de [SDSS]{.acr}, la información captada por Gaia del cuerpo que categorizaba como el vecino más cercano. Se observaron diversas limitaciones en este proceso, en gran medida debido a la estructura y capacidad de los servicios de consulta de los que disponen ambos instrumentos. Por este motivo, una parte importante del trabajo se basó en conseguir un método robusto y reproducible que nos permitiese crear la base de datos inicial. Este proceso forma parte también de los resultados del trabajo, ya que la herramienta permite obtener y preparar nuevas parejas de espectros de forma automatizada.
+Al mismo tiempo, la calidad de los pares de espectros también influyó en el estudio. Se tuvieron que descartar algunos datos debido a escalas incompatibles, artefactos, relaciones señal-ruido de mala calidad o valores completamente anómalos, como por ejemplo espectros constantes o nulos a lo largo de la longitud de onda observada. Este filtrado permitió trabajar con una muestra más homogénea, reduciendo así los efectos negativos de observaciones que podrían haber dificultado el entrenamiento del modelo.
 
 En cuanto al modelo neuronal, planteamos un problema de regresión multivariante, cuya red recibe como entrada un espectro de Gaia y tiene el objetivo de predecir como salida un espectro de [SDSS]{.acr}. 
-<!--
-Cabe destacar que la gran diferencia de resolución entre Gaia y [SDSS]{.acr} implica que el modelo no sea capaz de aprender información espectral muy detallada de [SDSS]{.acr}, es decir, no puede reconstruir de forma eficaz las estructuras finas que [SDSS]{.acr} produce. Por este motivo, la dimensión de salida de [SDSS]{.acr} se redujo mediante una agrupación de bines, permitiéndonos mejorar la calidad de los resultados sin perder la información básica del espectro de mayor calidad. -->
 
 Se evaluaron diferentes arquitecturas de modelo y preprocesamientos de la base de datos, considerando definitivas las versiones que se pueden encontrar detalladas en este trabajo. 
-De dicho proceso de prueba y error, obtuvimos resultados que demuestran que el modelo es capaz de predecir la forma general de los espectros de [SDSS]{.acr} en gran parte de los casos. Asimismo, la comparación de las métricas de entrenamiento, validación y test permiten asegurar que el modelo no se ha sobreajustado a los datos usados durante el entrenamiento, sino que presenta capacidad para generalizar su uso sobre datos no observados. 
+De dicho proceso de prueba y error, obtuvimos resultados que demuestran que las diferentes  arquitecturas estudiadas son capaces de predecir la forma general de los espectros de [SDSS]{.acr} en gran parte de los casos.
+Destaca entre ellas el modelo neuronal denso, el cual obtiene mayoritariamente las mejores métricas al comparar espectros de [SDSS]{.acr} predichos y reales. Incluso al usar la librería *iSpec* para estimar características astrofísicas, se obtuvieron resultados positivos, con diferencias relativas inferiores al 0.5% en la temperatura y la gravedad superficial. Estas estadísticas idican que los espectros predichos no solo reproducen la forma general de los espectros reales, sino que conservan parte de la información física necesaria para estimar parámetros astrofísicos.
 
-En resumen, podemos concluir que este trabajo demuestra la viabilidad de diseñar un modelo de redes neuronales capaz de aproximar espectros captados por Gaia a una representación similar a los observados por [SDSS]{.acr}. Este hecho permite dejar una puerta abierta a varias líneas de mejora, las cuales serán comentadas en el siguiente apartado. 
+Asimismo, la comparación de las métricas de entrenamiento, validación y test permiten asegurar que este modelo no se ha sobreajustado a los datos usados durante el entrenamiento, sino que presenta capacidad para generalizar su uso sobre datos no observados. 
+
+A lo largo del trabajo, se investigaron otras estructuras neuronales mas complejas, pero ninguna resultó tener mejores estadísticas que la densa, aunque algunas se quedaron cerca, como por ejemplo al tratar de añadir una capa de [GRU]{.acr}. 
+El modelo más simple ofrecía mejores resultados que arquitecturas más complejas y de entrenamiento más largo como las [CNN]{.acr}. Esto demuestra que un aumento de la complejidad de la arquitectura no implica de forma directa un mejor rendimiento del modelo.
+
+En resumen, podemos concluir que este trabajo demuestra la viabilidad de diseñar un modelo de redes neuronales capaz de aproximar espectros captados por Gaia a una representación similar a los observados por [SDSS]{.acr}. Además, los resultados obtenidos con iSpec muestran que esta aproximación mantiene características espectrales que definen aspectos astrofísicos importantes. Este hecho permite dejar una puerta abierta a varias líneas de mejora, las cuales serán comentadas en el siguiente apartado. 
 
 
 ### Trabajo futuro
@@ -1181,10 +1193,12 @@ Por ejemplo, una primera opción sería refinar y ampliar la base de datos de en
 Otra opción consistiría en entrenar modelos especializados para distintos tipos de objetos o rangos de parámetros físicos. En este estudio se ha empleado un único modelo global que debía aprender relaciones espectrales para todos los objetos incluidos en el conjunto de datos. Sin embargo, si la base de datos se separase tratando de agrupar aquellos espectros más similares en diversos subconjuntos, la calidad del modelo final podría aumentar dado que facilitaríamos su aprendizaje. 
 
 Durante el trabajo se consideró la posibilidad de incluir la relación señal ruido como uno de los parámetros de entrada del modelo. Si bien es cierto, este hecho no produjo mejoras significativas a los resultados obtenidos, pero es una opción a tener en cuenta como posible línea de exploración. Añadiendo esta información se podría valorar la exactitud de cada punto de los espectros observados por Gaia y [SDSS]{.acr}, lo que permitiría valorar de forma más precisa el error cometido por el modelo. 
-<!--
-Asimismo, también cabe la opción de estudiar el uso de redes convolucionales de una dimensión. Los resultados obtenidos con su aplicación durante este trabajo no representaban una mejora significativa del modelo, por lo que fueron descartadas, pero su efectividad podría explorarse a partir de una estructura de modelo nueva.-->
 
-Finalmente, la idea de este estudio podría extenderse a otros conjuntos de datos astronómicos. Este proyecto se centró en la liberación de datos número tres de Gaia y la treceava de [SDSS]{.acr} debido a sus plataformas y el cruce de datos previamente existente, pero la metodología desarrollada podría aplicarse de forma general a otros catálogos de datos astronómicos. 
-En este trabajo, el objetivo principal era conseguir mejorar la calidad de los datos captados por Gaia, a partir de una herramienta que los aproximase a las observaciones de [SDSS]{.acr}. Esto podría generalizarse a otros satélites o telescopios que presenten el mismo problema que nuestro conjunto de datos de entrada, una baja resolución. 
-Generalizando los resultados obtenidos, el modelo no solo transformaría Gaia en [SDSS]{.acr}, sino que podría servir como base para mejorar las observaciones precedentes instrumentos astronómicos. 
+Finalmente, la idea de este estudio podría extenderse a otros conjuntos de datos astronómicos. Este proyecto se centró en la liberación de datos número tres de Gaia y la treceava de [SDSS]{.acr} debido a sus plataformas y el cruce de datos previamente existente, pero la metodología desarrollada podría aplicarse de forma general a otros catálogos de datos astronómicos.
+En este trabajo, el objetivo principal era conseguir mejorar la calidad de los datos captados por Gaia, a partir de una herramienta que los aproximase a las observaciones de [SDSS]{.acr}. Esto podría generalizarse a otros satélites o telescopios que presenten el mismo problema que nuestro conjunto de datos de entrada, una baja resolución.
+Generalizando los resultados obtenidos, el modelo no solo transformaría Gaia en [SDSS]{.acr}, sino que podría servir como base para mejorar las observaciones procedentes de instrumentos astronómicos. 
+
+Asimismo, como se observó al analizar los datos a través de un diagrama [HR]{.acr}, las estrellas gigantes no estaban representadas durante el entrenamiento del modelo, con lo que podría extenderse su uso a esta categoría aumentando el conjunto de datos usado.
+
+La programación de los modelos se ha basado en scripts y notebooks de Python, aunque en un futuro podría facilitarse el acceso a este servicio mediante el desarrollo de una aplicación que permita acceder al modelo de una forma mas sencilla. 
 

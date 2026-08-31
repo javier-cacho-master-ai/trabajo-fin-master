@@ -17,6 +17,10 @@ acronyms:
   - key: BP/RP
     shortname: BP/RP
     longname: Blue Photometer / Red Photometer
+  - key: CNN
+    shortname: CNN
+    longname: Convolutional neural network
+    translation: Red neuronal convolucional
   - key: DR
     shortname: DR
     longname: Data Release
@@ -61,6 +65,10 @@ acronyms:
   - key: MANGA
     shortname: MaNGA
     longname: Mapping Nearby Galaxies at Apache Point Observatory
+  - key: RNN
+    shortname: RNN
+    longname: Red neuronal recurrente
+    translation: Recurrent neural network
   - key: RVS
     shortname: RVS
     longname: Radial Velocity Spectrometer
