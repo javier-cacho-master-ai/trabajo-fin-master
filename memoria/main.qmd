@@ -627,20 +627,23 @@ La arquitectura evoluciona de la pila de bloques residuales a una U-Net de una d
 La configuración del entrenamiento conserva la función de pérdida Huber con $\delta = 1$ (ahora ponderada por píxel), las mismas métricas [MAE]{.acr} y [MSE]{.acr} sin ponderar para mantener la comparabilidad con el resto de modelos, el optimizador Adam con limitación a 1 de la norma de los gradientes y los lotes de 64 muestras. Al ser un modelo de mayor capacidad, se amplió el presupuesto de entrenamiento: tasa de aprendizaje inicial de 0.0003, un máximo de 100 épocas, parada temprana con paciencia de 10 épocas y reducción de la tasa de aprendizaje a la mitad tras 4 épocas sin mejora.
 
 #### Modelo recurrente
-Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró cada longitud de onda como un paso de la secuencia, y el flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
+Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró como una secuencia en función de la longitud de onda, donde cada longitud de onda era un paso de la secuencia y flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
 
 Los primeros intentos de arquitectura recurrente se basaron en capas recurrentes simples y [GRU]{.acr}. A diferencia de las capas recurrentes simples, las [GRU]{.acr} incluyen mecanismos internos que condicionan que información de los pasos anteriores debe descartarse y cuál conservarse.
 En estas, las funciones de pérdida, optimizador y parada temprana se mantuvieron igual que las descritas en las redes neuronales densas, dado que habían presentado un buen funcionamiento con estos modelos. 
 
-La arquitectura usada para los modelos más simples incorporaban capas densas similares a las que anteriormente habían sido definidas pero con la adición de una capa recurrente simple de dimensión 128, o dos capas de [GRU]{.acr} de dimensión 128 consecutivas, configurando la primera como *return_sequences = True* para que devolviese la representación de cada punto y la otra como *False* para que devolviese el último estado de la secuencia y que este vector fuese usado como entrada a las capas densas.
+El primero de los modelos recurrentes seleccionados estaba formado por una capa de [GRU]{.acr} de dimensión 128. A continuación una capa densa de 512 neuronas, seguida de funciones de activación LeakyReLU intercaladas por otra capa densa de 1024 neuronas. Finalmente, se añadió una capa densa de salida del tamaño de los espectros de [SDSS]{.acr}.
 
 Por otro lado, se probaron variantes bidireccionales de la arquitectura recurrente [@schuster1997bidirectional]. Esta capa procesa la secuencia de puntos en ambos sentidos, en sentido creciente y decreciente de longitud de onda. Se incluyeron versiones con y sin capas de normalización internas.
+En el modelo bidireccional destacado se utilizó una capa [GRU]{.acr} bidireccional con dimensión 128. A continuación se incorporaron dos capas densas de 512 y 1024 neuronas, intercaladas con funciones de activación LeakyReLU. Igual que en los casos anteriores, la capa de salida disponía del mismo tamaño que la dimensión de los espectros de [SDSS]{.acr}.
 
-Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resuma el entreno en el último estado recurrente, sino que el modelo conserva información de todos los pasos de la secuencia y asigne pesos a aquellas regiones del espectro que se consideran más importantes para la predicción.  
+Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resuma el entreno en el último estado recurrente, sino que el modelo conservase información de todos los pasos de la secuencia y asignasen pesos a aquellas regiones del espectro que se consideran más importantes para la predicción.  
 
-En la arquitectura de estos dos últimos modelos mencionados, se redujo las épocas de espera dado que la diferencia entre esperar 2 o 4 épocas no reflejaba mejoras en las estadísticas pero sí en el tiempo de entrenamiento.
+El modelo con atención seleccionado estaba formado por dos capas [GRU]{.acr} bidireccionales, la primera de dimensión 128 y la segunda 64 en cada dirección. Sobre su salida se aplicó el mecanismo de Atención, que generó un vector de dimensión 128. 
+El vector fue procesado por capas densas de 512 y 1024 neuronas, intercaladas otra vez con funciones LeakyReLU. 
 
-En todas las arquitecturas probadas, la capa de salida del modelo tenía dimensión igual al número de puntos del espectro real de [SDSS]{.acr}. 
+En la arquitectura de estos dos últimos modelos mencionados, se redujeron las épocas de espera dado que la diferencia entre esperar 2 o 4 épocas no reflejaba mejoras en las estadísticas pero sí en el tiempo de entrenamiento.
+
 
 
 ## Descripción de los resultados
@@ -969,7 +972,7 @@ A diferencia del modelo convolucional 1D, la U-Net no se limita a una correcció
 
 ### Resultados obtenidos con el modelo recurrente
 
-Después de entrenar diversas combinaciones de las características descritas para los modelos en el apartado de redes recurrentes, podemos destacar 3 modelos que obtuvieron los mejores resultados entre los estudiados. 
+Después de entrenar diversas combinaciones de las características descritas para los modelos en el apartado de redes recurrentes, podemos destacar tres modelos que obtuvieron los mejores resultados entre los estudiados. 
 
 #### Modelo basado en una capa GRU
 La primera arquitectura destacable, formada por una capa de [GRU]{.acr} y dos densas con función de activación ReLU, junto a las mismas funciones de disminución de la tasa de aprendizaje y parada temprana que los modelos basados únicamente en redes neuronales densas. Después de 23 épocas se obtuvieron las  métricas de entrenamiento, validación y test descritas en la @tbl-GRU-metrics:
@@ -987,7 +990,7 @@ La primera arquitectura destacable, formada por una capa de [GRU]{.acr} y dos de
 Resultados obtenidos con el primer modelo basado en GRU para los diferentes conjuntos de datos.
 :::
 
-Se puede observar como no se aprecian diferencias significativas entre los grupos, pudiendo confirmar la inexistencia de sobreajuste al conjunto de entrenamiento.
+Se puede observar que no se aprecian diferencias significativas entre los grupos, pudiendo confirmar la inexistencia de sobreajuste al conjunto de entrenamiento. 
 
 Respecto a las predicciones realizadas sobre las mismas observaciones que en los casos anteriores, obtenemos las figuras @fig-rnn-small_10 y @fig-rnn-small_245 :
 
@@ -1009,12 +1012,35 @@ Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes co
 Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una capa de GRU.
 :::
 
+El modelo consigue reproducir la forma general de los espectros reales de [SDSS]{.acr}, acorde con las conclusiones obtenidas de las métricas estudiadas. 
+
+La evolución de las métricas de entrenamiento puede observarse en la @fig-evolution-gru:
+
+:::{#fig-evolution-gru}
+
+::::{layout="[[1,1],[-1,2,-1]]"}
+
+![](images/evo_loss_gru.png)
+
+![](images/evo_lmae_gru.png)
+
+![](images/evo_mse_gru.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Gráficas de la evolución de las métricas de entrenamiento del modelo basado en una capa GRU
+:::
+
+En estos gráficos se aprecia como el modelo converge con pocas iteraciones, pero mantiene una mejora constante que continúa alrededor de un total de 25 épocas.
+
 #### Modelo basado en una capa Bidireccional
 Los siguientes modelos a mencionar, usaron funciones de parada temprana con espera de 2 épocas y reducción de la tasa de aprendizaje con 1 época. 
 
-La siguiente arquitectura usó una capa Bidireccional después de la de entrada, y a continuación, 4 capas densas con capas de funciones de activación LeakyReLU. 
+La siguiente arquitectura usó una capa Bidireccional después de la de entrada, y a continuación, 4 capas densas con capas con funciones de activación LeakyReLU. 
 
-Las métricas obtenidas tras el entrenamiento de las 6 épocas del modelo fueron los incluidos en la @tbl-BIRNN-metrics :
+Las métricas obtenidas tras las seis épocas de entrenamiento del modelo fueron las incluidas en la @tbl-BIRNN-metrics :
 
 ::: {#tbl-BIRNN-metrics}
 
@@ -1030,10 +1056,10 @@ Las métricas obtenidas tras el entrenamiento de las 6 épocas del modelo fueron
 Resultados obtenidos con el modelo basado en RNN bidireccionales para los diferentes conjuntos de datos.
 :::
 
-Estos valores son muy similares a los obtenidos en el modelo anterior, siendo entre un 0.001 y 0.01 más altos según la métrica. Siguen siendo buenas aproximaciones e indicando un buen comportamiento del modelo, pero no presentan una mejora significativa comparado con el anterior. 
+Estos valores son muy similares a los obtenidos en el modelo anterior, siendo entre un 0.001 y 0.01 más altos según la métrica. Siguen siendo buenas aproximaciones e indican un buen comportamiento del modelo, pero no presentan una mejora significativa comparado con el anterior. Contrariamente a lo que podría suponerse, el procesamiento de la secuencia en ambas direcciones no aporta una clara ventaja estadística en este conjunto de datos.
 
 
-Los ejemplos usados para la representación visual de las aproximaciones, tampoco presentan grandes diferencias, tal y como observamos en las figuras @fig-BIRNN
+Los ejemplos usados para la representación visual de las aproximaciones tampoco presentan grandes diferencias, tal y como observamos en la @fig-BIRNN
 
 :::{#fig-BIRNN}
 
@@ -1047,12 +1073,34 @@ Los ejemplos usados para la representación visual de las aproximaciones, tampoc
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generado por el modelo de redes neuronales recurrentes con una capa bidireccional.
+Ejemplos de espectros generados por el modelo de redes neuronales recurrentes con una capa bidireccional.
 :::
+
+Las predicciones vuelven a mantener la forma general del espectro, sin apreciarse una mejora visual evidente comparado con el modelo anterior.
+
+En cuanto a la evolución de las métricas, los resultados se ven representados en la @fig-evolution-birnn. Como en el caso anterior, los valores de entrenamiento y validación convergen rápido, en este caso en la segunda época. A partir de aquí el modelo se mantiene constante hasta que termina su entreno en la sexta iteración
+
+:::{#fig-evolution-birnn}
+
+::::{layout="[[1,1],[-1,2,-1]]"}
+
+![](images/evo_loss_birnn.png)
+
+![](images/evo_mae_birnn.png)
+
+![](images/evo_mse_birnn.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Gráficas de la evolución de las métricas de entrenamiento del modelo basado en una capa Bidireccional
+:::
+
 
 #### Modelo basado en capas Bidireccionales y función de Atención
 
-El último modelo destacable de los estudiados en este apartado, se basa en dos capas Bidireccionales y la aplicación de la función de Atención sobre todos los puntos del espectro junto a las capas densas anteriormente mencionadas. 
+El último modelo destacable de los estudiados en este apartado se basa en dos capas bidireccionales y la aplicación de la función de Atención sobre todos los puntos del espectro junto a las capas densas anteriormente mencionadas. 
 Esta adición tampoco representa grandes mejoras en las métricas del modelo. Los valores pueden observarse en la @tbl-ATT-metrics.
 
 ::: {#tbl-ATT-metrics}
@@ -1068,6 +1116,8 @@ Esta adición tampoco representa grandes mejoras en las métricas del modelo. Lo
 
 Resultados obtenidos con el modelo basado en RNN bidireccionales y la función de Atención para los diferentes conjuntos de datos.
 :::
+
+A pesar de las ventajas del mecanismo de atención las métricas obtenidas siguen estando muy cercanas a la de los demás modelos estudiados.
 
 Igual que en las métricas comentadas, en los espectros usados como punto de control tampoco se aprecian grandes diferencias como se puede observar en las imágenes de la @fig-ATT. 
 
@@ -1086,9 +1136,34 @@ Igual que en las métricas comentadas, en los espectros usados como punto de con
 Ejemplos de espectros generados por el modelo de redes neuronales recurrentes con una función de Atención.
 :::
 
+
+Visualmente los espectros continúan reproduciendo la froma del espectro original, pero no destaca como para justificar la complejidad introducida en la arquitectura.
+
+Finalmente, en la @fig-evolution-att se observa el comportamiento del modelo a lo largo del entrenamiento. 
+
+:::{#fig-evolution-att}
+
+::::{layout="[[1,1],[-1,2,-1]]"}
+
+![](images/evo_loss_att.png)
+
+![](images/evo_mae_att.png)
+
+![](images/evo_mse_att.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Gráficas de la evolución de las métricas de entrenamiento del modelo basado en el mecanismo de Atención
+:::
+
+En este caso, el modelo tarda dos épocas mas en converger que el basado en solo capas bidireccionales, pero de igual forma, su entrenamiento se basa en pocas época, no llegando a superar las ocho.
+
+
 #### Comparación entre los modelos recurrentes con iSpec
 
-Por último, si nos basamos en los resultados obtenidos de la estimación de características astrofísicas con *iSpec*, las diferencias entre los valores predichos con los espectros de [SDSS]{.acr} reales y los predichos por los modelos son los incluidos en la @tbl-RNN-iSpec:
+Por último, si nos basamos en los resultados obtenidos de la estimación de características astrofísicas con *iSpec*, las diferencias entre los valores estimados a partir de los espectros de [SDSS]{.acr} reales y los predichos por los modelos son los incluidos en la @tbl-RNN-iSpec:
 
 ::: {#tbl-RNN-iSpec}
 
@@ -1104,25 +1179,29 @@ Por último, si nos basamos en los resultados obtenidos de la estimación de car
 Resultados obtenidos con iSpec en los modelos destacados basados en RNNs.
 :::
 
-De estos resultados se aprecia que las arquitecturas con GRU básicas y Atención presentan mejores resultados que el modelo con solo una capa Bidireccional. 
+De estos resultados se aprecia que las arquitecturas con [GRU]{.acr} simple y atención presentan mejores resultados que el modelo con solo una capa bidireccional.
+
+En general, las diferencias entre los tres modelos son reducidas, por lo que todos ellos conservan de forma similar información necesaria para estimar los parámetros astrofísicos estudiados. 
+En conjunto, estos resultados refuerzan la idea de que no por aumentar la complejidad del modelo implica que mejore el rendimiento.
+El modelo con una capa [GRU]{.acr} sería destacable como el más equilibrado entre complejidad y resultados dentro de esta sección, pero aun así no supera los resultados obtenidos con el modelo neuronal denso.
 
 
 ## Discusión
 
-Para comparar la eficacia de cada modelo estudiado con estadísticas añadidas a las ya utilizadas, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del cálculo de chi-cuadrado para cada observación en el conjunto de test. 
-La fórmula usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa (*ivar*). Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error, contribuyen en menor medida en el resultado. 
+Para comparar la eficacia de cada modelo estudiado con estadísticas añadidas a las ya utilizadas, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del estadístico chi-cuadrado para cada observación del conjunto de test. 
+La fórmula usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa (*ivar*). Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado. 
 
 La fórmula de chi-cuadrado se define como :
 $$ \chi^2 = \sum_{i=1}^{N} \left(F_{\mathrm{real},i}-F_{\mathrm{pred},i}\right)^2\mathrm{ivar}_i $$
 
-donde $F_{\mathrm{real},i}$ y $F_{\mathrm{pred},i}$ representan, respectivamente, el flujo real y predicho en el punto espectral $i$, respectivamente, mientras que $\mathrm{ivar}_i$ es la varianza inversa sacada de los datos de [SDSS]{.acr}.
+donde $F_{\mathrm{real},i}$ y $F_{\mathrm{pred},i}$ representan, respectivamente, el flujo real y predicho en el punto espectral $i$, respectivamente, mientras que $\mathrm{ivar}_i$ es la varianza inversa sacada de los datos de [SDSS]{.acr}. Esta ponderación permite tener en cuenta la incertidumbre de cada punto espectral en lugar de suponer que todos tienen la misma precisión.
 
-Por otro lado, como $\chi^2$ también depende del número de puntos de cada espectro, se consideró una versión normalizada dividida por la cantidad de puntos espectrales válidos (con *ivar* mayor que 0). Al normalizarla, facilita la comparación entre los distintos espectros, dado que valores próximos a la unidad indican que las diferencias entre ambos espectros son comparables a la incertidumbre de la muestra, mientras que valores mayores implican discrepancias superiores a las esperadas en los puntos espectrales. 
+Por otro lado, como $\chi^2$ también depende del número de puntos de cada espectro, se consideró una versión normalizada dividida por la cantidad de puntos espectrales válidos (con *ivar* mayor que 0). La normalización facilita la comparación entre los distintos espectros, dado que valores próximos a la unidad indican que las diferencias entre ambos espectros son comparables con la incertidumbre de la muestra, mientras que valores mayores implican discrepancias superiores a las esperadas en los puntos espectrales. 
 Teniendo esto en cuenta, la fórmula final fue:
 
 $$\chi^2_{\mathrm{norm}} = \frac{\chi^2}{N} $$
 
-A partir de la cual se obtuvieron los valores de la @tbl-chi-square:
+A partir de esta expresión se obtuvieron los valores de la @tbl-chi-square:
 
 ::: {#tbl-chi-square}
 
@@ -1130,6 +1209,8 @@ A partir de la cual se obtuvieron los valores de la @tbl-chi-square:
 |---|---:|---:|---:|
 | Densa con mediana | 1.4 | 0.47 | 131.91 |
 | Densa con máximo | 5.66 | 0.55 | 69488.31 |
+| Convolucional 1D | 7.15 | 1.02 | 572.90 |
+| Convolucional U-Net | 3.62 | 0.59 | 419.99 |
 | RNN con capa de GRU | 1.80 | 0.52 | 192.86 |
 | RNN con capa Bidireccional | 2.26 | 0.66 | 270.30 |
 | RNN con capa de Atención | 2.00 | 0.54 | 199.19 |
@@ -1140,13 +1221,20 @@ A partir de la cual se obtuvieron los valores de la @tbl-chi-square:
 Chi-cuadrado normalizado aplicado sobre los conjuntos de test predichos por los diversos modelos estudiados.
 :::
 
-Los resultados obtenidos demuestran que la arquitectura densa normalizada con la mediana de cada espectro es la que mejor comportamiento tiene. Los modelos recurrentes no mejoraron este resultado, aunque la arquitectura con una capa de GRU se queda muy próxima. 
-Por otro lado, el modelo denso normalizado con el máximo de cada espectro es la menos estable tal y como se aprecia en la diferencia entre el mínimo y máximo. Presenta una mediana 4 veces superior al modelo con mejores datos, confirmando que es el peor de los modelos destacados en el entrenamiento.
+Los resultados obtenidos muestran que la arquitectura densa normalizada con la mediana de cada espectro es la que mejor comportamiento global presenta. Ni los modelos recurrentes ni los convolucionales mejoraron este resultado, aunque la arquitectura con una capa de GRU se aproxima considerablemente, con una mediana de 1,8 frente al 1.4 de la red densa.
+Las arquitecturas bidireccionales y con atención obtienen valores intermedios, indicando que aumentar la complejidad del modelo no es sinónimo de mejorar el ajuste.
 
-La conclusión extraída con el estadístico chi-cuadrado es la misma que la obtenida de las métricas de entrenamiento y test de los modelos. Si bien es cierto, las diferencias no son muy grandes, pero los valores más pequeños se encuentran en el modelo denso normalizado con la mediana. 
-En cuanto a iSpec, los resultados indican que todos los modelos tienen un comportamiento similar en cuanto a los datos que este aproxima, así que no podemos destacar un modelo en concreto, pero sí afirmar que las predicciones producen datos astrofísicos muy parecidos a los que producen los espectros reales.
+Por otro lado, el modelo denso normalizado con el máximo de cada espectro es el menos estable, tal y como se aprecia en la diferencia entre el mínimo y máximo, dos órdenes de magnitud por encima de la del resto de modelos. Presenta una mediana aproximadamente 4 veces superior al modelo con mejores resultados, confirmando que es el que peor comportamiento presenta de entre los modelos seleccionados en este estudio. Además, el valor máximo tan elevado indica la presencia de predicciones con discrepancias mucho mayores a la del resto de arquitecturas.
 
-Si nos centramos en los resultados obtenidos por la red que mejores estadísticas presenta generalmente, es decir, la red neuronal Densa con la normalización por la mediana, observamos en la @fig-HR-CHI-dense que no destaca una categoría de estrellas donde el modelo haya funcionado mejor.
+Entre las arquitecturas convolucionales, la U-Net reduce prácticamente a la mitad la mediana del modelo convolucional 1D (de 7.15 a 3.62) y mejora también su mínimo y su máximo, en la misma línea que la mejora que ya mostraban el [MAE]{.acr} y el [MSE]{.acr} sobre el conjunto de test. Aun así, ambas quedan por detrás del modelo denso y de los recurrentes: el chi-cuadrado pondera cada punto espectral con su varianza inversa, de modo que penaliza especialmente la corrección suave que estas dos redes aplican sobre el espectro de Gaia interpolado, que no llega a reproducir las estructuras finas del espectro de [SDSS]{.acr}.
+
+La conclusión extraída con el estadístico chi-cuadrado es la misma que la obtenida a partir de las métricas de entrenamiento y test de los modelos. Si bien es cierto, las diferencias entre algunos modelos no son excesivamente grandes, pero los valores mas pequeños de mediana se encuentran en el modelo denso normalizado con la mediana.
+Al extraer la misma conclusión de ambas formas de evaluación, se refuerza la selección de esta arquitectura como el modelo principal del trabajo realizado.
+
+En cuanto a iSpec, los resultados indican que todos los modelos tienen un comportamiento similar en cuanto a los parámetros que esta herramienta aproxima, así que no podemos destacar un modelo en concreto, pero sí afirmar que las predicciones producen datos astrofísicos muy parecidos a los que producen los espectros reales.
+Este hecho resulta relevante ya que indica que las diferencias observadas entre espectros, no se traducen en grandes diferencias en los parámetros físicos estimados.
+
+Si nos centramos en los resultados obtenidos por la red que mejores estadísticas presenta generalmente, es decir, la red neuronal densa con la normalización por la mediana, observamos en la @fig-HR-CHI-dense que no destaca una categoría de estrellas donde el modelo presente un mejor o peor comportamiento.
 
 :::{#fig-HR-CHI-dense}
 
@@ -1154,10 +1242,14 @@ Si nos centramos en los resultados obtenidos por la red que mejores estadística
 
 *Fuente: Elaboración propia*
 
-Diagrama HR del estadístico Chi-cuadrado aplicado sobre la muestra de test en el modelo denso.
+Diagrama HR del estadístico chi-cuadrado normalizado aplicado sobre la muestra de test en el modelo denso.
 :::
 
-Aún así, cabe destacar que la cantidad de espectros analizados en la secuencia principal es mucho mayor a los de enanas blancas, así que no disponemos de una muestra suficientemente representativa para asegurar un comportamiento igualitario ante ambos conjuntos.
+La distribución de los valores del estadístico chi-cuadrado a lo largo del diagrama [HR]{.acr} no muestran una concentración evidente de zonas con grandes fallos, por lo que el rendimiento del modelo parece no depender del tipo de estrella.
+
+Aun así, cabe destacar que la cantidad de espectros analizados en la secuencia principal es mucho mayor a los correspondientes a enanas blancas, así que no disponemos de una muestra suficientemente representativa para asegurar un comportamiento igualitario ante ambos conjuntos. Por ese motivo, las conclusiones obtenidas de este trabajo serán mas robustas para la secuencia principal.
+
+En conjunto, los resultados obtenidos con diversas métricas apuntan a conclusiones similares. La red densa normalizada mediante la mediana de cada espectro es la que mejor rendimiento presenta al comparar espectros reales y predichos. 
 
 
 ## Conclusiones y trabajo futuro
@@ -1188,17 +1280,16 @@ En resumen, podemos concluir que este trabajo demuestra la viabilidad de diseña
 ### Trabajo futuro
 
 Los resultados obtenidos en este estudio constituyen un punto de partida para diversas líneas de mejora. 
-Por ejemplo, una primera opción sería refinar y ampliar la base de datos de entrenamiento. En este trabajo hemos conseguido construir un conjunto de 50 000 parejas de espectros Gaia-[SDSS]{.acr}, pero como el rendimiento y la calidad del modelo dependen directamente de dicha base, cuanta mejor selección e investigación de los datos usados, mejores resultados se obtendrían.
+Por ejemplo, una primera opción sería refinar y ampliar la base de datos de entrenamiento. En este trabajo hemos conseguido construir un conjunto de 50 000 parejas de espectros Gaia-[SDSS]{.acr}, pero como el rendimiento y la calidad del modelo dependen directamente de dicha base, cuanta mejor sea la selección e investigación de los datos usados, mejores resultados podrían obtenerse. Además de la posibilidad de aumentar el número de observaciones, se podría intentar buscar una distribución equilibrada entre los diferentes tipos de estrella.
+Como se observó al analizar los datos a través de un diagrama [HR]{.acr}, las estrellas gigantes estaban escasamente representadas durante el entrenamiento del modelo, con lo que se podría extender el conjunto de datos usado. Si se aumentase este conjunto, podría comprobarse el rendimiento del modelo ante espectros con parámetros poco representados durante su entrenamiento.
 
-Otra opción consistiría en entrenar modelos especializados para distintos tipos de objetos o rangos de parámetros físicos. En este estudio se ha empleado un único modelo global que debía aprender relaciones espectrales para todos los objetos incluidos en el conjunto de datos. Sin embargo, si la base de datos se separase tratando de agrupar aquellos espectros más similares en diversos subconjuntos, la calidad del modelo final podría aumentar dado que facilitaríamos su aprendizaje. 
+Otra opción consistiría en entrenar modelos especializados para distintos tipos de objetos o rangos de parámetros físicos. En este estudio se ha empleado un único modelo global que debía aprender relaciones espectrales para todos los objetos incluidos en el conjunto de datos. Sin embargo, si la base de datos se separase tratando de agrupar aquellos espectros más similares en diversos subconjuntos, la calidad del modelo final podría aumentar, dado que facilitaríamos su aprendizaje. Una posible partición podria basarse en datos como la temperatura, gravedad superficial o metalicidad.
 
 Durante el trabajo se consideró la posibilidad de incluir la relación señal ruido como uno de los parámetros de entrada del modelo. Si bien es cierto, este hecho no produjo mejoras significativas a los resultados obtenidos, pero es una opción a tener en cuenta como posible línea de exploración. Añadiendo esta información se podría valorar la exactitud de cada punto de los espectros observados por Gaia y [SDSS]{.acr}, lo que permitiría valorar de forma más precisa el error cometido por el modelo. 
 
-Finalmente, la idea de este estudio podría extenderse a otros conjuntos de datos astronómicos. Este proyecto se centró en la liberación de datos número tres de Gaia y la treceava de [SDSS]{.acr} debido a sus plataformas y el cruce de datos previamente existente, pero la metodología desarrollada podría aplicarse de forma general a otros catálogos de datos astronómicos.
-En este trabajo, el objetivo principal era conseguir mejorar la calidad de los datos captados por Gaia, a partir de una herramienta que los aproximase a las observaciones de [SDSS]{.acr}. Esto podría generalizarse a otros satélites o telescopios que presenten el mismo problema que nuestro conjunto de datos de entrada, una baja resolución.
+La programación de los modelos se ha basado en scripts y notebooks de Python, aunque en un futuro podría facilitarse el acceso a este servicio mediante el desarrollo de una aplicación que permita acceder al modelo de una forma más sencilla. Esta aplicación podría permitir introducir un espectro de Gaia, ejecutar el modelo y visualizar el espectro predicho junto a datos asociados a la calidad de la predicción.
+
+Finalmente, la idea de este estudio podría extenderse a otros conjuntos de datos astronómicos. Este proyecto se centró en la liberación de datos número tres de Gaia y la decimotercera de [SDSS]{.acr} debido a sus plataformas y al cruce de datos previamente existente, pero la metodología desarrollada podría aplicarse de forma general a otros catálogos de datos astronómicos.
+En este trabajo, el objetivo principal era conseguir mejorar la calidad de los datos captados por Gaia a partir de una herramienta que los aproximase a las observaciones de [SDSS]{.acr}. Esto podría generalizarse a otros satélites o telescopios que presenten el mismo problema que nuestro conjunto de datos de entrada: una baja resolución espectral.
+
 Generalizando los resultados obtenidos, el modelo no solo transformaría Gaia en [SDSS]{.acr}, sino que podría servir como base para mejorar las observaciones procedentes de instrumentos astronómicos. 
-
-Asimismo, como se observó al analizar los datos a través de un diagrama [HR]{.acr}, las estrellas gigantes no estaban representadas durante el entrenamiento del modelo, con lo que podría extenderse su uso a esta categoría aumentando el conjunto de datos usado.
-
-La programación de los modelos se ha basado en scripts y notebooks de Python, aunque en un futuro podría facilitarse el acceso a este servicio mediante el desarrollo de una aplicación que permita acceder al modelo de una forma mas sencilla. 
-
