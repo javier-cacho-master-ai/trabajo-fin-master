@@ -19,7 +19,7 @@ en una sesión nueva sin repetir el entrenamiento:
   los que `.npz` es el único formato razonable de los tres: conserva la forma y
   el `dtype` sin código de conversión, escribe y lee en menos de un segundo y
   ocupa lo mismo que en memoria, mientras que en JSON o CSV los mismos datos
-  pasarían de 134 MB a unos 600 MB de texto. Sobre todo, `.npz` conserva los
+  pasarían de 177 MB a unos 800 MB de texto. Sobre todo, `.npz` conserva los
   identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la
   mitad no se representan de forma exacta en el `float64` al que los llevaría
   un CSV o un JSON leído como decimal.

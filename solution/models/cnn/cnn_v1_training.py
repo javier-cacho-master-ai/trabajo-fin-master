@@ -75,6 +75,9 @@ y_test = data["y_test"]
 X_id_test = data["X_id_test"]
 y_id_test = data["y_id_test"]
 
+# Varianza inversa de SDSS, con la que se pondera el chi cuadrado
+y_ivar_test = data["y_ivar_test"]
+
 # Longitudes de onda
 gaia_wavelength = data["gaia_wavelength"]
 sdss_wavelength = data["sdss_wavelength"]
@@ -125,6 +128,7 @@ save_test_data(
     X_test=X_test,
     y_test=y_test,
     y_test_norm=y_test_norm,
+    y_ivar_test=y_ivar_test,
     X_id_test=X_id_test,
     gaia_wavelength=gaia_wavelength,
     sdss_wavelength=sdss_wavelength,
@@ -259,6 +263,7 @@ test_data = load_test_data(TEST_DATA_PATH)
 X_test = test_data["X_test"]
 y_test = test_data["y_test"]
 y_test_norm = test_data["y_test_norm"]
+y_ivar_test = test_data["y_ivar_test"]
 X_id_test = test_data["X_id_test"]
 gaia_wavelength = test_data["gaia_wavelength"]
 sdss_wavelength = test_data["sdss_wavelength"]
@@ -276,7 +281,8 @@ print("Métricas de test:", test_metrics)
 # Importamos funciones a usar para analizar resultados
 from model_functions import (
     plot_training_metrics,
-    plot_worst_best_predictions
+    plot_worst_best_predictions,
+    calculate_all_chi2
 )
 
 plot_training_metrics(training_history)
@@ -338,6 +344,14 @@ plot_worst_best_predictions(
     gaia_wavelength,
     10
 )
+
+# %% [markdown]
+# Chi cuadrado normalizado frente al espectro real de SDSS, la métrica con la que se comparan entre sí todas las arquitecturas del trabajo: la diferencia de flujo se pondera con la varianza inversa de SDSS y se divide entre el número de puntos válidos (aquellos cuya varianza inversa es mayor que cero). Se calcula sobre el flujo sin normalizar, de modo que los valores son comparables con los de los modelos denso y recurrente.
+
+# %%
+chi2_values = calculate_all_chi2(y_test, y_pred, y_ivar_test)
+
+print(f"Mediana: {np.median(chi2_values): .2f}")
 
 # %%
 # El modelo ya está guardado por el checkpoint; lo reescribimos por si esta

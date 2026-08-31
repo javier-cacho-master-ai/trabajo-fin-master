@@ -182,6 +182,7 @@ save_test_data(
     TEST_DATA_PATH,
     X_test=X_test,
     y_test=y_test,
+    y_ivar_test=y_ivar_test,
     X_id_test=X_id_test,
     y_id_test=y_id_test,
     gaia_wavelength=gaia_wavelength,
@@ -349,7 +350,7 @@ model_cnn_v2.summary()
 # - `cnn-v2.keras`: el modelo con la mejor pérdida de validación, guardado cada vez que mejora.
 # - `cnn-v2_training_history.csv`: una fila por época con todas las métricas, escrita al final de cada época. Es una **tabla**, así que la escribe directamente el callback `CSVLogger` de Keras, sin código propio, y queda legible y comparable entre versiones del modelo. Un CSV además admite los `NaN` de una época divergente, que en JSON no serían válidos.
 # - `cnn-v2_training_summary.json`: el resumen del entrenamiento (mejor época, tamaño de lote y métricas de test). Son **datos sueltos y heterogéneos** que no caben en una tabla ni en un contenedor de arrays, y en JSON siguen siendo legibles y versionables en Git.
-# - `cnn-v2_test_data.npz`: las variables del conjunto de test que consumen las celdas posteriores (`X_test`, `y_test`, los identificadores, las longitudes de onda, la escala y los espectros interpolados). Son **arrays** de 134 MB en total, para los que `.npz` es el único formato razonable de los tres: conserva forma y `dtype` sin código de conversión y se escribe y lee en menos de un segundo, mientras que en JSON o CSV los mismos datos ocuparían unos 600 MB de texto. Sobre todo, conserva los identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la mitad no se representan de forma exacta en el `float64` al que los llevaría un CSV o un JSON leído como decimal.
+# - `cnn-v2_test_data.npz`: las variables del conjunto de test que consumen las celdas posteriores (`X_test`, `y_test`, la varianza inversa de SDSS, los identificadores, las longitudes de onda, la escala y los espectros interpolados). Son **arrays** de 177 MB en total, para los que `.npz` es el único formato razonable de los tres: conserva forma y `dtype` sin código de conversión y se escribe y lee en menos de un segundo, mientras que en JSON o CSV los mismos datos ocuparían unos 800 MB de texto. Sobre todo, conserva los identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la mitad no se representan de forma exacta en el `float64` al que los llevaría un CSV o un JSON leído como decimal.
 # 
 # La lógica de guardado y recarga vive en `services/persistence.py`. Los arrays que se regeneran en un paso determinista, como las predicciones del modelo, no se guardan: se obtienen del modelo y del propio `.npz` de test.
 # 
@@ -426,6 +427,7 @@ test_data = load_test_data(TEST_DATA_PATH)
 
 X_test = test_data["X_test"]
 y_test = test_data["y_test"]
+y_ivar_test = test_data["y_ivar_test"]
 X_id_test = test_data["X_id_test"]
 y_id_test = test_data["y_id_test"]
 gaia_wavelength = test_data["gaia_wavelength"]
@@ -447,7 +449,8 @@ print("Métricas de test:", test_metrics)
 from model_functions import (
     plot_training_metrics,
     plot_prediction_example,
-    plot_worst_best_predictions
+    plot_worst_best_predictions,
+    calculate_all_chi2
 )
 
 plot_training_metrics(training_history)
@@ -522,6 +525,16 @@ plot_worst_best_predictions(
     gaia_wavelength,
     10
 )
+
+
+# %% [markdown]
+# Chi cuadrado normalizado frente al espectro real de SDSS, la métrica con la que se comparan entre sí todas las arquitecturas del trabajo: la diferencia de flujo se pondera con la varianza inversa de SDSS y se divide entre el número de puntos válidos (aquellos cuya varianza inversa es mayor que cero). Se calcula sobre el flujo sin normalizar, de modo que los valores son comparables con los de los modelos denso y recurrente.
+# 
+
+# %%
+chi2_values = calculate_all_chi2(y_test, y_pred, y_ivar_test)
+
+print(f"Mediana: {np.median(chi2_values): .2f}")
 
 
 # %%
