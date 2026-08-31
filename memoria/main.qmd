@@ -880,17 +880,19 @@ Gráficas de las métricas de evolución de entranamiento en modelo convoluciona
 
 Este comportamiento sugiere que la red converge casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación permanecen muy próximas entre sí durante todo el proceso, por lo que tampoco en esta arquitectura se aprecian indicios de sobreajuste.
 
-Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de test, obteniendo las métricas recogidas en la @tbl-test-cnn, muy similares a las del conjunto de validación.
+Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de test, obteniendo las métricas recogidas en la @tbl-test-cnn, muy similares a las de los conjuntos de entrenamiento y validación de la mejor época.
 
 ::: {#tbl-test-cnn}
 
-| Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|
-| 0.0153 | 0.1137 | 0.0352 |
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0129 | 0.1044 | 0.0286 |
+| Validación | 0.0129 | 0.1051 | 0.0311 |
+| Test | 0.0128 | 0.1047 | 0.0272 |
 
 *Fuente: Elaboración propia*
 
-Resultados obtenidos sobre el conjunto de test con el modelo convolucional 1D.
+Resultados obtenidos con el modelo convolucional 1D para los diferentes conjuntos de datos.
 :::
 
 Cabe recordar que estas métricas se calculan sobre espectros normalizados con la mediana del flujo de Gaia, una estrategia distinta a las empleadas en el modelo denso, por lo que los valores no son directamente comparables con los de las tablas anteriores.
@@ -935,20 +937,22 @@ El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al 
 Gráficas de la evolución de las métricas de entrenamiento del modelo convolucional U-Net
 :::
 
-Las métricas obtenidas sobre el conjunto de test se recogen en la @tbl-test-cnn-v2. Junto a las métricas sin ponderar, comparables con las del resto de modelos, se incluyen sus variantes ponderadas por la varianza inversa de [SDSS]{.acr}, que reflejan el objetivo que la red optimiza. La pérdida, al estar ponderada, no es comparable con la de las arquitecturas anteriores.
+Las métricas de entrenamiento, validación y test de la mejor época se recogen en la @tbl-test-cnn-v2. Junto a las métricas sin ponderar, comparables con las del resto de modelos, se incluyen sus variantes ponderadas por la varianza inversa de [SDSS]{.acr}, que reflejan el objetivo que la red optimiza. La pérdida, al estar ponderada, no es comparable con la de las arquitecturas anteriores.
 
 ::: {#tbl-test-cnn-v2}
 
-| Pérdida | [MAE]{.acr} | [MSE]{.acr} | [MAE]{.acr} ponderado | [MSE]{.acr} ponderado |
-|---|---:|---:|---:|---:|
-| 0.0055 | 0.0786 | 0.0165 | 0.0704 | 0.0112 |
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} | [MAE]{.acr} ponderado | [MSE]{.acr} ponderado |
+|---|---:|---:|---:|---:|---:|
+| Entrenamiento | 0.0054 | 0.0779 | 0.0173 | 0.0697 | 0.0110 |
+| Validación | 0.0056 | 0.0794 | 0.0204 | 0.0711 | 0.0114 |
+| Test | 0.0055 | 0.0786 | 0.0165 | 0.0704 | 0.0112 |
 
 *Fuente: Elaboración propia*
 
-Resultados obtenidos sobre el conjunto de test con el modelo convolucional U-Net.
+Resultados obtenidos con el modelo convolucional U-Net para los diferentes conjuntos de datos.
 :::
 
-La comparación con la @tbl-test-cnn es directa por compartir normalización: el [MAE]{.acr} sobre test baja de 0.1137 a 0.0786 (una mejora del 31 %) y el [MSE]{.acr} de 0.0352 a 0.0165 (un 53 %). En la @fig-espectros-generados_cnn_v2 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
+La comparación con la @tbl-test-cnn es directa por compartir normalización: el [MAE]{.acr} sobre test baja de 0.1047 a 0.0786 (una mejora del 25 %) y el [MSE]{.acr} de 0.0272 a 0.0165 (un 39 %). En la @fig-espectros-generados_cnn_v2 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
 
 :::{#fig-espectros-generados_cnn_v2}
 
@@ -1130,6 +1134,8 @@ A partir de la cual se obtuvieron los valores de la @tbl-chi-square:
 |---|---:|---:|---:|
 | Densa con mediana | 1.4 | 0.47 | 131.91 |
 | Densa con máximo | 5.66 | 0.55 | 69488.31 |
+| Convolucional 1D | 7.15 | 1.02 | 572.90 |
+| Convolucional U-Net | 3.62 | 0.59 | 419.99 |
 | RNN con capa de GRU | 1.80 | 0.52 | 192.86 |
 | RNN con capa Bidireccional | 2.26 | 0.66 | 270.30 |
 | RNN con capa de Atención | 2.00 | 0.54 | 199.19 |
@@ -1140,10 +1146,12 @@ A partir de la cual se obtuvieron los valores de la @tbl-chi-square:
 Chi-cuadrado normalizado aplicado sobre los conjuntos de test predichos por los diversos modelos estudiados.
 :::
 
-Los resultados obtenidos demuestran que la arquitectura densa normalizada con la mediana de cada espectro es la que mejor comportamiento tiene. Los modelos recurrentes no mejoraron este resultado, aunque la arquitectura con una capa de GRU se queda muy próxima. 
-Por otro lado, el modelo denso normalizado con el máximo de cada espectro es la menos estable tal y como se aprecia en la diferencia entre el mínimo y máximo. Presenta una mediana 4 veces superior al modelo con mejores datos, confirmando que es el peor de los modelos destacados en el entrenamiento.
+Los resultados obtenidos demuestran que la arquitectura densa normalizada con la mediana de cada espectro es la que mejor comportamiento tiene. Ni los modelos convolucionales ni los recurrentes mejoraron este resultado, aunque la arquitectura recurrente con una capa de GRU se queda muy próxima. 
+Por otro lado, el modelo denso normalizado con el máximo de cada espectro es la menos estable tal y como se aprecia en la diferencia entre el mínimo y máximo, dos órdenes de magnitud por encima de la del resto de modelos. Presenta una mediana 4 veces superior al modelo con mejores datos, confirmando que es el peor de los modelos densos y recurrentes destacados en el entrenamiento.
 
-La conclusión extraída con el estadístico chi-cuadrado es la misma que la obtenida de las métricas de entrenamiento y test de los modelos. Si bien es cierto, las diferencias no son muy grandes, pero los valores más pequeños se encuentran en el modelo denso normalizado con la mediana. 
+Entre las arquitecturas convolucionales, la U-Net reduce prácticamente a la mitad la mediana del modelo convolucional 1D (de 7.15 a 3.62) y mejora también su mínimo y su máximo, en la misma línea que la mejora que ya mostraban el [MAE]{.acr} y el [MSE]{.acr} sobre el conjunto de test. Aun así, ambas quedan por detrás del modelo denso y de los recurrentes: el chi-cuadrado pondera cada punto espectral con su varianza inversa, de modo que penaliza especialmente la corrección suave que estas dos redes aplican sobre el espectro de Gaia interpolado, que no llega a reproducir las estructuras finas del espectro de [SDSS]{.acr}.
+
+La conclusión extraída con el estadístico chi-cuadrado es la misma que la obtenida de las métricas de entrenamiento y test de los modelos. Si bien es cierto, las diferencias entre los modelos densos y recurrentes no son muy grandes, pero los valores más pequeños se encuentran en el modelo denso normalizado con la mediana. 
 En cuanto a iSpec, los resultados indican que todos los modelos tienen un comportamiento similar en cuanto a los datos que este aproxima, así que no podemos destacar un modelo en concreto, pero sí afirmar que las predicciones producen datos astrofísicos muy parecidos a los que producen los espectros reales.
 
 Si nos centramos en los resultados obtenidos por la red que mejores estadísticas presenta generalmente, es decir, la red neuronal Densa con la normalización por la mediana, observamos en la @fig-HR-CHI-dense que no destaca una categoría de estrellas donde el modelo haya funcionado mejor.
