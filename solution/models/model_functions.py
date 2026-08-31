@@ -54,13 +54,13 @@ def plot_worst_best_predictions(
     X_id_test,
     sdss_wavelength,
     gaia_wavelength,
-    n_worst=10
+    n_plot=10
 ):
 
     mae_per_object = np.mean(np.abs(y_test - y_pred), axis=1)
     mse_per_object = np.mean((y_test - y_pred) ** 2, axis=1)
 
-    worst_idx = np.argsort(mse_per_object)[-n_worst:]
+    worst_idx = np.argsort(mse_per_object)[-n_plot:]
 
     for i in worst_idx:
         plt.figure(figsize=(10, 4))
@@ -74,7 +74,7 @@ def plot_worst_best_predictions(
         plt.legend()
         plt.show()
 
-    best_idx = np.argsort(mse_per_object)[:10]
+    best_idx = np.argsort(mse_per_object)[:n_plot]
 
     for i in best_idx:
         plt.figure(figsize=(10, 4))
