@@ -27,6 +27,13 @@ REAL_PARAMS_CACHE_FILE = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "ispec_real_params.csv")
 )
 
+# Parámetros ya ajustados sobre los espectros predichos. Este ajuste sí depende
+# del modelo, pero no de la ejecución: guardarlo evita repetirlo al rehacer un
+# análisis y deja que un análisis interrumpido continúe donde lo dejó.
+PRED_PARAMS_CACHE_FILE = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "ispec_pred_params.csv")
+)
+
 # Lo que devuelve 'analyze_spectrum_with_ispec', que es lo que se guarda
 _RESULT_COLUMNS = [
     "initial_teff", "initial_logg", "initial_mh",
@@ -515,8 +522,8 @@ def _spectrum_cache_key(wavelength_aa, flux, gaia_parameters, config):
     return digest.hexdigest()[:16]
 
 
-# Función para leer los ajustes de espectros reales ya calculados
-def load_real_params_cache(path=REAL_PARAMS_CACHE_FILE):
+# Función para leer los ajustes ya calculados, reales o predichos
+def load_params_cache(path=REAL_PARAMS_CACHE_FILE):
 
     if not os.path.exists(path):
         return {}
@@ -532,7 +539,7 @@ def load_real_params_cache(path=REAL_PARAMS_CACHE_FILE):
 
 
 # Función para añadir un ajuste a la caché, según se calcula
-def append_real_params(path, source_id, cache_key, result):
+def append_params(path, source_id, cache_key, result):
 
     row = {
         "source_id": source_id,
@@ -564,16 +571,24 @@ def analyze_sample_real_vs_pred(
     min_teff=2500,
     max_teff=8000,
     real_cache_path=REAL_PARAMS_CACHE_FILE,
+    pred_cache_path=PRED_PARAMS_CACHE_FILE,
     config=ISPEC_CONFIG
 ):
 
     # Ajustes de espectros reales de análisis anteriores, de este modelo o de
     # cualquier otro: el espectro real es el mismo para todos
     real_params_cache = (
-        load_real_params_cache(real_cache_path) if real_cache_path else {}
+        load_params_cache(real_cache_path) if real_cache_path else {}
     )
 
-    reused = 0
+    # Ajustes de espectros predichos de análisis anteriores. Solo los reutiliza
+    # el mismo modelo: la clave incluye el flujo, que cambia con la predicción
+    pred_params_cache = (
+        load_params_cache(pred_cache_path) if pred_cache_path else {}
+    )
+
+    reused_real = 0
+    reused_pred = 0
     progress_bar = tqdm(
         total=sample_size,
         desc="Espectros analizados",
@@ -627,7 +642,7 @@ def analyze_sample_real_vs_pred(
         real_estimation = real_params_cache.get(cache_key)
 
         if real_estimation is not None:
-            reused += 1
+            reused_real += 1
         else:
             try:
                 real_estimation = analyze_spectrum_with_ispec(
@@ -649,25 +664,45 @@ def analyze_sample_real_vs_pred(
             real_params_cache[cache_key] = real_estimation
 
             if real_cache_path:
-                append_real_params(
+                append_params(
                     real_cache_path, gaia_id, cache_key, real_estimation
                 )
 
-        try:
-            pred_estimation = analyze_spectrum_with_ispec(
-                wavelength_aa=wavelength_aa,
-                flux=y_pred[i],
-                gaia_row=gaia_row,
-                resources=resources,
-                config=config
-            )
-        except Exception as error:
-            print(f"Error analizando el espectro predicho de {gaia_id}: {error}")
-            continue
+        # El ajuste del espectro predicho depende del modelo, pero no de la
+        # ejecución: si ya se calculó para esta misma predicción, se reutiliza
+        pred_cache_key = _spectrum_cache_key(
+            wavelength_aa, y_pred[i], gaia_parameters, config
+        )
 
-        if pred_estimation is None:
-            print("Sin ajuste para el espectro predicho")
-            continue
+        pred_estimation = pred_params_cache.get(pred_cache_key)
+
+        if pred_estimation is not None:
+            reused_pred += 1
+        else:
+            try:
+                pred_estimation = analyze_spectrum_with_ispec(
+                    wavelength_aa=wavelength_aa,
+                    flux=y_pred[i],
+                    gaia_row=gaia_row,
+                    resources=resources,
+                    config=config
+                )
+            except Exception as error:
+                print(
+                    f"Error analizando el espectro predicho de {gaia_id}: {error}"
+                )
+                continue
+
+            if pred_estimation is None:
+                print("Sin ajuste para el espectro predicho")
+                continue
+
+            pred_params_cache[pred_cache_key] = pred_estimation
+
+            if pred_cache_path:
+                append_params(
+                    pred_cache_path, gaia_id, pred_cache_key, pred_estimation
+                )
 
 
         delta_teff = pred_estimation["teff"] - real_estimation["teff"]
@@ -711,7 +746,7 @@ def analyze_sample_real_vs_pred(
 
     print(
         f"Espectros analizados: {len(results_df)} "
-        f"| ajustes del espectro real reutilizados: {reused}"
+        f"| ajustes reutilizados: {reused_real} reales, {reused_pred} predichos"
     )
 
     return results_df

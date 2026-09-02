@@ -46,6 +46,12 @@ TEST_DATA_PATH = CNN_DIR / "cnn_v1_test_data.npz"
 # así que van en 'data/predictions' y no en esta misma carpeta.
 PREDICTIONS_PATH = DATA_DIR / "predictions" / "cnn_v1_predictions.npz"
 
+# Tabla del análisis con iSpec de la muestra de espectros de test, con una fila
+# por espectro y los parámetros estelares del real y del predicho. Acompaña a
+# las predicciones porque, como ellas, se calcula una vez y la leen después la
+# comparativa entre arquitecturas y las figuras de error de la memoria.
+ISPEC_PATH = DATA_DIR / "predictions" / "ispec_cnn_v1.csv"
+
 # Tamaño de lote del entrenamiento, guardado también en el resumen
 batch_size = 64
 
@@ -407,6 +413,15 @@ results_df_cnn = analyze_sample_real_vs_pred(
     sdss_wavelength,
     resources,
     sample_size=250
+)
+
+# Guardamos la tabla nada más calcularla: el análisis son horas de iSpec, y así
+# los histogramas de error se rehacen sin repetirlo
+ISPEC_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+results_df_cnn.to_csv(
+    ISPEC_PATH,
+    index=False
 )
 
 error_df_cnn = analyze_ispec_errors(results_df_cnn)

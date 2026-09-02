@@ -1,13 +1,13 @@
 {
   "model": "dense-global.keras",
   "history": "dense-global_training_history.csv",
-  "updated": "2026-09-01T00:14:51",
+  "updated": "2026-09-03T16:21:42",
   "batch_size": 64,
-  "epochs_completed": 24,
-  "best_epoch": 23,
+  "epochs_completed": 22,
+  "best_epoch": 21,
   "test_metrics": {
-    "loss": 0.009797128848731518,
-    "mae": 0.07787792384624481,
-    "mse": 0.021224206313490868
+    "loss": 0.009995597414672375,
+    "mae": 0.07781712710857391,
+    "mse": 0.021699268370866776
   }
 }
