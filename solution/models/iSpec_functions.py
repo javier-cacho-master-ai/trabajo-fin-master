@@ -1,3 +1,5 @@
+import hashlib
+import json
 import os
 import sys
 import traceback
@@ -5,11 +7,33 @@ import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
+from astropy.table import Table
 
 # Configuramos iSpec con una ruta relativa a este fichero
 ISPEC_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "lib", "iSpec")
 )
+
+# La tabla de Gaia, también relativa a este fichero, para que no dependa del
+# directorio desde el que arranque el kernel
+GAIA_DATA_FILE = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "data", "gaia_data.ecsv")
+)
+
+# Parámetros ya ajustados sobre los espectros reales de SDSS. El ajuste de un
+# espectro real no depende del modelo, así que es el mismo para todos: guardarlo
+# ahorra la mitad de los ajustes de iSpec a partir del primer modelo analizado.
+REAL_PARAMS_CACHE_FILE = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "ispec_real_params.csv")
+)
+
+# Lo que devuelve 'analyze_spectrum_with_ispec', que es lo que se guarda
+_RESULT_COLUMNS = [
+    "initial_teff", "initial_logg", "initial_mh",
+    "teff", "logg", "mh",
+    "teff_err", "logg_err", "mh_err",
+    "status"
+]
 
 if ISPEC_DIR not in sys.path:
     sys.path.insert(0, ISPEC_DIR)
@@ -68,8 +92,21 @@ ISPEC_CONFIG = {
 }
 
 
+# Lo ya leído de disco, para no releerlo en cada llamada: los recursos de iSpec
+# suman unos 195 MB entre la malla de atmósferas y la lista de líneas, y la
+# tabla de Gaia ocupa 27 MB. Las claves distinguen configuraciones y ficheros
+# distintos, de modo que pedir otros sí los lee.
+_ispec_resources_cache = {}
+_gaia_table_cache = {}
+
+
 # Función para cargar recursos
 def load_ispec_resources(config=ISPEC_CONFIG):
+
+    cache_key = json.dumps(config, sort_keys=True)
+
+    if cache_key in _ispec_resources_cache:
+        return _ispec_resources_cache[cache_key]
 
     # Sin el sintetizador compilado, ispec.model_spectrum genera espectros
     # sintéticos de ceros y el ajuste devuelve los parámetros iniciales de Gaia
@@ -104,13 +141,17 @@ def load_ispec_resources(config=ISPEC_CONFIG):
 
     print("\nRecursos de iSpec cargados correctamente.")
 
-    return {
+    resources = {
         "modeled_layers_pack": modeled_layers_pack,
         "solar_abundances": solar_abundances,
         "isotopes": isotopes,
         "atomic_linelist": atomic_linelist,
         "line_regions": line_regions
     }
+
+    _ispec_resources_cache[cache_key] = resources
+
+    return resources
 
 
 # Convertir espectro a formato aceptado por iSpec
@@ -415,6 +456,29 @@ def analyze_spectrum_with_ispec(
     return result
 
 # Seleccionar los datos de Gaia segun el ID
+# Función para cargar la tabla de Gaia guardada en local
+def load_gaia_table(path=GAIA_DATA_FILE):
+
+    path = os.fspath(path)
+
+    if path in _gaia_table_cache:
+        return _gaia_table_cache[path]
+
+    gaia_table = Table.read(path, format="ascii.ecsv")
+
+    # El resto de funciones trabajan con el DataFrame, no con la tabla
+    gaia_df = gaia_table.to_pandas()
+
+    print(f"Tabla de Gaia cargada: {len(gaia_df)} objetos.")
+
+    # El DataFrame se comparte entre quienes lo piden, así que se consulta pero
+    # no se modifica en el sitio: quien necesite cambiarlo, que use '.copy()'
+    _gaia_table_cache[path] = gaia_df
+
+    return gaia_df
+
+
+# Función para buscar una fila de Gaia por su identificador
 def get_gaia_row_by_id(
     gaia_df,
     source_id,
@@ -436,6 +500,56 @@ def get_gaia_row_by_id(
 
     return row
 
+# Clave que identifica un ajuste: cambia si cambia el espectro, la malla de
+# longitudes de onda, los parámetros de Gaia que lo inicializan o la
+# configuración de iSpec, de modo que un dato distinto nunca reutiliza el ajuste
+def _spectrum_cache_key(wavelength_aa, flux, gaia_parameters, config):
+
+    digest = hashlib.sha256()
+
+    for array in (wavelength_aa, flux, gaia_parameters):
+        digest.update(np.ascontiguousarray(array, dtype=float).tobytes())
+
+    digest.update(json.dumps(config, sort_keys=True).encode())
+
+    return digest.hexdigest()[:16]
+
+
+# Función para leer los ajustes de espectros reales ya calculados
+def load_real_params_cache(path=REAL_PARAMS_CACHE_FILE):
+
+    if not os.path.exists(path):
+        return {}
+
+    # 'source_id' se lee como entero: son identificadores de Gaia de hasta 19
+    # dígitos, que en el float64 por defecto de pandas perderían precisión
+    table = pd.read_csv(path, dtype={"source_id": "int64"})
+
+    return {
+        row["cache_key"]: {column: row[column] for column in _RESULT_COLUMNS}
+        for _, row in table.iterrows()
+    }
+
+
+# Función para añadir un ajuste a la caché, según se calcula
+def append_real_params(path, source_id, cache_key, result):
+
+    row = {
+        "source_id": source_id,
+        "cache_key": cache_key,
+        **{column: result[column] for column in _RESULT_COLUMNS}
+    }
+
+    # Se escribe fila a fila y no al final: un análisis completo son horas, y
+    # así una interrupción conserva todo lo ajustado hasta ese momento
+    pd.DataFrame([row]).to_csv(
+        path,
+        mode="a",
+        header=not os.path.exists(path),
+        index=False
+    )
+
+
 # Analizar el espectro real y predicho
 def analyze_sample_real_vs_pred(
     y_real,
@@ -448,8 +562,18 @@ def analyze_sample_real_vs_pred(
     random_seed=23,
     id_column="source_id",
     min_teff=2500,
-    max_teff=8000
+    max_teff=8000,
+    real_cache_path=REAL_PARAMS_CACHE_FILE,
+    config=ISPEC_CONFIG
 ):
+
+    # Ajustes de espectros reales de análisis anteriores, de este modelo o de
+    # cualquier otro: el espectro real es el mismo para todos
+    real_params_cache = (
+        load_real_params_cache(real_cache_path) if real_cache_path else {}
+    )
+
+    reused = 0
     progress_bar = tqdm(
         total=sample_size,
         desc="Espectros analizados",
@@ -494,26 +618,55 @@ def analyze_sample_real_vs_pred(
         #if not (min_teff <= teff_gaia <= max_teff):
         #   continue
 
-        try:
-            real_estimation = analyze_spectrum_with_ispec(
-                wavelength_aa=wavelength_aa,
-                flux=y_real[i],
-                gaia_row=gaia_row,
-                resources=resources
-            )
-        except Exception as e:
-            print("Error analizando espectro real")
-            continue
+        # El ajuste del espectro real no depende del modelo, así que se
+        # reutiliza el que ya se calculó en este u otro análisis
+        cache_key = _spectrum_cache_key(
+            wavelength_aa, y_real[i], gaia_parameters, config
+        )
+
+        real_estimation = real_params_cache.get(cache_key)
+
+        if real_estimation is not None:
+            reused += 1
+        else:
+            try:
+                real_estimation = analyze_spectrum_with_ispec(
+                    wavelength_aa=wavelength_aa,
+                    flux=y_real[i],
+                    gaia_row=gaia_row,
+                    resources=resources,
+                    config=config
+                )
+            except Exception as error:
+                print(f"Error analizando el espectro real de {gaia_id}: {error}")
+                continue
+
+            # El ajuste devuelve None cuando no converge, sin lanzar excepción
+            if real_estimation is None:
+                print("Sin ajuste para el espectro real")
+                continue
+
+            real_params_cache[cache_key] = real_estimation
+
+            if real_cache_path:
+                append_real_params(
+                    real_cache_path, gaia_id, cache_key, real_estimation
+                )
 
         try:
             pred_estimation = analyze_spectrum_with_ispec(
                 wavelength_aa=wavelength_aa,
                 flux=y_pred[i],
                 gaia_row=gaia_row,
-                resources=resources
+                resources=resources,
+                config=config
             )
-        except Exception as e:
-            print("Error analizando espectro predicho")
+        except Exception as error:
+            print(f"Error analizando el espectro predicho de {gaia_id}: {error}")
+            continue
+
+        if pred_estimation is None:
+            print("Sin ajuste para el espectro predicho")
             continue
 
 
@@ -555,6 +708,11 @@ def analyze_sample_real_vs_pred(
     # Definimos como Dataframe
     results_df = pd.DataFrame(results)
     progress_bar.close()
+
+    print(
+        f"Espectros analizados: {len(results_df)} "
+        f"| ajustes del espectro real reutilizados: {reused}"
+    )
 
     return results_df
 

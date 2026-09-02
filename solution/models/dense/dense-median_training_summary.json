@@ -1,0 +1,13 @@
+{
+  "model": "dense-median.keras",
+  "history": "dense-median_training_history.csv",
+  "updated": "2026-09-01T04:52:03",
+  "batch_size": 64,
+  "epochs_completed": 22,
+  "best_epoch": 22,
+  "test_metrics": {
+    "loss": 0.0029439234640449286,
+    "mae": 0.04150513559579849,
+    "mse": 0.0074310400523245335
+  }
+}
