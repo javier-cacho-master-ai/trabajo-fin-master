@@ -4,23 +4,23 @@ author    : "Carla Sequero, J. Javier Cacho"
 director  : "Dr. Guillermo Torralba Elipe"
 degree    : "Máster Universitario en Inteligencia Artificial"
 work_type : "Proyecto Piloto"
-date      : 2026-02-05
+date      : 2026-09-09
 keywords  : [inteligencia artificial generativa, aprendizaje automático, espectro azul, espectro rojo, Gaia, astronomía]
 keywords_en : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
 ---
 
 ## Resumen
 
-En este trabajo se propone un enfoque basado en aprendizaje profundo para mejorar la calidad de los espectros de baja resolución captados por los fotómetros azul (BP) y rojo (RP) del satélite Gaia, aproximándolos a espectros de mayor resolución equivalentes a los del *Sloan Digital Sky Survey* (SDSS). Para ello se ha construido un conjunto de datos propio con más de 55 000 pares de espectros emparejados de Gaia y SDSS, obtenido al cruzar la tercera liberación de datos de Gaia (DR3) con la decimotercera de SDSS (DR13) mediante la tabla oficial de mejores vecinos, y depurado con criterios de calidad basados en la relación señal-ruido y en la coherencia entre ambas fuentes. Sobre este conjunto se han entrenado y comparado tres arquitecturas de red neuronal: una red densa, una red convolucional unidimensional ([CNN]{.acr}) y una red recurrente ([RNN]{.acr}).
+En este trabajo se propone un enfoque basado en aprendizaje profundo para mejorar la calidad de los espectros de baja resolución captados por los fotómetros azul (BP) y rojo (RP) del satélite Gaia, aproximándolos a espectros de mayor resolución equivalentes a los del *Sloan Digital Sky Survey* (SDSS). Para ello se ha construido un conjunto de datos propio con más de 55 000 pares de espectros emparejados de Gaia y SDSS, obtenido al cruzar la tercera liberación de datos de Gaia (DR3) con la decimotercera de SDSS (DR13) mediante la tabla oficial de mejores vecinos, y depurado con criterios de calidad basados en la relación señal-ruido y en la coherencia entre ambas fuentes. Sobre este conjunto se han entrenado y comparado tres arquitecturas de red neuronal: una red densa, una red convolucional unidimensional y una red recurrente.
 
-Los resultados muestran que la red densa, combinada con una normalización por la mediana de cada espectro, proporciona las mejores aproximaciones: las predicciones reproducen la morfología general del espectro de SDSS, incluidos sus picos más acentuados, y la similitud de las métricas obtenidas en entrenamiento, validación y test descarta el sobreajuste. Además de la comparación directa con las observaciones reales, los espectros generados se han validado estimando con la librería iSpec parámetros astrofísicos como la temperatura efectiva, la gravedad superficial y la metalicidad, con errores relativos medianos inferiores al 1% en temperatura y gravedad respecto a los derivados de los espectros reales de SDSS. Estos resultados demuestran la viabilidad de emplear redes neuronales para trasladar el detalle de las observaciones terrestres de alta resolución al extenso catálogo de Gaia.
+Los resultados muestran que la red densa usada, combinada con una normalización por la mediana de cada espectro, proporciona las mejores aproximaciones: las predicciones reproducen la morfología general del espectro de SDSS, incluidos sus picos más acentuados, y la similitud de las métricas obtenidas en entrenamiento, validación y test descarta el sobreajuste. Además de la comparación directa con las observaciones reales, los espectros generados se han validado estimando con la librería *iSpec* parámetros astrofísicos como la temperatura efectiva, la gravedad superficial y la metalicidad, con errores relativos medianos inferiores al 1% en temperatura y gravedad respecto a los derivados de los espectros reales de SDSS. Estos resultados demuestran la viabilidad de emplear redes neuronales para trasladar el detalle de las observaciones terrestres de alta resolución al extenso catálogo de Gaia.
 
 
 ## Abstract
 
-This work proposes a deep learning-based approach to improve the quality of the low-resolution spectra captured by the blue (BP) and red (RP) photometers of the Gaia satellite, approximating them to higher-resolution spectra equivalent to those of the *Sloan Digital Sky Survey* (SDSS). To this end, a dedicated dataset of more than 55,000 matched pairs of Gaia and SDSS spectra has been built by cross-matching the third Gaia data release (DR3) with the thirteenth SDSS data release (DR13) through the official best-neighbour table, and refined with quality criteria based on the signal-to-noise ratio and on the consistency between both sources. Three neural network architectures have been trained and compared on this dataset: a dense network, a one-dimensional convolutional network ([CNN]{.acr}), and a recurrent network ([RNN]{.acr}).
+This work proposes a deep learning-based approach to improve the quality of the low-resolution spectra captured by the blue (BP) and red (RP) photometers of the Gaia satellite, approximating them to higher-resolution spectra equivalent to those of the *Sloan Digital Sky Survey* (SDSS). To this end, a dedicated dataset of more than 55,000 matched pairs of Gaia and SDSS spectra has been built by cross-matching the third Gaia data release (DR3) with the thirteenth SDSS data release (DR13) through the official best-neighbour table, and refined with quality criteria based on the signal-to-noise ratio and on the consistency between both sources. Three neural network architectures have been trained and compared on this dataset: a dense network, a one-dimensional convolutional network and a recurrent network.
 
-The results show that the dense network, combined with a per-spectrum median normalization, provides the best approximations: the predictions reproduce the overall morphology of the SDSS spectrum, including its most prominent peaks, and the similarity of the metrics obtained on the training, validation, and test sets rules out overfitting. In addition to the direct comparison against real observations, the generated spectra have been validated by estimating astrophysical parameters with the iSpec library, such as the effective temperature, the surface gravity, and the metallicity, with median relative errors below 1% in temperature and gravity with respect to those derived from the real SDSS spectra. These results demonstrate the feasibility of using neural networks to transfer the detail of high-resolution ground-based observations to the vast Gaia catalogue.
+The results show that the used dense network, combined with a per-spectrum median normalization, provides the best approximations: the predictions reproduce the overall morphology of the SDSS spectrum, including its most prominent peaks, and the similarity of the metrics obtained on the training, validation, and test sets rules out overfitting. In addition to the direct comparison against real observations, the generated spectra have been validated by estimating astrophysical parameters with the *iSpec* library, such as the effective temperature, the surface gravity, and the metallicity, with median relative errors below 1% in temperature and gravity with respect to those derived from the real SDSS spectra. These results demonstrate the feasibility of using neural networks to transfer the detail of high-resolution ground-based observations to the vast Gaia catalogue.
 
 
 ## Organización del trabajo en grupo
@@ -33,16 +33,16 @@ requerido por la plantilla grupal (páginas VII-VIII). Columna
 "Responsables" pendiente de rellenar por los autores.
 -->
 
-Este trabajo ha sido desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se han mantenido reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se ha empleado un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se han integrado mediante revisiones cruzadas.
+Este trabajo fue desarrollado de manera conjunta por los dos autores. Para coordinar el desarrollo se mantuvieron reuniones periódicas de seguimiento, junto con las revisiones con el director del trabajo, y se empleó un repositorio de control de versiones compartido tanto para el código como para la memoria, donde los avances de cada autor se integraron mediante revisiones cruzadas.
 
-En cuanto al reparto concreto de las tareas, el desarrollo del código usado se ha dividido principalmente en dos bloques. Por un lado, Javier se encargó de la creación del proceso de extracción de los datos para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
-En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de las redes neuronales densas y recurrentes, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. Javier intervino en la creación de las arquitecturas Convolucionales estudiadas.
+En cuanto al reparto concreto de las tareas, el desarrollo del código usado se dividió principalmente en dos bloques. Por un lado, Javier se encargó de la creación del proceso de extracción de los datos para el entrenamiento del modelo, incluyendo la extracción de datos de Gaia y [SDSS]{.acr} y su descarga. 
+En cambio, Carla se centró en el preprocesado de dicha base de datos y el diseño de las redes neuronales densas y recurrentes, incluyendo el ajuste de los hiperparámetros y la evaluación de los resultados obtenidos. Javier intervino en la creación de las arquitecturas convolucionales estudiadas.
 
 Por otro lado, la elaboración de la memoria también se repartió entre los dos autores. Carla desarrolló los apartados de introducción, contexto, discusión y conclusiones. Mientras que Javier trabajó en el estado del arte, metodología y objetivos. 
 
-Los capítulos 4 y 5, llamado *Descripción del experiento* y *Descipción de los resultados*, fueron redactados por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
+Los capítulos 4 y 5, llamados *Descripción del experiento* y *Descipción de los resultados*, fueron redactados por ambos autores teniendo en cuenta quien desarrolló principalmente el código relacionado con cada subapartado. 
 
-Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se ha llevado a cabo de forma independiente. Tanto la memoria como el código utilizado han sido revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes hayan sido desarrolladas únicamente por esa persona. Gracias a las revisiones se han detectado errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
+Aunque las tareas se hayan repartido entre ambos autores, el desarrollo no se llevó a cabo de forma independiente. Tanto la memoria como el código utilizado fueron revisados de manera cruzada, permitiendo a ambos autores aportar ideas y posibles mejoras sobre el trabajo. Por tanto, las divisiones descritas anteriormente indican el autor principal del apartado o código, pero no implican que dichas partes huibieran sido desarrolladas únicamente por esa persona. Gracias a las revisiones se detectaron errores, mejoras y ajustes que debían incorporarse con tal de mantener un formato común y asegurar coherencia en el proyecto.
 
 
 | Apartado de la memoria | Responsables |
@@ -66,9 +66,9 @@ y las siguientes muestran solo la sigla.
 
 ## Introducción
  
-En diciembre de 2013 comenzó la misión Gaia [@gaiaDR1] con el objetivo de crear un mapa que permita conocer más detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de [ESA]{.acr}, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en el 1989 y finalizó en el 1993. Los datos que Gaia aporta son 200 veces más precisos que los obtenidos por dicho satélite, pero aun así, de menor calidad que los obtenidos por otros proyectos actuales.  
+En diciembre de 2013 comenzó la misión Gaia [@gaiaDR1] con el objetivo de crear un mapa que permitiera conocer más detalles del Sistema Solar y la Vía Láctea. Esta misión es considerada la sucesora de Hipparcos dentro de [ESA]{.acr}, siendo este el primer satélite dedicado a la astrometría. Dicha misión fue puesta en marcha en 1989 y finalizó en 1993. Los datos que Gaia aporta son 200 veces más precisos que los obtenidos por dicho satélite, pero aun así, de menor calidad que los obtenidos por otros proyectos actuales.  
 
-La propia agencia [ESA]{.acr} describe en el reporte publicado en 2013 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto, pero sin un orden o punto de referencia, en sus propias palabras, describen lo siguiente:<br>
+La propia agencia [ESA]{.acr} describió en el reporte publicado en 2013 donde explicaban detalles de la misión de Gaia [@ESA_Gaia_BR296_2013] que antes de estudiar un objeto celeste, es necesario poder ubicarlo en el plano, de lo contrario solo tendrían un conjunto de datos sin sentido pertenecientes a un mismo conjunto, pero sin un orden o punto de referencia, en sus propias palabras, describieron lo siguiente:<br>
 
 >"Antes de que los astrónomos puedan estudiar un objeto celeste, deben saber dónde encontrarlo. Sin este conocimiento, los astrónomos vagarían en vano en lo que Galileo alguna vez llamó un oscuro laberinto"
 <br>
@@ -81,8 +81,8 @@ Esta misión ha proporcionado uno de los catálogos más extensos y precisos has
 Otras misiones, como ahora la iniciada en el año 2000 con [SDSS]{.acr}, son capaces de proporcionar mediciones con mayor resolución que Gaia, pero con un número de objetos observados y una cobertura del cielo mucho menores [@SDSS_release1].
 De este hecho parte la idea del trabajo que se desarrolla a continuación.
 
-Si se pudiese definir una similitud entre los espectros obtenidos por Gaia y [SDSS]{.acr}, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto al la calidad y detalle que [SDSS]{.acr} conlleva. 
-En este contexto, gracias a los avances constantes de la inteligencia artificial, en este trabajo proponemos explorar técnicas que nos permitan llevar a cabo este objetivo; convertir espectros de Gaia en su equivalente [SDSS]{.acr}.
+Si se pudiese definir una similitud entre los espectros obtenidos por Gaia y [SDSS]{.acr}, conseguiríamos combinar lo mejor de ambos proyectos, el rango espacial que Gaia ha sido capaz de conseguir junto a la calidad y detalle que [SDSS]{.acr} conlleva. 
+En este contexto, gracias a los avances constantes de la inteligencia artificial, en este trabajo propusimos explorar técnicas que nos permitieran llevar a cabo este objetivo; convertir espectros de Gaia en su equivalente [SDSS]{.acr}.
 
 
 ### Motivación
@@ -90,27 +90,18 @@ En este contexto, gracias a los avances constantes de la inteligencia artificial
 A lo largo de 2026 se publicarán los últimos datos recolectados por Gaia en un último DR4 y catálogo final DR5. Se calcula que a lo largo de la misión, unos 2 000 millones de estrellas y otros objetos celestes fueron captados por el satélite. 
 Gracias a los datos recolectados, se dispone de una imagen reconstruida sobre cómo un observador vería nuestra galaxia desde el exterior de esta. Esta hazaña se ha conseguido a base de un conjunto de datos donde la información del cuerpo celeste parte fundamentalmente de dos espectros de baja resolución.
 La espectroscopía es una de las herramientas principales de la astrofísica para extraer información acerca de los cuerpos astronómicos. Gracias a la distribución de la luz en función de la longitud de onda, se pueden conocer detalles clave acerca de los objetos estudiados, como por ejemplo su composición, la temperatura y la gravedad superficial [@RecioBlanco2016]. 
-<!--
-A diferencia de Gaia, otros proyectos astronómicos como [SDSS]{.acr} presentan una resolución espectral mayor en gran parte del rango de longitudes de onda que ambos comparten (en el resto del rango, simplemente no disponen de datos). Como contrapartida, al tratarse de un sondeo terrestre que depende de dos telescopios situados en el Observatorio Apache Point de Nuevo México y en el de Las Campanas de Carnegie en Chile [@DR13sdss], el número de objetos que [SDSS]{.acr} puede observar es muy inferior al de Gaia.
--->
 
-La motivación de este trabajo parte de explorar si técnicas de aprendizaje automático pueden aprender a relacionar la gran cantidad de datos captados por Gaia y los espectros de mayor calidad de [SDSS]{.acr}. Si se modela la relación entre ambos datos, se conseguiría mejorar la información obtenida a partir de los datos recolectados por Gaia. 
-
-
-<!--
-Misiones anteriores a Gaia de la ESA:
-- Hipparcos: lanzado en 1989, primer satélite dedicado a la astrometría. Primer release de datos en 1997 continene posiciones, distancias y movimientos de casi 120 000 estrellas, datos 200 veces mas precisos que cualquier medida anterior. Mas adelante se volvió a analizar y se obtuvo un catálogo con casi 2,5 millones de estrellas pero menos preciso. @ESA_Gaia_BR296_2013
--->
+La motivación de este trabajo partió de explorar si técnicas de aprendizaje automático podían aprender a relacionar la gran cantidad de datos captados por Gaia y los espectros de mayor calidad de [SDSS]{.acr}. Si se modelaba la relación entre ambos datos, se conseguiría mejorar la información obtenida a partir de los datos recolectados por Gaia. 
 
 
 ### Planteamiento del trabajo
-El objetivo principal del trabajo que se desarrolla a continuación es diseñar un modelo basado en redes neuronales que consiga convertir espectros de Gaia en espectros equivalentes a los de [SDSS]{.acr}. De esta forma conseguiríamos encontrar un modelo que relacione los datos captados por ambos proyectos.
+El objetivo principal del trabajo que se desarrolla a continuación fue diseñar un modelo basado en redes neuronales que consiguiese convertir espectros de Gaia en espectros equivalentes a los de [SDSS]{.acr}. De esta forma conseguiríamos encontrar un modelo que relacionase los datos captados por ambos proyectos.
 
-Para llevarlo a cabo, primero debemos entender las características de ambas fuentes de información, dado que los datos que usaremos deben estar correlacionados entre ambos conjuntos de datos. 
-En concreto nos centraremos en la tercera liberación de datos de Gaia (Gaia DR3) [@Gaia_DR3_Summary_2023] y la decimotercera de [SDSS]{.acr} (DR13) [@DR13sdss], debido a que estos son los que en el DR3 de Gaia ya encontramos semi comparados, o por lo menos las asociaciones de vecindad hechas.
-Para ser exactos, trataremos de relacionar los espectros de baja resolución de Gaia DR3 y los espectros ópticos de [SDSS]{.acr} DR13.
+Para llevarlo a cabo, primero debíamos entender las características de ambas fuentes de información, dado que los datos que usaríamos debían estar correlacionados entre ambos conjuntos de datos. 
+En concreto nos centramos en la tercera liberación de datos de Gaia (Gaia DR3) [@Gaia_DR3_Summary_2023] y la decimotercera de [SDSS]{.acr} (DR13) [@DR13sdss], debido a que estos son los que en el DR3 de Gaia ya se encontraban semi comparados, o por lo menos las asociaciones de vecindad hechas.
+Para ser exactos, tratamos de relacionar los espectros de baja resolución de Gaia DR3 y los espectros ópticos de [SDSS]{.acr} DR13.
 
-Para realizar este trabajo seleccionamos el conjunto de datos de Gaia como base de estudio por diferentes motivos, por un lado, estas observaciones son parte de un estudio actual y al mismo tiempo la forma de acceder a los datos es relativamente sencilla, pero por otro, es muy destacable la gran cantidad de información y cuerpos observados que Gaia dispone. Esto nos permite tener una buena base para tratar de sacar comparaciones con otros satélites y al mismo tiempo justifica la magnitud del efecto que tendría su mejora.
+Para realizar este trabajo seleccionamos el conjunto de datos de Gaia como base de estudio por diferentes motivos, por un lado, estas observaciones son parte de un estudio actual y al mismo tiempo la forma de acceder a los datos es relativamente sencilla, pero por otro, es muy destacable la gran cantidad de información y cuerpos observados que Gaia dispone. Esto nos justificó tener una buena base para tratar de sacar comparaciones con otros satélites y al mismo tiempo justifica la magnitud del efecto que tendría su mejora.
 
 ### Estructura del trabajo
 
@@ -129,30 +120,14 @@ En el Capítulo 6 se realiza una discusión acerca de los resultados obtenidos e
 Finalmente, en el Capítulo 7 se recogen las conclusiones del trabajo y se proponen posibles líneas de trabajo futuro.
 
 
-
-
-<!-- Para llegar al objetivo descrito anteriormente, primero será necesario recopilar los datos de ambas fuentes, para así hacer un *Cross match* de los datos de SDSS y Gaia. De este proceso, sacaremos un data set con el catálogo de estrellas que han sido observadas por ambos instrumentos y de las cuales podemos analizar de forma paralela sus datos o espectros, para ser más precisos.
-Una vez tengamos identificados los datos con los que se trabajará, analizaremos la relación señal-ruido que se obtiene en ambos sets de datos. 
-A continuación, preprocesaremos los datos con el objetivo de poder tratarlos por igual y descartar todas las anomalías que puedan estropear el comportamiento de futuros modelos.
-
-A partir de estos datos procesados, entrenaremos diversos modelos de inteligencia artificial con el objetivo de que aprendan la relación existente entre ambos tipos de espectro. Es decir, que aprendan la relación entre los datos de Gaia y los de Sloan.
-A partir de aquí sacaremos conclusiones sobre la aplicabilidad y la calidad de los resultados obtenidos. -->
-
-
 ## Contexto y estado del arte
 
-En esta sección se dará un contexto al problema anteriormente descrito, comenzando desde la base del conocimiento necesario para entender los datos, hasta las técnicas que se usarán para el desarrollo del modelo de aprendizaje automático. 
+En esta sección se da un contexto al problema anteriormente descrito, comenzando desde la base del conocimiento necesario para entender los datos, hasta las técnicas que se usarán para el desarrollo del modelo de aprendizaje automático. 
 
 Por otro lado, también exploraremos trabajos ya publicados que contengan estudios de alta utilidad para el presente. 
 
 ### Contexto del problema
-<!-- Para poder desarollar este trabajo, necesitamos comprender términos clave para analizar los datos. El primero es el *Paralaje*. Este término es necesario para comprender como conseguimos situar cuerpos estelares en el plano estelar. La Tierra orbita alrededor del Sol provocando que se recojan diferentes observaciones del mismo cuerpo estelar.
 
-Buscar definición exacta de paralaje
-
-Todos estos datos se basan en mediciones de espectros de baja resolución como lo son los BP/RP (*Blue Photometer / Red Photometer*), a los cuales denominaremos a lo largo del trabajo como BS/RS (*Blue Spectrum / Red Spectrum*).  
-
- A partir de aquí todo menos lo que se indique explicitamente viene de aquí Gaia_DR3_Documentation_2023 -->
 A continuación nos centraremos en desarrollar términos relativos a los espectros estelares, su interpretación y cómo se obtienen y definen en las bases de datos de cada proyecto.
 
 #### Espectros estelares
@@ -171,15 +146,13 @@ En la @fig-espectro-ejemplo se muestra un ejemplo de espectro estelar observado 
 Ejemplo de espectro estelar observado por SDSS
 :::
 
-<!--
-Hay estudios existentes que desarrollan la conexión entre los espectros y las variables anteriormente mencionadas, por ejemplo @lee2008segue trataron los datos de [SDSS]{.acr} en su sexta liberación de datos para tratar de crear herramientas automatizadas que estableciesen dicha relación.-->
 Algunos estudios trataron de crear herramientas automatizadas para la obtención de los datos anteriormente mencionados. Por ejemplo @lee2008segue lo intentó con la sexta liberación datos de [SDSS]{.acr}.
 
 Paralelamente, en la unidad de control número 8 de Gaia se trata de establecer la misma relación, como se puede observar en el trabajo llevado a cabo por @witten2023bprp, donde llegaron a identificar de manera detallada la proporción de composición metálica de las estrellas observadas.
 
-Para cuantificar la calidad de las observaciones, se utiliza la relación señal-ruido [SNR]{.acr}. Esta medida se expresa como el cociente entre el flujo observado y su error correspondiente. Una [SNR].{acr} baja indica que en los datos observados predomina el ruido, por lo que son poco precisos, mientras que un valor alto indica lo contrario, poco ruido y una mayor precisión.
+Para cuantificar la calidad de las observaciones, se utiliza la relación señal-ruido [SNR]{.acr}. Esta medida se expresa como el cociente entre el flujo observado y su error correspondiente. Una [SNR]{.acr} baja indica que en los datos observados predomina el ruido, por lo que son poco precisos, mientras que un valor alto indica lo contrario, poco ruido y una mayor precisión.
 Si definimos el error como $\sigma$ y suponemos que el error sigue una distribución normal, $F \pm \sigma$ contendría alrededor del 68% de los valores reales, $F \pm 2\sigma$ el 95% y $F \pm 3\sigma$ el 99.7% de los datos. 
-Bajo esta nomenclatura $\mathrm{SNR}=F/\sigma$ y el error relativo de un espectro sería su inversa, $\mathrm{error relativo}=\sigma/F$, indicando la incertidumbre expresada en porcentaje del tamaño de la muestra
+Bajo esta nomenclatura $\mathrm{SNR}=F/\sigma$ y el error relativo de un espectro sería su inversa, $\mathrm{error\ relativo}=\sigma/F$, indicando la incertidumbre expresada en porcentaje del tamaño de la muestra
 
 En los siguientes apartados comentaremos los datos espectrales de Gaia y [SDSS]{.acr}.
 
@@ -222,7 +195,7 @@ Ejemplo aleatorio del espectro captado de un mismo cuerpo por Gaia y SDSS
 Podemos observar como claramente el intervalo que [SDSS]{.acr} cubre es muy similar a Gaia, pero existe una gran diferencia en cuanto a la suavidad de las curvas representadas. Como vemos, [SDSS]{.acr} incluye muchos más detalles que Gaia, su espectro tiene una resolución superior. 
 Por otro lado, si nos fijamos en los datos captados en los extremos de visión de Gaia, notamos la posibilidad de que en rangos inferiores a 400 nm estemos observando artefactos u obteniendo mediciones muy poco precisas. Lo mismo sucede en valores superiores a 950 nm. Diversos estudios han observado una menor precisión y un error mayor en intervalos muy similares a los mencionados en este trabajo, por ejemplo el artículo de @Huang2024.
 
-A lo largo del trabajo, para garantizar que los datos analizados correspondan al mismo objeto astronómico, se empleará la tabla de cruce oficial de DR3 denominada *gaiadr3.sdssdr13_best_neighbour* que se puede consultar en el archivo de Gaia [@gaiaDR3sdssBestNeighbourDataset]. Esta tabla contiene para cada cuerpo observado por Gaia, el vecino más cercano en [SDSS]{.acr} DR13, es decir, el que cuenta con una mayor probabilidad de que estén describiendo el mismo cuerpo celeste. El procedimiento con el cual se establece esta vecindad se encuentra descrito en la documentación oficial de Gaia DR3 [@Gaia_DR3_Documentation_2023], que puede consultarse en el propio archivo de Gaia. Dentro de este conjunto, definiremos un umbral de aceptación dado por la distancia angular, fijado en 2 segundos de arco.
+A lo largo del trabajo, para garantizar que los datos analizados correspondiesen al mismo objeto astronómico, se empleó la tabla de cruce oficial de DR3 denominada *gaiadr3.sdssdr13_best_neighbour* que se puede consultar en el archivo de Gaia [@gaiaDR3sdssBestNeighbourDataset]. Esta tabla contiene para cada cuerpo observado por Gaia, el vecino más cercano en [SDSS]{.acr} DR13, es decir, el que cuenta con una mayor probabilidad de que estén describiendo el mismo cuerpo celeste. El procedimiento con el cual se establece esta vecindad se encuentra descrito en la documentación oficial de Gaia DR3 [@Gaia_DR3_Documentation_2023], que puede consultarse en el propio archivo de Gaia. Dentro de este conjunto, definiremos un umbral de aceptación dado por la distancia angular, fijado en 2 segundos de arco.
 
 
 ### Estado del arte
@@ -231,8 +204,7 @@ En los últimos años, la astronomía se ha beneficiado de las técnicas de apre
 
 #### Modelos generativos en Astronomía
 
-Paralelamente, ha crecido el interés en generar datos astronómicos sintéticos mediante modelos generativos. En particular, las [GAN]{.acr} se han aplicado con éxito en algunos contextos. Por ejemplo, @garcia2022improving propusieron un método de aumento de datos (*data augmentation*) basado en [GAN]{.acr} para generar curvas de luz sintéticas de estrellas variables
-y mostraron cómo su modelo logra producir variaciones realistas de luminosidad, mejorando significativamente la precisión que alcanza la clasificación cuando se entrena con estos datos sintéticos adicionales. Esto ejemplifica cómo las [GAN]{.acr} pueden crear nuevos ejemplos de baja complejidad (en este caso series temporales) para compensar la escasez de datos etiquetados.
+Paralelamente, ha crecido el interés en generar datos astronómicos sintéticos mediante modelos generativos. En particular, las [GAN]{.acr} se han aplicado con éxito en algunos contextos. Por ejemplo, @garcia2022improving propusieron un método de aumento de datos basado en [GAN]{.acr} para generar curvas de luz sintéticas de estrellas variables y mostraron cómo su modelo logra producir variaciones realistas de luminosidad, mejorando significativamente la precisión que alcanza la clasificación cuando se entrena con estos datos sintéticos adicionales. Esto ejemplifica cómo las [GAN]{.acr} pueden crear nuevos ejemplos de baja complejidad (en este caso series temporales) para compensar la escasez de datos etiquetados.
 
 Asimismo, dada la enorme base de datos espectrales de baja resolución de la misión Gaia (más de 220 millones de espectros [BP/RP]{.acr} en Gaia DR3), se han desarrollado modelos generativos específicos para estos datos. @laroche2025closing introdujeron un *autoencoder* variacional generativo no supervisado que aprende directamente de los espectros Gaia sin necesidad de etiquetas estelares. Su arquitectura sigue el esquema *encoder-decoder* propio de los *autoencoders* variacionales: un codificador comprime los coeficientes de los espectros [BP/RP]{.acr} en un espacio latente de baja dimensión y un decodificador reconstruye el espectro a partir de dicha representación, entrenándose ambos de forma conjunta mediante la optimización de la [ELBO]{.acr}. Su modelo reproduce los espectros [BP/RP]{.acr} y detecta patrones en áreas donde el aprendizaje supervisado falla debido a la falta de referencias. De hecho, antes de este trabajo la única aproximación generativa para los espectros de Gaia era supervisada: @zhang2023parameters entrenaron un modelo capaz de generar el espectro [XP]{.acr} a partir de los parámetros estelares, apoyándose para ello en un conjunto reducido de estrellas de Gaia que cuentan con una observación equivalente en el sondeo espectroscópico terrestre LAMOST, del cual se obtuvieron dichos parámetros de referencia. Estos desarrollos recientes demuestran que los modelos generativos pueden explorar el conjunto masivo de datos Gaia para *aproximar* datos de mayor resolución. 
 
@@ -242,7 +214,7 @@ A pesar de estos avances, el uso de redes neuronales profundas en astronomía si
 
 Dentro de las evoluciones recientes encontramos el trabajo @grassi2026differentiable, en el que se explora la integración de modelos físicos dentro de arquitecturas de aprendizaje automático, mediante el desarrollo de un modelo geométrico 3D completamente diferenciable para la interpretación de cubos de datos espectrales moleculares. Mediante el uso de librerías de diferenciación automática como JAX, generaron observaciones sintéticas a partir de campos de densidad y velocidad parametrizados, optimizándolos iterativamente para reproducir con precisión las observaciones astronómicas reales. Aunque este enfoque orientado a la física difiere de las redes neuronales generativas utilizadas para relacionar directamente las bandas fotométricas con espectros de alta resolución, subraya la importancia de emplear modelos computacionales avanzados y generación sintética de datos para sortear las limitaciones instrumentales y extraer propiedades subyacentes de las señales astrofísicas, especialmente para la comprensión de la composición química de los objetos celestes radiando dichas señales.
 
-El ejemplo más cercano al enfoque propuesto en este trabajo lo encontramos en un trabajo muy reciente de @haghjoo2026learning. En esta propuesta, se usó el conjunto de datos de [JADES]{.acr} [@curtis2025jades] que proporciona imágenes y espectroscopía profunda combinando observaciones de la cámara (NIRCam) y el espectrógrafo (NIRSpec) del [JWST]{.acr}. Este sondeo es ideal para el estudio porque observa los mismos objetivos de galaxias utilizando una combinación de espectroscopía de prisma de baja resolución (R ~ 30–300) y modos de red de difracción de media resolución (R ~ 1000; mediante los instrumentos G140M, G235M y G395M). A partir de estas observaciones emparejadas, los investigadores seleccionaron una muestra inicial de 1 187 pares de espectros coincidentes, la cual fue ampliada posteriormente a 24 927 muestras mediante técnicas de mejora de datos (*data augmentation*) para el entrenamiento del modelo, tal y como se ilustra en la @fig-jades-mejora-datos.
+El ejemplo más cercano al enfoque propuesto en este trabajo lo encontramos en un trabajo muy reciente de @haghjoo2026learning. En esta propuesta, se usó el conjunto de datos de [JADES]{.acr} [@curtis2025jades] que proporciona imágenes y espectroscopía profunda combinando observaciones de la cámara (NIRCam) y el espectrógrafo (NIRSpec) del [JWST]{.acr}. Este sondeo es ideal para el estudio porque observa los mismos objetivos de galaxias utilizando una combinación de espectroscopía de prisma de baja resolución (R ~ 30–300) y modos de red de difracción de media resolución (R ~ 1000; mediante los instrumentos G140M, G235M y G395M). A partir de estas observaciones emparejadas, los investigadores seleccionaron una muestra inicial de 1 187 pares de espectros coincidentes, la cual fue ampliada posteriormente a 24 927 muestras mediante técnicas de mejora de datos para el entrenamiento del modelo, tal y como se ilustra en la @fig-jades-mejora-datos.
 
 :::{#fig-jades-mejora-datos}
 
@@ -257,17 +229,9 @@ Este planteamiento guarda un notable paralelismo con el que se persigue en el pr
 
 Para llevar a cabo este estudio, los investigadores desarrollaron una red neuronal profunda personalizada de tres etapas, diseñada específicamente para procesar datos unidimensionales. La primera etapa emplea una red neuronal convolucional residual (1D ResNet-CNN) que genera una reconstrucción preliminar y conservadora del espectro. La segunda etapa utiliza otra red convolucional para inferir el corrimiento al rojo (*redshift*), contextualizando así la posición física de los elementos. Finalmente, la tercera etapa de refinamiento divide el trabajo en dos ramas: un modelo basado en mecanismos de atención (*Transformer encoder*) que procesa de manera aislada las líneas de emisión, y otra red convolucional que ajusta suavemente el continuo del espectro. En total, esta arquitectura por fases cuenta con unos 2,5 millones de parámetros y está diseñada para aplicar correcciones basadas en la física, evitando que la [IA]{.acr} "alucine" datos inexistentes.  
 
-Los resultados demostraron que este modelo es capaz de recuperar con éxito detalles de alta resolución a partir de observaciones de baja calidad. El sistema logró desmezclar y separar de manera efectiva líneas de emisión que aparecían fusionadas en los datos originales (como el doblete de [O III] y Hβ), mejorando sistemáticamente la relación señal-ruido en todas las líneas de diagnóstico clave. Además, los espectros superresueltos generados por la [IA]{.acr} alcanzaron niveles de ruido comparables a las observaciones reales de alta resolución y permitieron realizar estimaciones del corrimiento al rojo mucho más precisas, reduciendo a la mitad la dispersión de errores y disminuyendo significativamente los casos atípicos frente a los datos de entrada.
+Los resultados demostraron que este modelo es capaz de recuperar con éxito detalles de alta resolución a partir de observaciones de baja calidad. El sistema logró desmezclar y separar de manera efectiva líneas de emisión que aparecían fusionadas en los datos originales (como el doblete de [O III] y Hβ), mejorando sistemáticamente la [SNR]{.acr} en todas las líneas de diagnóstico clave. Además, los espectros superresueltos generados por la [IA]{.acr} alcanzaron niveles de ruido comparables a las observaciones reales de alta resolución y permitieron realizar estimaciones del corrimiento al rojo mucho más precisas, reduciendo a la mitad la dispersión de errores y disminuyendo significativamente los casos atípicos frente a los datos de entrada.
 
-<!-- IMPORTANTE ya se han comparado datos fotométricos con los de otros sistemas 
 
-JC: En este caso se tratan de filtros de mejora deterministas  y de calibración, no de modelos generativos. Lo dejo de momento por si puede ser útil mencionarlo, aunque quizá en otra sección.
-
-https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/cu5pho_sec_photSystem/cu5pho_ssec_photRelations.html
-
-https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/cu5pho_sec_spss/
-
--->
 ### Conclusiones
 
 La integración y estandarización de catálogos astronómicos masivos representa un desafío técnico fundamental, especialmente al trabajar con fuentes de naturalezas distintas como Gaia y [SDSS]{.acr}. Mientras que Gaia provee un volumen de datos astrométricos, fotométricos y espectroscópicos sin precedentes, sus espectros [BP/RP]{.acr} operan en resoluciones bajas y requieren complejos procesos de calibración para mitigar el ruido espacial y las fluctuaciones. Cabe matizar que el espectrómetro [RVS]{.acr} de Gaia alcanza una resolución incluso mayor que la de [SDSS]{.acr}, pero al requerir estrellas más brillantes dispone de muchas menos fuentes observadas. En contraste, [SDSS]{.acr} aporta espectros ópticos de mayor resolución que los [BP/RP]{.acr}. La necesidad de interconectar ambas misiones define el núcleo de este estudio: establecer una relación sólida capaz de traducir y equiparar los espectros de baja resolución de Gaia con los espectros de mayor resolución de [SDSS]{.acr}.
@@ -285,59 +249,59 @@ En este capítulo se detalla el objetivo principal de este trabajo y su desglose
 También se expone la metodología empleada para afrontar dichos objetivos.
 
 ### Objetivo general
-El objetivo general de este trabajo consiste en desarrollar un modelo basado en aprendizaje automático que permita aproximar el flujo calibrado captado por los fotómetros de baja resolución [BP/RP]{.acr} de Gaia a un espectro de resolución más alta, similar al proporcionado por las observaciones de mayor calidad de [SDSS]{.acr}.
+El objetivo general de este trabajo consistió en desarrollar un modelo basado en aprendizaje automático que permitiese aproximar el flujo calibrado captado por los fotómetros de baja resolución [BP/RP]{.acr} de Gaia a un espectro de resolución más alta, similar al proporcionado por las observaciones de mayor calidad de [SDSS]{.acr}.
 
 ### Objetivos específicos
-Para alcanzar el objetivo propuesto, se deben alcanzar previamente los siguientes objetivos intermedios.
+Para alcanzar el objetivo propuesto, se debían alcanzar previamente los siguientes objetivos intermedios.
 
 
 - Análisis estructural de la base de datos de Gaia y SDSS:
 
-El análisis y comprensión de las observaciones y la manera en la que están organizadas en los repositorios de Gaia y [SDSS]{.acr} es fundamental para entender cuales son los datos relevantes a extraer.  
+El análisis y comprensión de las observaciones y la manera en la que estaban organizadas en los repositorios de Gaia y [SDSS]{.acr} eran fundamentales para entender cuáles eran los datos relevantes a extraer.  
 
-Es también necesario comprender la relación entre las mediciones de ambos sondeos astronómicos para usar observaciones coincidentes, referidas a los mismos objetos del catálogo de objetos celestes.
+Era también necesario comprender la relación entre las mediciones de ambos sondeos astronómicos para usar observaciones coincidentes, referidas a los mismos objetos del catálogo de objetos celestes.
 
 - Preselección de los datos:
 
-Una vez se ha ganado cierta comprensión de los datos, se puede hacer una valoración más precisa de cuál es la calidad de los mismos, y qué valores no reúnen los requisitos para incluirse en el conjunto de datos de entrenamiento. 
+Una vez se obtuvo cierta comprensión de los datos, se pudo hacer una valoración más precisa de cuál era la calidad de los mismos, y qué valores no reunían los requisitos para incluirse en el conjunto de datos de entrenamiento. 
 
-Así, se deben definir unos parámetros para excluir los datos menos relevantes para el objetivo principal.
+Así, se debían definir unos parámetros para excluir los datos menos relevantes para el objetivo principal.
 
 - Extracción de los datos:
 
-Tras haber comprendido qué servicios se pueden usar para la extracción de los datos y haber reducido el conjunto de entrada atendiendo a su calidad, el siguiente paso consiste en la extracción de los mismos, usando métodos que optimicen la descarga de los datos orientados a minimizar el tiempo y los posibles errores que los servicios ofrecidos por los proyectos de Gaia y [SDSS]{.acr} ofrecen.
+Tras haber comprendido qué servicios se podían usar para la extracción de los datos y haber reducido el conjunto de entrada atendiendo a su calidad, el siguiente paso consistió en la extracción de los mismos, usando métodos que optimizasen la descarga de los datos orientados a minimizar el tiempo y los posibles errores que los servicios ofrecidos por los proyectos de Gaia y [SDSS]{.acr} presentaban.
 
 - Preprocesado de los datos:
 
-Una vez extraídos los datos, es necesario realizar cierto preprocesado de los mismos para mejorar el entrenamiento.
+Una vez extraídos los datos, fue necesario realizar cierto preprocesado de los mismos para mejorar el entrenamiento.
 
-Puesto que en la preselección de las observaciones se han tenido en cuenta criterios de calidad, y Gaia DR3 ofrece datos ya procesados y relaciones con [SDSS]{.acr}, el preprocesado en este caso consiste en la reducción del ruido, mejorando así la [SNR]{.acr}, aplicada a las observaciones de [SDSS]{.acr}, que tienen más variabilidad y pueden así aumentar la complejidad del entrenamiento.
+Puesto que en la preselección de las observaciones se tuvieron en cuenta criterios de calidad, y Gaia DR3 ofrecía datos ya procesados y relaciones con [SDSS]{.acr}, el preprocesado en este caso consistió en la reducción del ruido, mejorando así la [SNR]{.acr}, aplicada a las observaciones de [SDSS]{.acr}, que tenían más variabilidad y podían así aumentar la complejidad del entrenamiento.
 
 - Preparación de los conjuntos de entrenamiento, test y validación:
 
-Una vez los datos están listos, es necesario realizar el reparto entre los distintos conjuntos de datos. En concreto se necesitará un conjunto de entrenamiento para encontrar los mejores parámetros de los modelos propuestos, un conjunto de validación para seleccionar el modelo con mejores resultados y tener indicativos en caso de sobreajuste y, finalmente, un conjunto de test con el que estimar la calidad del modelo seleccionado a partir de datos no observados previamente.
+Una vez los datos estuvieron listos, fue necesario realizar el reparto entre los distintos conjuntos de datos. En concreto se necesitó un conjunto de entrenamiento para encontrar los mejores parámetros de los modelos propuestos, un conjunto de validación para seleccionar el modelo con mejores resultados y tener indicativos en caso de sobreajuste y, finalmente, un conjunto de test con el que estimar la calidad del modelo seleccionado a partir de datos no observados previamente.
 
 - Selección del modelo de redes neuronales más adecuado:
 
-Para el caso expuesto se considera que las redes neuronales pueden aportar una solución novedosa gracias a su no-linealidad.
+Para el caso expuesto se consideró que las redes neuronales podían aportar una solución novedosa gracias a su no-linealidad.
 
 
 - Entrenamiento, refinamiento y validación del modelo:
 
-La red neuronal entrenada requerirá de un proceso de optimización y ajuste de los hiperparámetros para dar una solución satisfactoria. Asimismo, se llevará un proceso de validación de los resultados a partir del conjunto de datos creado.
+La red neuronal entrenada requirió de un proceso de optimización y ajuste de los hiperparámetros para dar una solución satisfactoria. Asimismo, se llevó a cabo un proceso de validación de los resultados a partir del conjunto de datos creado.
 
 
 ### Metodología de trabajo
 
-De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar este trabajo se estructura en las siguientes etapas. Las particularidades y la implementación concreta de cada una de ellas se recogen en el Capítulo 5.
+De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar este trabajo se estructur´p en las siguientes etapas. Las particularidades y la implementación concreta de cada una de ellas se recogen en el Capítulo 5.
 
-1. Análisis exploratorio de los datos: mediante cuadernos *Jupyter* colaborativos se estudia la organización de los repositorios de Gaia y [SDSS]{.acr}, los servicios disponibles para su consulta y la manera de emparejar las observaciones de ambos proyectos referidas a un mismo objeto celeste.
+1. Análisis exploratorio de los datos: mediante cuadernos *Jupyter* colaborativos se estudió la organización de los repositorios de Gaia y [SDSS]{.acr}, los servicios disponibles para su consulta y la manera de emparejar las observaciones de ambos proyectos referidas a un mismo objeto celeste.
 
-2. Preselección de los datos: a partir del análisis previo se definen filtros de calidad sobre el cruce de catálogos, con el objetivo de maximizar la fiabilidad de los pares de espectros utilizados.
+2. Preselección de los datos: a partir del análisis previo se definieron filtros de calidad sobre el cruce de catálogos, con el objetivo de maximizar la fiabilidad de los pares de espectros utilizados.
 
-3. Extracción de los datos: descarga por lotes de los espectros emparejados, de manera reproducible y tolerante a las limitaciones de los servicios públicos de consulta. Esta etapa parte deliberadamente del catálogo espectroscópico de [SDSS]{.acr} y no del cruce fotométrico de Gaia, ya que este último constituyó inicialmente el cuello de botella del proceso: al buscar el espectro de [SDSS]{.acr} correspondiente a cada fuente fotométrica de Gaia, más del 98% de los candidatos carecían de una observación espectroscópica real, dejando un conjunto de datos prácticamente vacío. Invirtiendo el sentido de la consulta —partiendo de [SDSS]{.acr} y buscando la contrapartida en Gaia— se garantiza que cada candidato dispone de espectro desde el inicio, lo que eleva la tasa de coincidencia con Gaia a un 20-50%, muy por encima del 1% obtenido con el planteamiento original.
+3. Extracción de los datos: descarga por lotes de los espectros emparejados, de manera reproducible y tolerante a las limitaciones de los servicios públicos de consulta. Esta etapa partió deliberadamente del catálogo espectroscópico de [SDSS]{.acr} y no del cruce fotométrico de Gaia, ya que este último constituyó inicialmente el cuello de botella del proceso: al buscar el espectro de [SDSS]{.acr} correspondiente a cada fuente fotométrica de Gaia, más del 98% de los candidatos carecían de una observación espectroscópica real, dejando un conjunto de datos prácticamente vacío. Invirtiendo el sentido de la consulta —partiendo de [SDSS]{.acr} y buscando la contrapartida en Gaia— se garantizó que cada candidato dispusiera de espectro desde el inicio, lo que elevó la tasa de coincidencia con Gaia a un 20-50%, muy por encima del 1% obtenido con el planteamiento original.
 
-4. Preprocesado de los datos: limpieza de anomalías y artefactos, y homogeneización de los espectros de ambas fuentes para que sean directamente comparables. En esta etapa se compara la [SNR]{.acr} de los espectros: cada observatorio puede medir el mismo objeto un número distinto de veces y en condiciones diferentes, por lo que la [SNR]{.acr} puede variar entre observaciones de un mismo cuerpo. Por ello, los pares de espectros que se usen para entrenar y evaluar el modelo deben presentar una [SNR]{.acr} equivalente.
+4. Preprocesado de los datos: limpieza de anomalías y artefactos, y homogeneización de los espectros de ambas fuentes para que fueran directamente comparables. En esta etapa se comparó la [SNR]{.acr} de los espectros: cada observatorio puede medir el mismo objeto un número distinto de veces y en condiciones diferentes, por lo que la [SNR]{.acr} puede variar entre observaciones de un mismo cuerpo. Por ello, los pares de espectros que se usaron para entrenar y evaluar el modelo debían presentar una [SNR]{.acr} equivalente.
 
 5. Preparación de los conjuntos de entrenamiento, validación y test: partición del conjunto de datos garantizando una distribución homogénea de las muestras, también en términos de [SNR]{.acr}, y de manera reproducible.
 
@@ -346,7 +310,7 @@ De acuerdo a los objetivos expuestos, la metodología empleada para desarrollar 
 
 ## Descripción del experimento
 
-En este capítulo se describe el trabajo realizado en cada una de las etapas definidas en la metodología.
+En este capítulo se describen los requisitos necesarios para desarrollar el experimento y se detallan los pasos seguidos para preparar el conjunto de datos usado. 
 
 ### Definición de los requisitos
 
@@ -354,20 +318,20 @@ Para un correcto desarrollo del experimento, es necesario garantizar una serie d
 
 #### Requisitos del conjunto de datos
 
-El conjunto de datos usado para el entrenamiento del modelo debe estar formado por pares de espectros de Gaia y [SDSS]{.acr} que correspondan al mismo objeto astronómico. Para garantizar esta correspondencia se debe usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos, en concreto, la tabla de mejores vecinos entre Gaia DR3 y [SDSS]{.acr} DR13. 
+El conjunto de datos usado para el entrenamiento del modelo debía estar formado por pares de espectros de Gaia y [SDSS]{.acr} que correspondiera al mismo objeto astronómico. Para garantizar esta correspondencia se debía usar el catálogo de cruce de datos que Gaia incluye en su tercera liberación de datos, en concreto, la tabla de mejores vecinos entre Gaia DR3 y [SDSS]{.acr} DR13. 
 
-Cada muestra usada debe contener, como mínimo, el identificador de este objeto dentro de su base de datos, el espectro, la malla de longitud de onda correspondiente y la relación señal-ruido del espectro. En el caso de [SDSS]{.acr} el [SNR]{.acr} será obtenido a partir de la variable *ivar*.
-El identificador del objeto dependerá de la base de datos, ya que en Gaia será suficiente con el *source_id*, mientras que en [SDSS]{.acr} se necesitará *specObjID*, *plate*, *mjd* y *fiberID* que hacen referencia al identificador único del objeto en la base de datos de [SDSS]{.acr}, el número de placa usada en la observación, la fecha de observación y el número de fibra dentro de la placa asignada al objeto observado.
+Cada muestra usada debía contener, como mínimo, el identificador de este objeto dentro de su base de datos, el espectro, la malla de longitud de onda correspondiente y la [SNR]{.acr} del espectro. En el caso de [SDSS]{.acr} la [SNR]{.acr} se obtuvo a partir de la variable *ivar*.
+El identificador del objeto dependía de la base de datos, ya que en Gaia era suficiente con el *source_id*, mientras que en [SDSS]{.acr} se necesitaban *specObjID*, *plate*, *mjd* y *fiberID* que hacen referencia al identificador único del objeto en la base de datos de [SDSS]{.acr}, el número de placa usada en la observación, la fecha de observación y el número de fibra dentro de la placa asignada al objeto observado.
 
-El conjunto de datos original deberá ser almacenado en un formato que sea eficiente para su uso en el modelo. En este trabajo se consideró el formato HDF5, ya que permite organizar en un solo fichero todos los datos necesarios para su entrenamiento. 
+El conjunto de datos original debía ser almacenado en un formato que fuera eficiente para su uso en el modelo. En este trabajo se consideró el formato HDF5, ya que permite organizar en un solo fichero todos los datos necesarios para su entrenamiento. 
 
-Por último, será necesaria la aplicación de criterios de calidad y el preprocesado del conjunto de datos a usar.
+Por último, fue necesaria la aplicación de criterios de calidad y el preprocesado del conjunto de datos a usar.
 
 #### Requisitos de calidad
 
-Una vez extraído el conjunto de datos inicial, las parejas de espectros deberán pasar una serie de requisitos mínimos de calidad para ser usados en el entrenamiento del modelo.
+Una vez extraído el conjunto de datos inicial, las parejas de espectros debían pasar una serie de requisitos mínimos de calidad para ser usadas en el entrenamiento del modelo.
 
-En primer lugar, los espectros deberán contener valores numéricos válidos en todo el rango usado, con lo que se descartarán aquellos datos que contengan valores nulos o infinitos. Del mismo modo, se descartarán aquellas observaciones que contengas posibles anomalías en el flujo, como por ejemplo picos extremos o que no encajen en la tendencia general de la muestra. Al mismo tiempo, también se descartará el caso contrario, muestras donde haya una clara falta de variabilidad en el flujo, es decir, por ejemplo, que este sea un valor constante. Un claro ejemplo se puede observar en la @fig-descarte-constante, donde se aprecia como el espectro captado por SDSS es nulo:
+En primer lugar, los espectros debían contener valores numéricos válidos en todo el rango usado, con lo que se descartaron aquellos datos que contenían valores nulos o infinitos. Del mismo modo, se descartaron aquellas observaciones que contenían posibles anomalías en el flujo, como por ejemplo picos extremos o que no encajaban en la tendencia general de la muestra. Al mismo tiempo, también se descartó el caso contrario, muestras donde había una clara falta de variabilidad en el flujo, es decir, por ejemplo, que este fuera un valor constante. Un claro ejemplo se puede observar en la @fig-descarte-constante, donde se aprecia como el espectro captado por SDSS es nulo:
 
 :::{#fig-descarte-constante}
 
@@ -378,8 +342,8 @@ En primer lugar, los espectros deberán contener valores numéricos válidos en 
 Ejemplo de espectros donde el espectro de SDSS es constante 0.
 ::: 
 
-Por otro lado, las parejas de espectros de Gaia y [SDSS]{.acr} deberán ser coherentes en cuanto a la escala del flujo. Aunque ambos instrumentos presentan resoluciones diferentes, al tratarse de observaciones hechas al mismo cuerpo estelar, la relación entre los flujos no debe situarse en valores extremos. 
-Para descartar aquellas muestras que no sean coherentes, se comparará la media del flujo de ambos espectros y se descartarán aquellos pares cuya relación se encuentre fuera de los límites definidos con el percentil 99 del conjunto de datos. En la @fig-descarte-escala encontramos un ejemplo de lo que se evitará gracias a esta restricción.
+Por otro lado, las parejas de espectros de Gaia y [SDSS]{.acr} debían ser coherentes en cuanto a la escala del flujo. Aunque ambos instrumentos presentan resoluciones diferentes, al tratarse de observaciones hechas al mismo cuerpo estelar, la relación entre los flujos no debía situarse en valores extremos. 
+Para descartar aquellas muestras que no fueran coherentes, se comparó la media del flujo de ambos espectros y se descartaron aquellos pares cuya relación se encontraba fuera de los límites definidos con el percentil 99 del conjunto de datos. En la @fig-descarte-escala encontramos un ejemplo de lo que se evitó gracias a esta restricción.
 
 :::{#fig-descarte-escala}
 
@@ -390,29 +354,30 @@ Para descartar aquellas muestras que no sean coherentes, se comparará la media 
 Ejemplo de espectros donde la escala de Gaia y SDSS es diferente.
 ::: 
 
-En gran parte de los descartes que se realizarán, se usarán los percentiles 95 o 99 para establecer los límites tolerables. Al definirlos de esta forma, no se escogerá un valor arbitrario fijo, sino que se tendrá en cuenta el comportamiento estadístico de la muestra, permitiendo extender su uso en casos futuros.
+En gran parte de los descartes que se realizaron, se usaron los percentiles 95 o 99 para establecer los límites tolerables. Al definirlos de esta forma, no se escogió un valor arbitrario fijo, sino que se tuvo en cuenta el comportamiento estadístico de la muestra, permitiendo extender su uso en casos futuros.
 
-Asimismo, deberá tenerse en cuenta la [SNR]{.acr} de las observaciones. Este dato indica la calidad de la señal respecto al ruido, por lo que si este valor es muy bajo, la información del espectro asociado es poco fiable. Respecto a esto, se impondrán dos criterios: por un lado, se descartarán aquellos datos con los valores de [SNR]{.acr} por debajo del percentil 1. Por otro, dado que el modelo tratará de aprender la correspondencia entre las observaciones de Gaia y [SDSS]{.acr} y estos observan los objetos de formas diferentes y no bajo las mismas condiciones, las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste, por lo que se descartarán aquellos pares en los que la relación entre la media de [SNR]{.acr} de ambos instrumentos sean mayores al percentil 95 o inferiores al 5.
+Asimismo, debían tenerse en cuenta la [SNR]{.acr} de las observaciones. Este dato indica la calidad de la señal respecto al ruido, por lo que si este valor es muy bajo, la información del espectro asociado es poco fiable. Respecto a esto, se impusieron dos criterios: por un lado, se descartaron aquellos datos con los valores de [SNR]{.acr} por debajo del percentil 1. Por otro, dado que el modelo trataba de aprender la correspondencia entre las observaciones de Gaia y [SDSS]{.acr} y estos observan los objetos de formas diferentes y no bajo las mismas condiciones, las mediciones pueden presentar niveles de ruido diferentes aun tratándose del mismo cuerpo celeste, por lo que se descartaron aquellos pares en los que la relación entre la media de [SNR]{.acr} de ambos instrumentos fuera mayor al percentil 95 o inferior al 5.
 
-Finalmente, los espectros se recortarán a los rangos de longitud de onda comunes entre Gaia y [SDSS]{.acr} y así se evitará que la generación de datos de salida se vea afectada por la falta de datos de entrada. Al mismo tiempo, se descartarán los intervalos iniciales y finales del rango espectral, ya que en estas zonas suelen aparecer con mayor frecuencia anomalías u observaciones de artefactos. En concreto, se restringirá el intervalo de entrenamiento entre los 500 y 900 nm. 
+Finalmente, los espectros se recortaron a los rangos de longitud de onda comunes entre Gaia y [SDSS]{.acr} y así se evitó que la generación de datos de salida se viera afectada por la falta de datos de entrada. Al mismo tiempo, se descartaron los intervalos iniciales y finales del rango espectral, ya que en estas zonas suelen aparecer con mayor frecuencia anomalías u observaciones de artefactos. En concreto, se restringirá el intervalo de entrenamiento entre los 500 y 900 nm. 
 
 #### Requisitos del modelo
 
-El modelo basado en redes neuronales debe resolver un problema de regresión multivariante, en el que la entrada sea un vector de flujo de Gaia y la salida se corresponda con el espectro de [SDSS]{.acr}. 
+El modelo basado en redes neuronales debía resolver un problema de regresión multivariante, en el que la entrada fuera un vector de flujo de Gaia y la salida se correspondiera con el espectro de [SDSS]{.acr}. 
 
-Para mejorar la estabilidad del entrenamiento, el modelo debe trabajar con datos normalizados tanto de entrada como de salida. 
-La normalización será aplicada teniendo en cuenta solo los datos de entrenamiento. Los de validación y test no deben ser usados para entrenar el modelo, con la finalidad de que sean observaciones completamente nuevas para evaluarlo.
+Para mejorar la estabilidad del entrenamiento, el modelo debía trabajar con datos normalizados tanto de entrada como de salida. 
+La normalización se aplicó teniendo en cuenta solo los datos de entrenamiento. Los de validación y test no debían ser usados para entrenar el modelo, con la finalidad de que fueran observaciones completamente nuevas para evaluarlo.
 
-La separación de los grupos de entrenamiento, validación y test deberá llevarse a cabo de forma aleatoria para garantizar la variabilidad dentro de las muestras usadas para entrenar y evaluar el modelo.  El objetivo de esta separación aleatoria es que los conjuntos sean estadísticamente equivalentes, es decir, el conjunto de entrenamiento debe ser representativo de los conjuntos de validación y test.
+La separación de los grupos de entrenamiento, validación y test debía llevarse a cabo de forma aleatoria para garantizar la variabilidad dentro de las muestras usadas para entrenar y evaluar el modelo.  El objetivo de esta separación aleatoria era que los conjuntos fueran estadísticamente equivalentes, es decir, el conjunto de entrenamiento debía ser representativo de los conjuntos de validación y test.
 
-La arquitectura y diseño del modelo deberá tener capacidad suficiente como para aprender las relaciones entre el espectro de entrada y salida, pero sin llegar a memorizar el conjunto de entrenamiento para así evitar el sobreajuste. 
+La arquitectura y diseño del modelo debían tener capacidad suficiente como para aprender las relaciones entre el espectro de entrada y salida, pero sin llegar a memorizar el conjunto de entrenamiento para así evitar el sobreajuste. 
 
-El modelo deberá evaluarse con métricas cuantitativas apropiadas al tipo de dato y al mismo tiempo con un análisis visual de los resultados. 
+El modelo debía evaluarse con métricas cuantitativas apropiadas al tipo de dato y al mismo tiempo con un análisis visual de los resultados. 
 
 
 ### Preparación del conjunto de datos
 
-La construcción del conjunto de datos de entrenamiento se ha automatizado mediante un flujo reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consume el resultado de la anterior y guarda su salida en disco de inmediato, de manera que una ejecución interrumpida puede reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. A grandes rasgos dicho flujo obtiene la referencia de los objetos con espectro en [SDSS]{.acr}, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objetos referenciados de [SDSS]{.acr}, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal.
+La construcción del conjunto de datos de entrenamiento se automatizó mediante un flujo reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consumía el resultado de la anterior y guardaba su salida en disco de inmediato, de manera que una ejecución interrumpida podía reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. 
+A grandes rasgos dicho flujo obtiene la referencia de los objetos con espectro en [SDSS]{.acr}, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objetos referenciados de [SDSS]{.acr}, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal. A continuación se describe paso a paso el funcionamiento del código creado.
 
 #### Obtención de los objetos con espectro de [SDSS]{.acr}
 
@@ -420,7 +385,7 @@ La primera etapa parte del catálogo espectroscópico de [SDSS]{.acr} y recopila
 
 #### Cruce inverso con Gaia
 
-A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} busca la fuente equivalente en Gaia que además disponga de espectro BP/RP. La búsqueda se realiza localizando el identificador fotométrico de cada objeto de [SDSS]{.acr} en la tabla de cruce oficial *gaiadr3.sdssdr13_best_neighbour*, descrita en la sección de conjuntos de datos, y aplicando el umbral de aceptación de 2 segundos de arco de distancia angular allí definido; de las fuentes así emparejadas se conservan solo aquellas que publican el espectro BP/RP continuo. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
+A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} busca la observación del mismo objeto realizada por Gaia que además disponga de espectro BP/RP. La búsqueda se realiza localizando el identificador fotométrico de cada objeto de [SDSS]{.acr} en la tabla de cruce oficial *gaiadr3.sdssdr13_best_neighbour*, descrita en la sección de conjuntos de datos, y aplicando el umbral de aceptación de 2 segundos de arco de distancia angular allí definido; de las fuentes así emparejadas se conservan solo aquellas que publican el espectro BP/RP continuo. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
 
 #### Descarga de los espectros de [SDSS]{.acr}.
 
@@ -446,7 +411,7 @@ Para analizar la distribución física de los datos usados en el entrenamiento d
 
 En concreto, se considera la fuente de datos de Gaia. En el eje horizontal se grafica la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
-En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como por ejemplo la distancia y la luminosidad de la estrella, aunque también se puede ver afectado por la extinción y absorción estelar. 
+En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como, por ejemplo, la distancia y la luminosidad de la estrella, aunque también se puede ver afectado por la extinción y absorción estelar. 
 Dado que el diagrama [HR]{.acr} se usa meramente con objetivos descriptivos, para eliminar el efecto debido a la distancia y obtener la magnitud absoluta, se usó el paralaje de cada una, sin tener en cuenta el efecto de la extinción estelar.
 
 
@@ -495,7 +460,7 @@ Al mismo tiempo, se observan algunos datos dispersos y distantes de las regiones
 
 Una vez creado y filtrado el conjunto de datos, para analizar la calidad de los espectros, se usó la [SNR]{.acr} y el error relativo. 
 En primer lugar, para los espectros de Gaia, se calculó la [SNR]{.acr} a partir del flujo y de la incertidumbre proporcionada por la librería *GaiaXPy*. La mediana obtenida fue de 20.04, representando un error relativo del 5%. 
-Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a partir del flujo y la varianza inversa, definiendo el error como $\sigma = 1/\sqrt{\mathrm{ivar}}$. Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde $ivar$ era cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
+Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a partir del flujo y la varianza inversa ($ivar$), siendo $\mathrm{ivar} = 1/\sqrt{\mathrm{var}}$. A partir de estas variables, se definió el error como $\sigma = \sqrt{\mathrm{var}} = 1/\sqrt{\mathrm{ivar}}$. Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde $ivar$ era cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
 
 Observamos a continuación en la @fig-SNR-gaia-sdss la distribución del [SNR]{.acr} en los espectros de Gaia y SDSS. 
 
@@ -576,7 +541,7 @@ Como punto de partida, se aplicó una normalización global a través de la medi
 Las diferentes pruebas de normalización se realizaron durante el ensayo del modelo neuronal denso, dado que era el más simple y rápido de entrenar para poder observar los resultados de pequeñas modificaciones como esta.
 Una vez se definió la normalización más efectiva, fue usada en modelos posteriores. 
 
-Probamos también la adición de los datos de la relación señal-ruido del espectro de Gaia como parte del conjunto de entrada. En este caso, los resultados obtenidos no mejoraron significativamente, por lo que se descartó y continuó el estudio sin este dato de entrada.
+Probamos también la adición de los datos de la [SNR]{.acr} del espectro de Gaia como parte del conjunto de entrada. En este caso, los resultados obtenidos no mejoraron significativamente, por lo que se descartó y continuó el estudio sin este dato de entrada.
 
 #### Modelo base: red neuronal densa
 Después de un procedimiento de prueba y error, el modelo que mejores resultados obtuvo dentro en la categoría de red neuronal densa, estaba formado por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
@@ -589,7 +554,7 @@ $$L_{\delta}(a)=
 \delta \left(|a|-\frac{1}{2}\delta\right), & \text{si } |a| > \delta
 \end{cases}$$
 
-En esta, *a* representa el error entre el valor real y predicho, y $\delta$ define el valor frontera en el que la función deja de estar definida como [MSE]{.acr} y pasa a ser más similar a [MAE]{.acr}. En este caso, se definió $\delta$ como 1.
+Donde *a* representa el error entre el valor real y predicho, y $\delta$ define el valor frontera en el que la función deja de estar definida como [MSE]{.acr} y pasa a ser más similar a [MAE]{.acr}. En este caso, se definió $\delta$ como 1.
 
 Este comportamiento permite rebajar la penalización en aquellos casos en los que los espectros tengan desviaciones anómalas que no deban definir el comportamiento del modelo. 
 Se consideró el optimizador Adam [@kingma2014adam] con una tasa de aprendizaje de 0.0001 y una limitación a 1 en la norma de los gradientes con el objetivo de evitar las actualizaciones excesivas.
@@ -637,9 +602,9 @@ El primero de los modelos recurrentes seleccionados estaba formado por una capa 
 Por otro lado, se probaron variantes bidireccionales de la arquitectura recurrente [@schuster1997bidirectional]. Esta capa procesa la secuencia de puntos en ambos sentidos, en sentido creciente y decreciente de longitud de onda. Se incluyeron versiones con y sin capas de normalización internas.
 En el modelo bidireccional destacado se utilizó una capa [GRU]{.acr} bidireccional con dimensión 128. A continuación se incorporaron dos capas densas de 512 y 1024 neuronas, intercaladas con funciones de activación LeakyReLU. Igual que en los casos anteriores, la capa de salida disponía del mismo tamaño que la dimensión de los espectros de [SDSS]{.acr}.
 
-Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resuma el entreno en el último estado recurrente, sino que el modelo conservase información de todos los pasos de la secuencia y asignasen pesos a aquellas regiones del espectro que se consideran más importantes para la predicción.  
+Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resuma el entrenamiento en el último estado recurrente, sino que el modelo conservase información de todos los pasos de la secuencia y asignasen pesos a aquellas regiones del espectro que se consideran más importantes para la predicción.  
 
-El modelo con atención seleccionado estaba formado por dos capas [GRU]{.acr} bidireccionales, la primera de dimensión 128 y la segunda 64 en cada dirección. Sobre su salida se aplicó el mecanismo de Atención, que generó un vector de dimensión 128. 
+El modelo con atención seleccionado estaba formado por dos capas [GRU]{.acr} bidireccionales, la primera de dimensión 128 y la segunda 64 en cada dirección. Sobre su salida se aplicó el mecanismo de atención, que generó un vector de dimensión 128. 
 El vector fue procesado por capas densas de 512 y 1024 neuronas, intercaladas otra vez con funciones LeakyReLU. 
 
 En la arquitectura de estos dos últimos modelos mencionados, se redujeron las épocas de espera dado que la diferencia entre esperar 2 o 4 épocas no reflejaba mejoras en las estadísticas pero sí en el tiempo de entrenamiento.
@@ -655,6 +620,8 @@ Para hacerlo, se considerarán diversos caminos. Por un lado, se analizarán las
 Para evitar este problema, la evaluación se basará también en otras técnicas. La primera será una comparativa visual de los espectros respecto al real de [SDSS]{.acr} tras deshacer la normalización, esto permitirá comprobar si el modelo se ajusta correctamente a la forma global del espectro y a sus zonas de emisión y absorción. 
 
 Por último, se empleará la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, como por ejemplo la temperatura efectiva o la gravedad superficial. El objetivo será comparar los datos obtenidos con las predicciones y el espectro real. De esta forma no se valorará solo la similitud de los espectros por sí mismos, sino que también se tendrá en cuenta si las predicciones se aproximan a la información astrofísica que se obtiene del espectro de [SDSS]{.acr} original.
+Para hacerlo se ordenarán aleatoriamente los espectros predichos con los modelos, de esta permutación, se tratarán de aproximar 250 datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentará generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro obtenga algún tipo de error que no permita generar *iSpec*, se saltará al siguiente.
+Las estadísticas usadas en los siguientes apartados constarán de tres errores: el error relativo de *Teff* y *log(g)* y el error absoluto de M/H. Para los dos primeros casos, el error relativo permite expresar la desviación respecto el valor real teniendo en cuenta la escala de la magnitud estudiada. En cambio, para M/H, se empleó el error absoluto debido a que esta variable toma valores cercanos a cero, haciendo que el error relativo exagere diferencias pequeñas.
 
 ### Resultados obtenidos con el modelo base
 
@@ -662,7 +629,15 @@ En este aparado se comentan los resultados más significativos obtenidos del ent
 
 #### Arquitectura densa con diferentes normalizaciones
 
-Durante el entrenamiento del modelo basado en capas densas con normalización a partir de la mediana global de los datos, se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-metricas-red-densa.
+La primera opción de normalización evaluada consistía en calcular la media($\mu$) y la desviación estándar ($\sigma$) del conjunto de entrenamiento y utilizar estos valores para normalizar los datos de entrenamiento, validación y test. La fórmula empleada fue la siguiente:
+
+$$ F_{\mathrm{norm}} = \frac{F-\mu}{\sigma} $$
+
+Que nos permitió desnormalizar los espectros siguiendo el proceso inverso:
+
+$$ F_{\mathrm{pred}} = F_{\mathrm{pred,norm}}\sigma+\mu $$
+
+Durante el entrenamiento se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-metricas-red-densa.
 
 :::{#fig-metricas-red-densa}
 
@@ -710,7 +685,14 @@ En gran parte de los gráficos observados, el modelo reproduce la morfología ge
 Si bien es cierto, hay puntos que no puede inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
 Durante las comparaciones que se harán a continuación, siempre se usarán los mismos objetos, identificados por los id que aparecen en los gráficos recientemente comentados.
 
-Por otro lado, al usar una normalización basada en la mediana por espectro, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar tal y como observamos en las gráficas representadas en las imágenes @fig-metricas-red-densa-normalizada.
+El segundo tipo de normalización se basó en la mediana por espectro. Se aplicó la siguiente transformación a cada espectro *i* :
+$$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{mediana}(F_i)} $$
+
+Para desnormalizarlos, se guardaron las variables originales y se aplicó la fórmula inversa:
+
+$$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{mediana}(|F_i|) $$
+
+Con este método, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar tal y como observamos en las gráficas representadas en las imágenes @fig-metricas-red-densa-normalizada.
 
 :::{#fig-metricas-red-densa-normalizada}
 
@@ -748,7 +730,12 @@ Ejemplos de espectros generados por el modelo de redes neuronales densas con nor
 
 Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. 
 
-Por último, si nos fijamos en las figuras @fig-espectros-generados_maximo_espectro, observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo:
+Por último, si nos fijamos en las figuras @fig-espectros-generados_maximo_espectro, observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo. En estas, la fórmula utilizada para normalizar los espectros fue:
+$$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{max}(F_i)} $$
+
+Y para desnormalizarlos:
+
+$$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{max}(|F_i|) $$
 
 :::{#fig-espectros-generados_maximo_espectro}
 
@@ -788,10 +775,10 @@ La última comparación vendrá dada por la librería *ISpec*. Con esta estimamo
 Para ello primero transformamos cada espectro en el formato requerido por iSpec, teniendo que añadir para cada punto el flujo, longitud de onda y error asociado. El análisis se realizó sin incertidumbre asignada a cada punto, con lo que se asignó un valor unitario de error a todos los puntos de modo que todos partiesen del mismo peso.
 Una vez teníamos la estructura requerida, normalizamos al continuo los espectros con la función propia de iSpec.
 
-Además, los puntos iniciales de testeo de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto. 
+Además, los puntos iniciales de comprobación de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto. 
 
 En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES* [@Gustafsson2008], pero se observaron advertencias de que los valores quedaba fuera del rango disponible, así que se usó *ATLAS9.Castelli* [@CastelliKurucz2003], que prácticamente eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD* [@Piskunov1995], cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen e incluye parametros necesarios para la síntesis espectral. 
-Se usaron las abundancias solares de Grevesse[@Grevesse2007] como referencia de la metalicidad y la información isotópica de *SPECTRUM* [@GrayCorbally1994].
+Se usaron las abundancias solares de Grevesse [@Grevesse2007] como referencia de la metalicidad y la información isotópica de *SPECTRUM* [@GrayCorbally1994].
 
 A partir de los datos iniciales, mallas e información base mencionada, se ajustó la temperatura, gravedad superficial y metalicidad de las estrellas.
 
@@ -813,14 +800,14 @@ Analizamos muestras aleatorias de 250 espectros para cada modelo denso. El resul
 
 *Fuente: Elaboración propia*
 
-Gráficos de barras de errores absolutos dados por iSpec entre los espectros reales de SDSS y los predichos.
+Gráficos de barras de errores absolutos dados por *iSpec* entre los espectros reales de SDSS y los predichos.
 :::
 
 
 Encontramos destacada la mediana de los valores obtenidos y la distribución en histogramas de los errores de cada espectro. 
 
 Se aprecia como la mediana del error de la temperatura se ubica en todos los modelos alrededor del 0.25%, mientras que la de la gravedad superficial cerca del 0.10% y el error absoluto de la temperatura cerca de los 0.017. 
-Estos valores indican una relación de similitud entre las propiedades físicas de ambos espectros, por lo que podemos afirmar que los modelos densos estudiados conllevan una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con iSpec en rangos de error pequeños. 
+Estos valores indican una relación de similitud entre las propiedades físicas de ambos espectros, por lo que podemos afirmar que los modelos densos estudiados conllevan una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con *iSpec* en rangos de error pequeños. 
 
 #### Modelo denso con SNR
 
@@ -898,9 +885,9 @@ Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de t
 Resultados obtenidos con el modelo convolucional 1D para los diferentes conjuntos de datos.
 :::
 
-Cabe recordar que estas métricas se calculan sobre espectros normalizados con la mediana del flujo de Gaia, una estrategia distinta a las empleadas en el modelo denso, por lo que los valores no son directamente comparables con los de las tablas anteriores.
 
-En la @fig-generado_cnn se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, una vez deshecha la normalización.
+En la @fig-generado_cnn se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, una vez deshecha la normalización. 
+En ambos ejemplos se observa que el espectro predicho se mantiene muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llega a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
 
 :::{#fig-generado_cnn}
 
@@ -917,7 +904,6 @@ En la @fig-generado_cnn se muestran las predicciones obtenidas sobre los mismos 
 Ejemplos de espectros generados por el modelo convolucional 1D.
 :::
 
-En ambos ejemplos se observa que el espectro predicho se mantiene muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llega a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
 
 #### Modelo convolucional U-Net
 
@@ -1082,7 +1068,7 @@ Ejemplos de espectros generados por el modelo de redes neuronales recurrentes co
 
 Las predicciones vuelven a mantener la forma general del espectro, sin apreciarse una mejora visual evidente comparado con el modelo anterior.
 
-En cuanto a la evolución de las métricas, los resultados se ven representados en la @fig-evolution-birnn. Como en el caso anterior, los valores de entrenamiento y validación convergen rápido, en este caso en la segunda época. A partir de aquí el modelo se mantiene constante hasta que termina su entreno en la sexta iteración
+En cuanto a la evolución de las métricas, los resultados se ven representados en la @fig-evolution-birnn. Como en el caso anterior, los valores de entrenamiento y validación convergen rápido, en este caso en la segunda época. A partir de aquí el modelo se mantiene constante hasta que termina su entrenamiento en la sexta iteración
 
 :::{#fig-evolution-birnn}
 
@@ -1105,7 +1091,7 @@ Gráficas de la evolución de las métricas de entrenamiento del modelo basado e
 #### Modelo basado en capas Bidireccionales y función de Atención
 
 El último modelo destacable de los estudiados en este apartado se basa en dos capas bidireccionales y la aplicación de la función de Atención sobre todos los puntos del espectro junto a las capas densas anteriormente mencionadas. 
-Esta adición tampoco representa grandes mejoras en las métricas del modelo. Los valores pueden observarse en la @tbl-ATT-metrics.
+Esta adición tampoco representa grandes mejoras en las métricas del modelo, como puede observarse en la @tbl-ATT-metrics.
 
 ::: {#tbl-ATT-metrics}
 
@@ -1180,7 +1166,7 @@ Por último, si nos basamos en los resultados obtenidos de la estimación de car
 *Fuente: Elaboración propia*
 
 
-Resultados obtenidos con iSpec en los modelos destacados basados en RNNs.
+Resultados obtenidos con *iSpec* en los modelos destacados basados en RNNs.
 :::
 
 De estos resultados se aprecia que las arquitecturas con [GRU]{.acr} simple y atención presentan mejores resultados que el modelo con solo una capa bidireccional.
@@ -1193,14 +1179,16 @@ El modelo con una capa [GRU]{.acr} sería destacable como el más equilibrado en
 ## Discusión
 
 Para comparar la eficacia de cada modelo estudiado con estadísticas añadidas a las ya utilizadas, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del estadístico chi-cuadrado para cada observación del conjunto de test. 
-La fórmula usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa (*ivar*). Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado. 
+La fórmula usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa. Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado. 
 
 La fórmula de chi-cuadrado se define como :
-$$ \chi^2 = \sum_{i=1}^{N} \left(F_{\mathrm{real},i}-F_{\mathrm{pred},i}\right)^2\mathrm{ivar}_i $$
+
+$$ \chi^2 = \sum_{i=1}^{N} \frac{\left(F_{\mathrm{real},i}-F_{\mathrm{pred},i}\right)^2}{\sigma_i^2} = \sum_{i=1}^{N}\left(F_{\mathrm{real},i}-F_{\mathrm{pred},i}\right)^2 \mathrm{ivar}_i $$
+
 
 donde $F_{\mathrm{real},i}$ y $F_{\mathrm{pred},i}$ representan, respectivamente, el flujo real y predicho en el punto espectral $i$, respectivamente, mientras que $\mathrm{ivar}_i$ es la varianza inversa sacada de los datos de [SDSS]{.acr}. Esta ponderación permite tener en cuenta la incertidumbre de cada punto espectral en lugar de suponer que todos tienen la misma precisión.
 
-Por otro lado, como $\chi^2$ también depende del número de puntos de cada espectro, se consideró una versión normalizada dividida por la cantidad de puntos espectrales válidos (con *ivar* mayor que 0). La normalización facilita la comparación entre los distintos espectros, dado que valores próximos a la unidad indican que las diferencias entre ambos espectros son comparables con la incertidumbre de la muestra, mientras que valores mayores implican discrepancias superiores a las esperadas en los puntos espectrales. 
+Por otro lado, como $\chi^2$ también depende del número de puntos de cada espectro, se consideró una versión normalizada dividida por la cantidad de puntos espectrales válidos (con varianza inversa no nula). La normalización facilita la comparación entre los distintos espectros, dado que valores próximos a la unidad indican que las diferencias entre ambos espectros son comparables con la incertidumbre de la muestra, mientras que valores mayores implican discrepancias superiores a las esperadas en los puntos espectrales. 
 Teniendo esto en cuenta, la fórmula final fue:
 
 $$\chi^2_{\mathrm{norm}} = \frac{\chi^2}{N} $$
@@ -1251,7 +1239,7 @@ Diagrama HR del estadístico chi-cuadrado normalizado aplicado sobre la muestra 
 
 La distribución de los valores del estadístico chi-cuadrado a lo largo del diagrama [HR]{.acr} no muestran una concentración evidente de zonas con grandes fallos, por lo que el rendimiento del modelo parece no depender del tipo de estrella.
 
-Aun así, cabe destacar que la cantidad de espectros analizados en la secuencia principal es mucho mayor a los correspondientes a enanas blancas, así que no disponemos de una muestra suficientemente representativa para asegurar un comportamiento igualitario ante ambos conjuntos. Por ese motivo, las conclusiones obtenidas de este trabajo serán mas robustas para la secuencia principal.
+Cabe destacar que en el gráfico se observan algunas estrellas puntuales con un valor de chi-cuadrado muy superior al resto. Sin embargo, estas no parecen seguir una distribución discreta, sino que se encuentran dispersas a lo largo del diagrama.
 
 En conjunto, los resultados obtenidos con diversas métricas apuntan a conclusiones similares. La red densa normalizada mediante la mediana de cada espectro es la que mejor rendimiento presenta al comparar espectros reales y predichos. 
 
@@ -1278,7 +1266,7 @@ Asimismo, la comparación de las métricas de entrenamiento, validación y test 
 A lo largo del trabajo, se investigaron otras estructuras neuronales mas complejas, pero ninguna resultó tener mejores estadísticas que la densa, aunque algunas se quedaron cerca, como por ejemplo al tratar de añadir una capa de [GRU]{.acr}. 
 El modelo más simple ofrecía mejores resultados que arquitecturas más complejas y de entrenamiento más largo como las [CNN]{.acr}. Esto demuestra que un aumento de la complejidad de la arquitectura no implica de forma directa un mejor rendimiento del modelo.
 
-En resumen, podemos concluir que este trabajo demuestra la viabilidad de diseñar un modelo de redes neuronales capaz de aproximar espectros captados por Gaia a una representación similar a los observados por [SDSS]{.acr}. Además, los resultados obtenidos con iSpec muestran que esta aproximación mantiene características espectrales que definen aspectos astrofísicos importantes. Este hecho permite dejar una puerta abierta a varias líneas de mejora, las cuales serán comentadas en el siguiente apartado. 
+En resumen, podemos concluir que este trabajo demuestra la viabilidad de diseñar un modelo de redes neuronales capaz de aproximar espectros captados por Gaia a una representación similar a los observados por [SDSS]{.acr}. Además, los resultados obtenidos con *iSpec* muestran que esta aproximación mantiene características espectrales que definen aspectos astrofísicos importantes. Este hecho permite dejar una puerta abierta a varias líneas de mejora, las cuales serán comentadas en el siguiente apartado. 
 
 
 ### Trabajo futuro
