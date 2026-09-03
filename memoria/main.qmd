@@ -377,45 +377,45 @@ El modelo debía evaluarse con métricas cuantitativas apropiadas al tipo de dat
 ### Preparación del conjunto de datos
 
 La construcción del conjunto de datos de entrenamiento se automatizó mediante un flujo reproducible y tolerante a fallos, organizado en seis etapas encadenadas. Cada etapa consumía el resultado de la anterior y guardaba su salida en disco de inmediato, de manera que una ejecución interrumpida podía reanudarse desde la primera etapa incompleta sin repetir el trabajo ya realizado. 
-A grandes rasgos dicho flujo obtiene la referencia de los objetos con espectro en [SDSS]{.acr}, localiza la contrapartida de cada uno en Gaia, descarga los espectros para los objetos referenciados de [SDSS]{.acr}, depura el listado conservando solo los pares completos, obtiene los espectros calibrados de Gaia y combina ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal. A continuación se describe paso a paso el funcionamiento del código creado.
+A grandes rasgos dicho flujo obtía la referencia de los objetos con espectro en [SDSS]{.acr}, localizaba la contrapartida de cada uno en Gaia, descargaba los espectros para los objetos referenciados de [SDSS]{.acr}, depuraba el listado conservando solo los pares completos, obtienía los espectros calibrados de Gaia y combinaba ambas fuentes en un único conjunto de datos listo para su uso en el ajuste de la red neuronal. A continuación se describe paso a paso el funcionamiento del código creado.
 
 #### Obtención de los objetos con espectro de [SDSS]{.acr}
 
-La primera etapa parte del catálogo espectroscópico de [SDSS]{.acr} y recopila los metadatos de todos sus espectros primarios. Comenzar por este catálogo garantiza que cada objeto considerado dispone realmente de una observación espectral de [SDSS]{.acr}, lo que evita la enorme pérdida de muestras que se produciría al partir del cruce fotométrico en sentido contrario. El resultado es la lista de candidatos con espectro de [SDSS]{.acr} confirmado.
+La primera etapa partía del catálogo espectroscópico de [SDSS]{.acr} y recopilaba los metadatos de todos sus espectros primarios. Comenzar por este catálogo garantizaba que cada objeto considerado dispusiera realmente de una observación espectral de [SDSS]{.acr}, lo que evitaba la enorme pérdida de muestras que se produciría al partir del cruce fotométrico en sentido contrario. El resultado fue la lista de candidatos con espectro de [SDSS]{.acr} confirmado.
 
 #### Cruce inverso con Gaia
 
-A partir de esa lista, la segunda etapa consulta el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} busca la observación del mismo objeto realizada por Gaia que además disponga de espectro BP/RP. La búsqueda se realiza localizando el identificador fotométrico de cada objeto de [SDSS]{.acr} en la tabla de cruce oficial *gaiadr3.sdssdr13_best_neighbour*, descrita en la sección de conjuntos de datos, y aplicando el umbral de aceptación de 2 segundos de arco de distancia angular allí definido; de las fuentes así emparejadas se conservan solo aquellas que publican el espectro BP/RP continuo. Así se conserva únicamente la intersección de cuerpos observados por ambos proyectos, que constituye el cruce sobre el que se trabajará.
+A partir de esa lista, la segunda etapa consultó el archivo de Gaia en sentido inverso: para cada objeto de [SDSS]{.acr} buscaba la observación del mismo objeto realizada por Gaia que además dispusiera de espectro BP/RP. La búsqueda se realizó localizando el identificador fotométrico de cada objeto de [SDSS]{.acr} en la tabla de cruce oficial *gaiadr3.sdssdr13_best_neighbour*, descrita en la sección de conjuntos de datos, y aplicando el umbral de aceptación de 2 segundos de arco de distancia angular allí definido; de las fuentes así emparejadas se conservaron solo aquellas que publicaban el espectro BP/RP continuo. Así se conservó únicamente la intersección de cuerpos observados por ambos proyectos, que constituyó el cruce sobre el que se trabajó.
 
 #### Descarga de los espectros de [SDSS]{.acr}.
 
-La tercera etapa descarga el espectro de [SDSS]{.acr} para cada objeto emparejado. Las descargas se realizan en paralelo y cada espectro se almacena en cuanto se obtiene, de modo que el proceso es robusto frente a las interrupciones y a las limitaciones de los servicios públicos de consulta.
+La tercera etapa descargó el espectro de [SDSS]{.acr} para cada objeto emparejado. Las descargas se realizaron en paralelo y cada espectro se almacenó en cuanto se obtuvo, de modo que el proceso es fue frente a las interrupciones y a las limitaciones de los servicios públicos de consulta.
 
 #### Depuración de referencias
 
-Como no todas las descargas culminan con éxito, la cuarta etapa depura el listado de pares y conserva exclusivamente aquellos cuyo espectro de [SDSS]{.acr} se ha obtenido correctamente. El resultado es la tabla de referencia definitiva que vincula cada objeto entre ambos sistemas.
+Como no todas las descargas culminaron con éxito, la cuarta etapa depuró el listado de pares y conservó exclusivamente aquellos cuyo espectro de [SDSS]{.acr} se había obtenido correctamente. El resultado fue la tabla de referencia definitiva que vincula cada objeto entre ambos sistemas.
 
 #### Espectros calibrados de Gaia
 
-La quinta etapa recupera los espectros de Gaia de los objetos ya depurados. Dado que Gaia no proporciona directamente la relación entre flujo y longitud de onda, sino una representación mediante coeficientes, en esta etapa dichos espectros se calibran para obtener el flujo continuo equivalente y poder usarlo en el modelo.
+La quinta etapa recuperó los espectros de Gaia de los objetos ya depurados. Dado que Gaia no proporciona directamente la relación entre flujo y longitud de onda, sino una representación mediante coeficientes, en esta etapa dichos espectros se calibraron para obtener el flujo continuo equivalente y poder usarlo en el modelo.
 
 #### Transformación a datos de entrenamiento
 
-Finalmente, la sexta etapa homogeneiza y combina ambas fuentes: los espectros de [SDSS]{.acr} se remuestrean a una rejilla común de longitudes de onda y se guardan junto a los de Gaia correspondientes en un único fichero con un formato optimizado HDF5. Este fichero es además acumulativo, de forma que sucesivas ejecuciones incorporan los pares nuevos sin descartar los ya almacenados.
+Finalmente, la sexta etapa homogeneizó y combinó ambas fuentes: los espectros de [SDSS]{.acr} se remuestrearon a una rejilla común de longitudes de onda y se guardaron junto a los de Gaia correspondientes en un único fichero con un formato optimizado HDF5. Este fichero es además acumulativo, de forma que sucesivas ejecuciones incorporan los pares nuevos sin descartar los ya almacenados.
 
-Este proceso de extracción ha permitido reunir un conjunto de datos real con más de 55 000 pares de espectros emparejados de Gaia y [SDSS]{.acr}.
+Este proceso de extracción permitió reunir un conjunto de datos real con más de 55 000 pares de espectros emparejados de Gaia y [SDSS]{.acr}.
 
 #### Análisis visual de los datos obtenidos
 
-Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usa una representación del diagrama [HR]{.acr} (Hertzsprung-Russell, @hertzsprung1911wellenlaengen y @russell1914spectra). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
+Para analizar la distribución física de los datos usados en el entrenamiento del modelo, se usó una representación del diagrama [HR]{.acr} (Hertzsprung-Russell, @hertzsprung1911wellenlaengen y @russell1914spectra). Este diagrama representa la relación entre la luminosidad de las estrellas (eje Y) y su temperatura o color (eje X).
 
-En concreto, se considera la fuente de datos de Gaia. En el eje horizontal se grafica la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
+En concreto, se consideró la fuente de datos de Gaia. En el eje horizontal se graficó la variable *bp_rp*, que corresponde al índice de color obtenido a partir de la diferencia entre las medias de las magnitudes de BP y RP. Cuanto menor sea este valor, más azul y caliente será la estrella, mientras que los valores mayores representan estrellas rojas y frías.
 
-En el eje vertical encontramos la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como, por ejemplo, la distancia y la luminosidad de la estrella, aunque también se puede ver afectado por la extinción y absorción estelar. 
-Dado que el diagrama [HR]{.acr} se usa meramente con objetivos descriptivos, para eliminar el efecto debido a la distancia y obtener la magnitud absoluta, se usó el paralaje de cada una, sin tener en cuenta el efecto de la extinción estelar.
+En el eje vertical se representó la variable *phot_g_mean_mag*, la magnitud media aparente en la banda G, que indica lo brillante que se aprecia la estrella en las observaciones realizadas. Este valor depende de variables como, por ejemplo, la distancia y la luminosidad de la estrella, aunque también se puede ver afectado por la extinción y absorción estelar. 
+Dado que el diagrama [HR]{.acr} se usó meramente con objetivos descriptivos, para eliminar el efecto debido a la distancia y obtener la magnitud absoluta, se usó el paralaje de cada una, sin tener en cuenta el efecto de la extinción estelar.
 
 
-La fórmula usada parte de la representación del diagrama [HR]{.acr} realizada en el trabajo de @GaiaCollaboration2018HRD. En este artículo se usa la siguiente fórmula para representar todas las observaciones como si se encontrasen a una misma distancia de referencia: 
+La fórmula usada partió de la representación del diagrama [HR]{.acr} realizada en el trabajo de @GaiaCollaboration2018HRD. En este artículo se usa la siguiente fórmula para representar todas las observaciones como si se encontrasen a una misma distancia de referencia: 
 $$ M_G = G + 5 + 5\log_{10}\left(\frac{\varpi}{1000}\right) $$
 
 Aplicando las propiedades de los logaritmos a la fórmula anterior:
@@ -426,13 +426,13 @@ Como $\log_{10}(1000)=3$, se obtiene:
 
 $$ M_G = G + 5 + 5\log_{10}(\varpi)-15 $$
 
-y, simplificando la expressión :
+y, simplificando la expresión :
 
 $$ M_G = G + 5\log_{10}(\varpi)-10 $$
 
 Donde G corresponde *phot_g_mean_mag* y $\varpi$ es el paralaje expresado en milisegundos de arco.
 
-Tras esta modificación, aquellas estrellas más luminosas, presentan valores más bajos incluso negativos, mientras que las menos luminosas se mantienen en valores más altos y positivos. 
+Tras esta modificación, aquellas estrellas más luminosas, presentaban valores más bajos, incluso negativos, mientras que las menos luminosas se mantuvieron en valores más altos y positivos. 
 
 El diagrama de los datos usados en este estudio es el que se observa en la @fig-HR-diagram:
 
@@ -446,21 +446,21 @@ Diagrama HR de las observaciones de Gaia contenidas en la base de datos
 :::
 
 
-En este apreciamos como el conjunto de datos no está formado por un único tipo de estrella, sino que presenta objetos con propiedades físicas diferentes. Si bien es cierto, destaca un grupo mayoritario correspondiente a la secuencia principal, tal y como se aprecia en la parte central del gráfico. 
-Además, se aprecia un segundo grupo menos numeroso en la parte inferior izquierda, indicando la presencia de enanas blancas en el conjunto de datos.
+En este se apreció c´mo el conjunto de datos no estaba formado por un único tipo de estrella, sino que presentaba objetos con propiedades físicas diferentes. Si bien es cierto, destacaba un grupo mayoritario correspondiente a la secuencia principal, tal y como se aprecia en la parte central del gráfico. 
+Además, se apreció un segundo grupo menos numeroso en la parte inferior izquierda, indicando la presencia de enanas blancas en el conjunto de datos.
 
-En contraposición a estos grupos de observaciones, las estrellas gigantes parecen estar representadas en menor grado, no se observa una acumulación de puntos por encima de la secuencia principal.
-Esto implica que el modelo desarrollado estará entrenado principalmente sobre enanas blancas y estrellas de la secuencia principal. Para extender su aplicación a estrellas gigantes, debería incorporarse una muestra representativa de este tipo de cuerpo estelar y entrenar el modelo de nuevo.
+En contraposición a estos grupos de observaciones, las estrellas gigantes parecían estar representadas en menor grado, ya que no se observó una acumulación de puntos por encima de la secuencia principal.
+Esto implicó que el modelo desarrollado fuera entrenado principalmente sobre enanas blancas y estrellas de la secuencia principal. Para extender su aplicación a estrellas gigantes, debería incorporarse una muestra representativa de este tipo de cuerpo estelar y entrenar el modelo de nuevo.
 
-Debido a esta diversidad, el modelo debe adaptarse a fuentes de distintas características, con lo que no es un entrenamiento especializado en un solo tipo de estrella. Sin embargo, la capacidad de predicción podría verse afectada por el porcentaje de representación de cada población.
+Debido a esta diversidad, el modelo debía adaptarse a fuentes de distintas características, con lo que no se trató de un entrenamiento especializado en un solo tipo de estrella. Sin embargo, la capacidad de predicción podía verse afectada por el porcentaje de representación de cada población.
 
-Al mismo tiempo, se observan algunos datos dispersos y distantes de las regiones más pobladas, los cuales podrían corresponder a objetos con menos representación en la base de datos, es decir, observaciones atípicas para el modelo.
+Al mismo tiempo, se observaron algunos datos dispersos y distantes de las regiones más pobladas, los cuales podían corresponder a objetos con menos representación en la base de datos, es decir, observaciones atípicas para el modelo.
 
 ### Análisis de la [SNR]{.acr} de los datos obtenidos
 
 Una vez creado y filtrado el conjunto de datos, para analizar la calidad de los espectros, se usó la [SNR]{.acr} y el error relativo. 
 En primer lugar, para los espectros de Gaia, se calculó la [SNR]{.acr} a partir del flujo y de la incertidumbre proporcionada por la librería *GaiaXPy*. La mediana obtenida fue de 20.04, representando un error relativo del 5%. 
-Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a partir del flujo y la varianza inversa ($ivar$), siendo $\mathrm{ivar} = 1/\sqrt{\mathrm{var}}$. A partir de estas variables, se definió el error como $\sigma = \sqrt{\mathrm{var}} = 1/\sqrt{\mathrm{ivar}}$. Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde $ivar$ era cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
+Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a partir del flujo y la varianza inversa ($ivar$), siendo $\mathrm{ivar} = 1/\mathrm{var} = 1/\sigma^2$. A partir de estas variables, se definió el error como $\sigma = \sqrt{\mathrm{var}} = 1/\sqrt{\mathrm{ivar}}$. Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde $ivar$ era cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
 
 Observamos a continuación en la @fig-SNR-gaia-sdss la distribución del [SNR]{.acr} en los espectros de Gaia y SDSS. 
 
@@ -473,9 +473,9 @@ Observamos a continuación en la @fig-SNR-gaia-sdss la distribución del [SNR]{.
 Distribución de la SNR de los espectros de Gaia y SDSS
 :::
 
-En esta gráfica se puede observar la distribución del valor mediano de [SNR]{.acr} de los espectros del conjunto de datos. Se puede apreciar como [SDSS]{.acr} tiene una distribución centrada en valores más grandes, mientras que Gaia se ubica en valores inferiores. Esta observación era la esperada dadas las características de ambos instrumentos.
+En esta gráfica se pudo observar la distribución del valor mediano de [SNR]{.acr} de los espectros del conjunto de datos. Se pudo apreciar como [SDSS]{.acr} tenía una distribución centrada en valores más grandes, mientras que Gaia se ubicaba en valores inferiores. Esta observación era la esperada dadas las características de ambos instrumentos.
 
-Por otro lado, valoramos el error relativo mediano según la longitud de onda. En la @fig-error-rel-gaia se aprecian los valores obtenidos para Gaia. 
+Por otro lado, se valoró el error relativo mediano según la longitud de onda. En la @fig-error-rel-gaia se aprecian los valores que se obtuvieron para Gaia. 
 
 :::{#fig-error-rel-gaia}
 
@@ -486,9 +486,9 @@ Por otro lado, valoramos el error relativo mediano según la longitud de onda. E
 Distribución del error relativo según la longitud de onda de los espectros de Gaia
 :::
 
-La evolución del error relativo no es uniforme. Cerca de los 6500 Å se observa un salto. Este hecho coincide con el rango en el que se solapan las mediciones de BP y RP. La discontinuidad puede deberse al proceso con el que se solapan ambos espectros. 
-Además, cabe destacar que los valores menores se encuentran en la zona del salto, alcanzando el mínimo sobre los 6400Å. Después del salto, en el que el error incrementa bruscamente, el error relativo vuelve a ser descendiente y parece mantenerse constante en la zona central del espectro rojo, volviendo a aumentar en las longitudes de onda más elevadas.
-Asimismo, los percentiles 25 y 75 indican que la variabilidad es más alta en la zona del salto que en los extremos de la longitud espectral analizada y menor cerca del final del rango del espectro azul. 
+La evolución del error relativo no fue uniforme. Cerca de los 6500 Å se observó un salto. Este hecho coincidió con el rango en el que se solapan las mediciones de BP y RP. La discontinuidad podía deberse al proceso con el que se solapan ambos espectros. 
+Además, cabe destacar que los valores menores se encontraban en la zona del salto, alcanzando el mínimo sobre los 6400Å. Después del salto, en el que el error incrementó bruscamente, el error relativo volvió a ser descendiente y parecía mantenerse constante en la zona central del espectro rojo, volviendo a aumentar en las longitudes de onda más elevadas.
+Asimismo, los percentiles 25 y 75 indicaron que la variabilidad era más alta en la zona del salto que en los extremos de la longitud espectral analizada y menor cerca del final del rango del espectro azul. 
 
 En la @fig-error-rel-sdss encontramos la distribución de [SDSS]{.acr}. 
 
@@ -501,11 +501,11 @@ En la @fig-error-rel-sdss encontramos la distribución de [SDSS]{.acr}.
 Distribución del error relativo según la longitud de onda de los espectros de SDSS
 :::
 
-A diferencia de Gaia, el error relativo se mantiene mayormente constante a lo largo de todo el intervalo estudiado, teniendo una tendencia creciente a partir de los 8000 Å.
-Por otro lado, el mínimo se alcanza entre los 6000 y 7500 Å. 
-A partir de los 9000 Å la mediana es más inestable y la banda de los percentiles 25 y 75 se ensancha. Este dato implica que los datos son menos precisos en el extremo rojo del flujo. 
+A diferencia de Gaia, el error relativo se mantuvo mayormente constante a lo largo de todo el intervalo estudiado, teniendo una tendencia creciente a partir de los 8000 Å.
+Por otro lado, el mínimo se alcanzó entre los 6000 y 7500 Å. 
+A partir de los 9000 Å la mediana fue más inestable y la banda de los percentiles 25 y 75 se ensanchó. Este dato implica que los datos son menos precisos en el extremo rojo del flujo. 
 
-Sobreponiendo el espectro del mismo objeto observado por Gaia y [SDSS]{.acr} con su respectiva banda +-error, obtenemos gráficos como los observados en la @fig-error-margins. 
+Sobreponiendo el espectro del mismo objeto observado por Gaia y [SDSS]{.acr} con su respectiva banda +-error, obtuvimos los gráficos observados en la @fig-error-margins. 
 
 :::{#fig-error-margins}
 
@@ -522,7 +522,7 @@ Sobreponiendo el espectro del mismo objeto observado por Gaia y [SDSS]{.acr} con
 Ejemplos de los espectros observados por Gaia y SDSS con bandas de error
 :::
 
-En estos se observa como la banda de error de Gaia tiende a ser más ancha y constante, mientras que [SDSS]{.acr} tiene picos donde la imprecisión es destacable.
+En estos se observó cómo la banda de error de Gaia tendía a ser más ancha y constante, mientras que [SDSS]{.acr} presentaba picos donde la imprecisión era destacable.
 
 ### Entrenamiento del modelo
 
