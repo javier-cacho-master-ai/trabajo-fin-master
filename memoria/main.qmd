@@ -416,21 +416,21 @@ Dado que el diagrama [HR]{.acr} se usó meramente con objetivos descriptivos, pa
 
 
 La fórmula usada partió de la representación del diagrama [HR]{.acr} realizada en el trabajo de @GaiaCollaboration2018HRD. En este artículo se usa la siguiente fórmula para representar todas las observaciones como si se encontrasen a una misma distancia de referencia: 
-$$ M_G = G + 5 + 5\log_{10}\left(\frac{\varpi}{1000}\right) $$
+$$ M_G = m_G + 5 + 5\log_{10}\left(\frac{\varpi}{1000}\right) $$
 
 Aplicando las propiedades de los logaritmos a la fórmula anterior:
 
-$$ M_G = G + 5 + 5\left[\log_{10}(\varpi)-\log_{10}(1000)\right] $$
+$$ M_G = m_G + 5 + 5\left[\log_{10}(\varpi)-\log_{10}(1000)\right] $$
 
 Como $\log_{10}(1000)=3$, se obtiene: 
 
-$$ M_G = G + 5 + 5\log_{10}(\varpi)-15 $$
+$$ M_G = m_G + 5 + 5\log_{10}(\varpi)-15 $$
 
 y, simplificando la expresión :
 
-$$ M_G = G + 5\log_{10}(\varpi)-10 $$
+$$ M_G = m_G + 5\log_{10}(\varpi)-10 $$
 
-Donde G corresponde *phot_g_mean_mag* y $\varpi$ es el paralaje expresado en milisegundos de arco.
+Donde $\mathrm{m_G}$ corresponde *phot_g_mean_mag* y $\varpi$ es el paralaje expresado en milisegundos de arco.
 
 Tras esta modificación, aquellas estrellas más luminosas, presentaban valores más bajos, incluso negativos, mientras que las menos luminosas se mantuvieron en valores más altos y positivos. 
 
@@ -526,8 +526,8 @@ En estos se observó cómo la banda de error de Gaia tendía a ser más ancha y 
 
 ### Entrenamiento del modelo
 
-Una vez se dispone de la base de datos con los pares de espectros de Gaia y [SDSS]{.acr}, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
-El objetivo es conseguir un modelo que aprenda una transformación entre los datos de entrada de Gaia y el espectro de [SDSS]{.acr} asociado. Así pues, el modelo planteado recibe como entrada un vector con el flujo de Gaia y obtiene como salida un vector con una aproximación del flujo correspondiente al espectro de [SDSS]{.acr}.
+Una vez se dispuso de la base de datos con los pares de espectros de Gaia y [SDSS]{.acr}, se procedió con el preprocesamiento de los datos, diseño y entrenamiento del modelo de redes neuronales. 
+El objetivo era conseguir un modelo que aprendiese una transformación entre los datos de entrada de Gaia y el espectro de [SDSS]{.acr} asociado. Así pues, el modelo planteado recibía como entrada un vector con el flujo de Gaia y obtenía como salida un vector con una aproximación del flujo correspondiente al espectro de [SDSS]{.acr}.
 
 De cara a la preparación de la base para el entrenamiento del modelo, se definieron 3 subconjuntos: entrenamiento, test y validación. 
 El 80% de los datos se usó para el entrenamiento del modelo, mientras que el 20% restante fue dividido de forma aleatoria entre los conjuntos de test y validación, siendo cada uno un 10% de los datos originales.
@@ -536,7 +536,7 @@ El 80% de los datos se usó para el entrenamiento del modelo, mientras que el 20
 #### Planteamiento general del entrenamiento
 Para encontrar el modelo óptimo, se realizaron diversas pruebas con tal de analizar como afectaban al rendimiento del modelo. 
 En primer lugar, se probaron diferentes funciones de normalización para facilitar el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares cercanas al 1 y las funciones de pérdida se ubicaban en valores de más fácil interpretación.
-Como punto de partida, se aplicó una normalización global a través de la media y desviación típica de los datos del conjunto de entrenamiento. Esta opción no proporcionó malos resultados (tal y como podremos observar en los próximos apartados) y tenía la ventaja de que se podía deshacer la normalización sin necesidad de conocer los valores del conjunto de test, pero al tratarse de un proceso demasiado generalizado para la variabilidad de valores de los espectros, se probaron otros enfoques. Por ejemplo, se consideró la normalización espectro a espectro, en el que cada flujo se normaliza en su propia escala con la mediana de sus datos o su máximo. 
+Como punto de partida, se aplicó una normalización global a través de la media y desviación típica de los datos del conjunto de entrenamiento. Esta opción no proporcionó malos resultados (tal y como se pudo observar en los próximos apartados) y tenía la ventaja de que se podía deshacer la normalización sin necesidad de conocer los valores del conjunto de test, pero al tratarse de un proceso demasiado generalizado para la variabilidad de valores de los espectros, se probaron otros enfoques. Por ejemplo, se consideró la normalización espectro a espectro, en la que cada flujo se normalizaba en su propia escala con la mediana de sus datos o su máximo. 
 
 Las diferentes pruebas de normalización se realizaron durante el ensayo del modelo neuronal denso, dado que era el más simple y rápido de entrenar para poder observar los resultados de pequeñas modificaciones como esta.
 Una vez se definió la normalización más efectiva, fue usada en modelos posteriores. 
@@ -544,8 +544,8 @@ Una vez se definió la normalización más efectiva, fue usada en modelos poster
 Probamos también la adición de los datos de la [SNR]{.acr} del espectro de Gaia como parte del conjunto de entrada. En este caso, los resultados obtenidos no mejoraron significativamente, por lo que se descartó y continuó el estudio sin este dato de entrada.
 
 #### Modelo base: red neuronal densa
-Después de un procedimiento de prueba y error, el modelo que mejores resultados obtuvo dentro en la categoría de red neuronal densa, estaba formado por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
-Además, se probaron diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos, a diferencia de ReLU, cuyo uso fue descartado . En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
+Después de un procedimiento de prueba y error, el modelo que mejores resultados obtuvo dentro de la categoría de red neuronal densa, estaba formado por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
+Además, se probaron diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos, a diferencia de ReLU, cuyo uso fue descartado. En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
 
 La función de pérdida definida fue Huber [@huber1964robust], que combina el error cuadrático medio para errores pequeños, y el error absoluto medio para errores más grandes. La función matemática que la define es la siguiente:
 $$L_{\delta}(a)=
@@ -559,37 +559,37 @@ Donde *a* representa el error entre el valor real y predicho, y $\delta$ define 
 Este comportamiento permite rebajar la penalización en aquellos casos en los que los espectros tengan desviaciones anómalas que no deban definir el comportamiento del modelo. 
 Se consideró el optimizador Adam [@kingma2014adam] con una tasa de aprendizaje de 0.0001 y una limitación a 1 en la norma de los gradientes con el objetivo de evitar las actualizaciones excesivas.
 
-El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana <!--EarlyStopping--> que monitorea la pérdida del set de validación y detiene el entrenamiento si después de 5 épocas no ha mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estanca durante dos épocas. 
+El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana <!--EarlyStopping--> que monitoreaba la pérdida del set de validación y detenía el entrenamiento si después de 5 épocas no había mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estancaba durante dos épocas. 
 
 #### Modelo convolucional
 
-Como segunda arquitectura se planteó un modelo basado en capas convolucionales de una dimensión. La motivación de este enfoque reside en la propia naturaleza de los espectros: las estructuras que los caracterizan, como las líneas de absorción y emisión o la forma local del continuo, son patrones locales que pueden aparecer en cualquier punto del rango de longitudes de onda. Las convoluciones explotan precisamente esta localidad, ya que aplican los mismos filtros a lo largo de todo el espectro, lo que reduce drásticamente el número de parámetros respecto a una red densa y favorece que el modelo generalice los patrones aprendidos en una zona del espectro a las demás.
+Como segunda arquitectura se planteó un modelo basado en capas convolucionales de una dimensión. La motivación de este enfoque residía en la propia naturaleza de los espectros: las estructuras que los caracterizan, como las líneas de absorción y emisión o la forma local del continuo, son patrones locales que pueden aparecer en cualquier punto del rango de longitudes de onda. Las convoluciones explotaban precisamente esta localidad, ya que aplicaban los mismos filtros a lo largo de todo el espectro, lo que reducía drásticamente el número de parámetros respecto a una red densa y favorecía que el modelo generalizase los patrones aprendidos en una zona del espectro a las demás.
 
-De esta arquitectura se desarrollaron dos versiones: el modelo convolucional 1D, una red residual de campo receptivo local, y el modelo convolucional U-Net, que amplía el campo receptivo a todo el espectro e incorpora la información de incertidumbre de ambos instrumentos.
+De esta arquitectura se desarrollaron dos versiones: el modelo convolucional 1D, una red residual de campo receptivo local, y el modelo convolucional U-Net, que ampliaba el campo receptivo a todo el espectro e incorporaba la información de incertidumbre de ambos instrumentos.
 
 ##### Modelo convolucional 1D
 
-El diseño sigue un planteamiento de superresolución análogo al de la primera etapa del modelo de @haghjoo2026learning. En primer lugar, el espectro de Gaia se interpola linealmente sobre la malla de longitudes de onda de [SDSS]{.acr}, obteniendo así una versión de baja resolución alineada punto a punto con la salida esperada. La red recibe este espectro interpolado y aprende únicamente la corrección que debe aplicarse sobre él, gracias a una conexión residual global que suma la entrada interpolada a la salida de la red. De esta forma el modelo no necesita aprender la forma general del continuo, que ya viene dada por la interpolación, y puede concentrar su capacidad en recuperar el detalle espectral que la resolución de Gaia no capta.
+El diseño siguió un planteamiento de superresolución análogo al de la primera etapa del modelo de @haghjoo2026learning. En primer lugar, el espectro de Gaia se interpoló linealmente sobre la malla de longitudes de onda de [SDSS]{.acr}, obteniendo así una versión de baja resolución alineada punto a punto con la salida esperada. La red recibía este espectro interpolado y aprendía únicamente la corrección que debía aplicarse sobre él, gracias a una conexión residual global que sumaba la entrada interpolada a la salida de la red. De esta forma el modelo no necesitaba aprender la forma general del continuo, que ya viene dada por la interpolación, y podía concentrar su capacidad en recuperar el detalle espectral que la resolución de Gaia no captaba.
 
-En cuanto a la arquitectura interna, el modelo se compone de una capa convolucional inicial de 64 filtros con un núcleo de tamaño 9, seguida de cuatro bloques residuales. Cada bloque contiene dos convoluciones de 64 filtros con núcleo de tamaño 7 y activación ELU, junto con un atajo que suma la entrada del bloque a su salida para facilitar la propagación del gradiente. Una última capa convolucional con un único filtro y núcleo de tamaño 5 genera la corrección final. En total, la red cuenta con aproximadamente 230 000 parámetros entrenables, una cifra muy inferior a la del modelo denso descrito anteriormente.
+En cuanto a la arquitectura interna, el modelo se componía de una capa convolucional inicial de 64 filtros con un núcleo de tamaño 9, seguida de cuatro bloques residuales. Cada bloque contenía dos convoluciones de 64 filtros con núcleo de tamaño 7 y activación ELU, junto con un atajo que sumaba la entrada del bloque a su salida para facilitar la propagación del gradiente. Una última capa convolucional con un único filtro y núcleo de tamaño 5 generaba la corrección final. En total, la red contaba con aproximadamente 230 000 parámetros entrenables, una cifra muy inferior a la del modelo denso descrito anteriormente.
 
-Respecto a la normalización, en este caso ambos espectros del par se escalan con la mediana del flujo del espectro de Gaia. Al depender únicamente de la entrada, esta estrategia permite deshacer la normalización de la predicción sin necesidad de conocer el espectro real de [SDSS]{.acr}, lo que resulta imprescindible al aplicar el modelo sobre observaciones nuevas.
+Respecto a la normalización, en este caso ambos espectros del par se escalaron con la mediana del flujo del espectro de Gaia. Al depender únicamente de la entrada, esta estrategia permitió deshacer la normalización de la predicción sin necesidad de conocer el espectro real de [SDSS]{.acr}, lo que resultaba imprescindible al aplicar el modelo sobre observaciones nuevas.
 
 El resto de la configuración del entrenamiento se mantuvo idéntica a la del modelo base: función de pérdida Huber con $\delta = 1$, optimizador Adam con tasa de aprendizaje de 0.0001 y limitación a 1 de la norma de los gradientes, lotes de 64 muestras, un máximo de 50 épocas y las mismas funciones de parada temprana y reducción de la tasa de aprendizaje.
 
 ##### Modelo convolucional U-Net
 
-Como veremos en el apartado de evaluación, el modelo convolucional 1D se estanca en una corrección suave del espectro interpolado. La segunda versión ataca las causas de ese estancamiento incorporando la información de incertidumbre de ambos instrumentos, que hasta ahora no se utilizaba, mediante tres mejoras:
+Como veremos en el apartado de evaluación, el modelo convolucional 1D se estancó en una corrección suave del espectro interpolado. La segunda versión atacó las causas de ese estancamiento incorporando la información de incertidumbre de ambos instrumentos, que hasta entonces no se había utilizado, mediante tres mejoras:
 
-1. **Pérdida ponderada por la varianza inversa de [SDSS]{.acr}**. El espectro objetivo no es el espectro verdadero de la estrella, sino una observación con ruido, y ese ruido varía mucho entre píxeles. Ponderando la pérdida de Huber con la varianza inversa de cada píxel, los puntos ruidosos del objetivo pesan menos y los píxeles marcados como inválidos por [SDSS]{.acr} (varianza inversa nula) quedan enmascarados, de modo que la red aprende el espectro subyacente y no la realización concreta del ruido. Los pesos se reescalan con la normalización de cada espectro, se ajustan para que su media sobre los píxeles válidos sea 1 (así todos los objetos contribuyen por igual y los pesos solo redistribuyen la importancia entre píxeles) y se recortan superiormente para evitar que unos pocos píxeles de varianza muy baja dominen el entrenamiento.
+1. **Pérdida ponderada por la varianza inversa de [SDSS]{.acr}**. El espectro objetivo no es el espectro verdadero de la estrella, sino una observación con ruido, y ese ruido varía mucho entre píxeles. Ponderando la pérdida de Huber con la varianza inversa de cada píxel, los puntos ruidosos del objetivo pesan menos y los píxeles marcados como inválidos por [SDSS]{.acr} (varianza inversa nula) quedan enmascarados, de modo que la red aprende el espectro subyacente y no la realización concreta del ruido. Los pesos se reescalaron con la normalización de cada espectro, se ajustaron para que su media sobre los píxeles válidos fuera 1 (así todos los objetos contribuían por igual y los pesos solo redistribuían la importancia entre píxeles) y se recortaron superiormente para evitar que unos pocos píxeles de varianza muy baja dominasen el entrenamiento.
 
-2. **Canal de entrada adicional con el error de flujo de Gaia**. Junto al flujo interpolado, la red recibe el error observacional de Gaia interpolado sobre la misma malla, lo que le permite saber qué zonas de su entrada son fiables y modular la corrección en consecuencia.
+2. **Canal de entrada adicional con el error de flujo de Gaia**. Junto al flujo interpolado, la red recibía el error observacional de Gaia interpolado sobre la misma malla, lo que le permitía saber qué zonas de su entrada eran fiables y modular la corrección en consecuencia.
 
-3. **Mejora de datos con ruido realista**. En cada época se perturba el flujo de Gaia con ruido gaussiano de amplitud igual a su error observacional, lo que multiplica de forma efectiva el conjunto de entrenamiento y obliga a la red a ser robusta frente al nivel de ruido real del instrumento. Para que esta perturbación sea estadísticamente correcta, se aplica sobre la malla nativa de Gaia y la interpolación se realiza después, en cada época, expresada como una matriz lineal fija dentro del propio flujo de datos de entrenamiento.
+3. **Mejora de datos con ruido realista**. En cada época se perturbaba el flujo de Gaia con ruido gaussiano de amplitud igual a su error observacional, lo que multiplicaba de forma efectiva el conjunto de entrenamiento y obligaba a la red a ser robusta frente al nivel de ruido real del instrumento. Para que esta perturbación fuera estadísticamente correcta, se aplicaba sobre la malla nativa de Gaia y la interpolación se realizaba después, en cada época, expresada como una matriz lineal fija dentro del propio flujo de datos de entrenamiento.
 
-La arquitectura evoluciona de la pila de bloques residuales a una U-Net de una dimensión [@ronneberger2015unet]. El codificador parte de una convolución inicial de 64 filtros y encadena tres niveles de submuestreo por convolución con paso 2 (64, 96, 128 y 160 filtros); el cuello de botella aplica dos bloques residuales que ven el espectro completo a un octavo de su resolución; y el decodificador recupera la resolución original en tres niveles de sobremuestreo, concatenando en cada uno la conexión del nivel equivalente del codificador. Cada bloque residual incorpora además atención de canal de tipo *squeeze-and-excitation* [@hu2018squeeze], que recalibra la importancia relativa de los filtros en función del contenido global del espectro. Con los tres niveles de submuestreo, el campo receptivo cubre todo el rango de longitudes de onda, por lo que la red puede corregir tanto el detalle de las líneas como el desajuste de continuo a gran escala entre Gaia y [SDSS]{.acr}, algo fuera del alcance del campo receptivo local del modelo 1D. Se mantiene la conexión residual global sobre el espectro interpolado, y el modelo alcanza aproximadamente 2,3 millones de parámetros entrenables, una capacidad muy superior a la del modelo convolucional 1D aunque todavía del orden de la mitad que la del modelo denso.
+La arquitectura evolucionó de la pila de bloques residuales a una U-Net de una dimensión [@ronneberger2015unet]. El codificador partía de una convolución inicial de 64 filtros y encadenaba tres niveles de submuestreo por convolución con paso 2 (64, 96, 128 y 160 filtros); el cuello de botella aplicaba dos bloques residuales que veían el espectro completo a un octavo de su resolución; y el decodificador recuperaba la resolución original en tres niveles de sobremuestreo, concatenando en cada uno la conexión del nivel equivalente del codificador. Cada bloque residual incorporaba además atención de canal de tipo *squeeze-and-excitation* [@hu2018squeeze], que recalibraba la importancia relativa de los filtros en función del contenido global del espectro. Con los tres niveles de submuestreo, el campo receptivo cubría todo el rango de longitudes de onda, por lo que la red podía corregir tanto el detalle de las líneas como el desajuste de continuo a gran escala entre Gaia y [SDSS]{.acr}, algo fuera del alcance del campo receptivo local del modelo 1D. Se mantuvo la conexión residual global sobre el espectro interpolado, y el modelo alcanzó aproximadamente 2,3 millones de parámetros entrenables, una capacidad muy superior a la del modelo convolucional 1D aunque todavía del orden de la mitad que la del modelo denso.
 
-La configuración del entrenamiento conserva la función de pérdida Huber con $\delta = 1$ (ahora ponderada por píxel), las mismas métricas [MAE]{.acr} y [MSE]{.acr} sin ponderar para mantener la comparabilidad con el resto de modelos, el optimizador Adam con limitación a 1 de la norma de los gradientes y los lotes de 64 muestras. Al ser un modelo de mayor capacidad, se amplió el presupuesto de entrenamiento: tasa de aprendizaje inicial de 0.0003, un máximo de 100 épocas, parada temprana con paciencia de 10 épocas y reducción de la tasa de aprendizaje a la mitad tras 4 épocas sin mejora.
+La configuración del entrenamiento conservó la función de pérdida Huber con $\delta = 1$ (ahora ponderada por píxel), las mismas métricas [MAE]{.acr} y [MSE]{.acr} sin ponderar para mantener la comparabilidad con el resto de modelos, el optimizador Adam con limitación a 1 de la norma de los gradientes y los lotes de 64 muestras. Al ser un modelo de mayor capacidad, se amplió el presupuesto de entrenamiento: tasa de aprendizaje inicial de 0.0003, un máximo de 100 épocas, parada temprana con paciencia de 10 épocas y reducción de la tasa de aprendizaje a la mitad tras 4 épocas sin mejora.
 
 #### Modelo recurrente
 Además de las estructuras anteriormente mencionadas, se evaluaron modelos recurrentes. En estos, cada espectro se consideró como una secuencia en función de la longitud de onda, donde cada longitud de onda era un paso de la secuencia y flujo correspondiente era la variable de entrada. Esta arquitectura permite conservar información de pasos anteriores de la secuencia [@schmidt2019rnn].
@@ -602,7 +602,7 @@ El primero de los modelos recurrentes seleccionados estaba formado por una capa 
 Por otro lado, se probaron variantes bidireccionales de la arquitectura recurrente [@schuster1997bidirectional]. Esta capa procesa la secuencia de puntos en ambos sentidos, en sentido creciente y decreciente de longitud de onda. Se incluyeron versiones con y sin capas de normalización internas.
 En el modelo bidireccional destacado se utilizó una capa [GRU]{.acr} bidireccional con dimensión 128. A continuación se incorporaron dos capas densas de 512 y 1024 neuronas, intercaladas con funciones de activación LeakyReLU. Igual que en los casos anteriores, la capa de salida disponía del mismo tamaño que la dimensión de los espectros de [SDSS]{.acr}.
 
-Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resuma el entrenamiento en el último estado recurrente, sino que el modelo conservase información de todos los pasos de la secuencia y asignasen pesos a aquellas regiones del espectro que se consideran más importantes para la predicción.  
+Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resumiese el entrenamiento en el último estado recurrente, sino que el modelo conservase información de todos los pasos de la secuencia y asignase pesos a aquellas regiones del espectro que se consideraban más importantes para la predicción.  
 
 El modelo con atención seleccionado estaba formado por dos capas [GRU]{.acr} bidireccionales, la primera de dimensión 128 y la segunda 64 en cada dirección. Sobre su salida se aplicó el mecanismo de atención, que generó un vector de dimensión 128. 
 El vector fue procesado por capas densas de 512 y 1024 neuronas, intercaladas otra vez con funciones LeakyReLU. 
@@ -610,18 +610,17 @@ El vector fue procesado por capas densas de 512 y 1024 neuronas, intercaladas ot
 En la arquitectura de estos dos últimos modelos mencionados, se redujeron las épocas de espera dado que la diferencia entre esperar 2 o 4 épocas no reflejaba mejoras en las estadísticas pero sí en el tiempo de entrenamiento.
 
 
-
 ## Descripción de los resultados
 
-Una vez entrenadas las distintas opciones de red neuronal, es necesario evaluar el rendimiento para determinar que aproximación es la más adecuada al problema que se ha planteado. 
+Una vez entrenadas las distintas opciones de red neuronal, fue necesario evaluar el rendimiento para determinar qué aproximación era la más adecuada al problema que se habían planteado. 
 
-Para hacerlo, se considerarán diversos caminos. Por un lado, se analizarán las métricas obtenidas durante el entrenamiento, como por ejemplo los valores de la función de pérdida, [MAE]{.acr} o [MSE]{.acr}. No obstante, debe tenerse en cuenta que se han usado diferentes funciones de normalización, por lo que no en todos los casos estas métricas se podrán comparar directamente. 
+Para hacerlo, se consideraron diversos caminos. Por un lado, se analizaron las métricas obtenidas durante el entrenamiento, como por ejemplo los valores de la función de pérdida, [MAE]{.acr} o [MSE]{.acr}. No obstante, debía tenerse en cuenta que se habían usado diferentes funciones de normalización, por lo que no en todos los casos estas métricas se podían comparar directamente. 
 
-Para evitar este problema, la evaluación se basará también en otras técnicas. La primera será una comparativa visual de los espectros respecto al real de [SDSS]{.acr} tras deshacer la normalización, esto permitirá comprobar si el modelo se ajusta correctamente a la forma global del espectro y a sus zonas de emisión y absorción. 
+Para evitar este problema, la evaluación se basó también en otras técnicas. La primera fue una comparativa visual de los espectros respecto al real de [SDSS]{.acr} tras deshacer la normalización, esto permitió comprobar si el modelo se ajustaba correctamente a la forma global del espectro y a sus zonas de emisión y absorción. 
 
-Por último, se empleará la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, como por ejemplo la temperatura efectiva o la gravedad superficial. El objetivo será comparar los datos obtenidos con las predicciones y el espectro real. De esta forma no se valorará solo la similitud de los espectros por sí mismos, sino que también se tendrá en cuenta si las predicciones se aproximan a la información astrofísica que se obtiene del espectro de [SDSS]{.acr} original.
-Para hacerlo se ordenarán aleatoriamente los espectros predichos con los modelos, de esta permutación, se tratarán de aproximar 250 datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentará generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro obtenga algún tipo de error que no permita generar *iSpec*, se saltará al siguiente.
-Las estadísticas usadas en los siguientes apartados constarán de tres errores: el error relativo de *Teff* y *log(g)* y el error absoluto de M/H. Para los dos primeros casos, el error relativo permite expresar la desviación respecto el valor real teniendo en cuenta la escala de la magnitud estudiada. En cambio, para M/H, se empleó el error absoluto debido a que esta variable toma valores cercanos a cero, haciendo que el error relativo exagere diferencias pequeñas.
+Por último, se empleó la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, como por ejemplo la temperatura efectiva o la gravedad superficial. El objetivo fue comparar los datos obtenidos con las predicciones y el espectro real. De esta forma no se valoró solo la similitud de los espectros por sí mismos, sino que también se tuvo en cuenta si las predicciones se aproximaban a la información astrofísica que se obtenía del espectro de [SDSS]{.acr} original.
+Para hacerlo se ordenaron aleatoriamente los espectros predichos con los modelos, de esta permutación, se trataron de aproximar 250 datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentó generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro obtuvieron algún tipo de error que no permitiera generar *iSpec*, se saltaba al siguiente.
+Las estadísticas usadas en los siguientes apartados constaron de tres errores: el error relativo de *Teff* y *log(g)* y el error absoluto de M/H. Para los dos primeros casos, el error relativo permitía expresar la desviación respecto al valor real teniendo en cuenta la escala de la magnitud estudiada. En cambio, para M/H, se empleó el error absoluto debido a que esta variable tomaba valores cercanos a cero, haciendo que el error relativo exagerase diferencias pequeñas.
 
 ### Resultados obtenidos con el modelo base
 
@@ -637,7 +636,7 @@ Que nos permitió desnormalizar los espectros siguiendo el proceso inverso:
 
 $$ F_{\mathrm{pred}} = F_{\mathrm{pred,norm}}\sigma+\mu $$
 
-Durante el entrenamiento se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Vemos esta disminución constante representada en la @fig-metricas-red-densa.
+Durante el entrenamiento se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Se observa esta disminución constante representada en la @fig-metricas-red-densa.
 
 :::{#fig-metricas-red-densa}
 
@@ -657,9 +656,9 @@ Gráfica de la evolución del MAE en el modelo de redes neuronales densas con no
 :::
 
 En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento muy similar a la del conjunto de validación.
-Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento, reforzando la idea de que el modelo tiene un comportamiento estable ante los datos que no han sido vistos con anterioridad. 
+Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento, reforzando la idea de que el modelo tenía un comportamiento estable ante los datos que no había sido vistos con anterioridad. 
 
-Cabe destacar que las métricas calculadas se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso ha sido necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
+Cabe destacar que las métricas calculadas se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso fue necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
 En las gráficas detalladas de la @fig-generados_global, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. Las observaciones representadas formaron parte del conjunto de test.  
 
@@ -678,12 +677,12 @@ En las gráficas detalladas de la @fig-generados_global, se muestran dos ejemplo
 Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana del conjunto de entrenamiento.
 :::
 
-Por un lado, en azul encontramos el espectro que el modelo pretende predecir, los puntos de [SDSS]{.acr} una vez han sido recortados. Por otro, en verde podemos ver la entrada que recibe el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia han sido convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usan escalas diferentes. 
+Por un lado, en azul encontramos el espectro que el modelo pretendía predecir, los puntos de [SDSS]{.acr} una vez habían sido recortados. Por otro, en verde podemos ver la entrada que recibía el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia fueron convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usaban escalas diferentes. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
 
-En gran parte de los gráficos observados, el modelo reproduce la morfología general del espectro, incluso modela los picos más acentuados. 
-Si bien es cierto, hay puntos que no puede inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
-Durante las comparaciones que se harán a continuación, siempre se usarán los mismos objetos, identificados por los id que aparecen en los gráficos recientemente comentados.
+En gran parte de los gráficos observados, el modelo repdroducía la morfología general del espectro, incluso modelaba los picos más acentuados. 
+Si bien es cierto, había puntos que no podía inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
+Durante las comparaciones que se realizaron a continuación, siempre se usaron los mismos objetos, identificados por los id que aparecen en los gráficos recientemente comentados.
 
 El segundo tipo de normalización se basó en la mediana por espectro. Se aplicó la siguiente transformación a cada espectro *i* :
 $$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{mediana}(F_i)} $$
@@ -728,7 +727,7 @@ Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obteni
 Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro.
 :::
 
-Comparándolas con las gráficas obtenidas con la primera normalización mencionada, podemos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. 
+Comparándolas con las gráficas obtenidas con la primera normalización mencionada, pudimos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. 
 
 Por último, si nos fijamos en las figuras @fig-espectros-generados_maximo_espectro, observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo. En estas, la fórmula utilizada para normalizar los espectros fue:
 $$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{max}(F_i)} $$
@@ -752,7 +751,7 @@ $$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{max}(|F_i|) $$
 Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en el máximo de cada espectro.
 :::
 
-A partir de las gráficas observadas, parece que la opción con mejores resultados es la segunda, dado que es la que obtiene espectros más cercanos a los reales. Ahora bien, comprobemos métricas para obtener resultados más concluyentes.
+A partir de las gráficas observadas, pareció que la opción con mejores resultados era la segunda, dado que era la que obtenía espectros más cercanos a los reales. Ahora bien, se comprobaron métricas para obtener resultados más concluyentes.
 
 En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta arquitectura según el tipo de normalización aplicado.
 
@@ -769,22 +768,22 @@ En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta 
 Resultados obtenidos con distintas estrategias de normalización.
 :::
 
-Igual que en la conclusión anterior, parece que al aplicar una normalización por espectro basada en la mediana, obtenemos ligeramente mejores resultados. 
+Igual que en la conclusión anterior, al aplicar una normalización por espectro basada en la mediana, obtuvimos ligeramente mejores resultados. 
 
-La última comparación vendrá dada por la librería *ISpec*. Con esta estimamos los parámetros astrofísicos de los cuerpos observados a partir del espectro real de [SDSS]{.acr} y los predichos. 
-Para ello primero transformamos cada espectro en el formato requerido por iSpec, teniendo que añadir para cada punto el flujo, longitud de onda y error asociado. El análisis se realizó sin incertidumbre asignada a cada punto, con lo que se asignó un valor unitario de error a todos los puntos de modo que todos partiesen del mismo peso.
+La última comparación vino dada por la librería *ISpec*. Con esta se estimaron los parámetros astrofísicos de los cuerpos observados a partir del espectro real de [SDSS]{.acr} y los predichos. 
+Para ello primero se transformó cada espectro en el formato requerido por iSpec, teniendo que añadir para cada punto el flujo, longitud de onda y error asociado. El análisis se realizó sin incertidumbre asignada a cada punto, con lo que se asignó un valor unitario de error a todos los puntos de modo que todos partiesen del mismo peso.
 Una vez teníamos la estructura requerida, normalizamos al continuo los espectros con la función propia de iSpec.
 
 Además, los puntos iniciales de comprobación de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto. 
 
-En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES* [@Gustafsson2008], pero se observaron advertencias de que los valores quedaba fuera del rango disponible, así que se usó *ATLAS9.Castelli* [@CastelliKurucz2003], que prácticamente eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD* [@Piskunov1995], cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen e incluye parametros necesarios para la síntesis espectral. 
+En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES* [@Gustafsson2008], pero se observaron advertencias de que los valores quedaban fuera del rango disponible, así que se usó *ATLAS9.Castelli* [@CastelliKurucz2003], que prácticamente eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD* [@Piskunov1995], cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen e incluye parámetros necesarios para la síntesis espectral. 
 Se usaron las abundancias solares de Grevesse [@Grevesse2007] como referencia de la metalicidad y la información isotópica de *SPECTRUM* [@GrayCorbally1994].
 
 A partir de los datos iniciales, mallas e información base mencionada, se ajustó la temperatura, gravedad superficial y metalicidad de las estrellas.
 
-Para comprobar el funcionamiento del modelo de redes neuronales, se tomó los resultados del espectro real de [SDSS].{acr} como los verdaderos, y se comparó los predichos con estos, calculando las diferencias entre los datos obtenidos, sus errores absolutos y relativos. 
+Para comprobar el funcionamiento del modelo de redes neuronales, se tomaron los resultados del espectro real de [SDSS]{.acr} como los verdaderos, y se compararon los predichos con estos, calculando las diferencias entre los datos obtenidos, sus errores absolutos y relativos. 
 
-Analizamos muestras aleatorias de 250 espectros para cada modelo denso. El resultado se resume en las gráficas observadas en las figuras @fig-ispec-errors.
+Se analizaron muestras aleatorias de 250 espectros para cada modelo denso. El resultado se resume en las gráficas observadas en las figuras @fig-ispec-errors.
 
 :::{#fig-ispec-errors}
 
@@ -806,8 +805,8 @@ Gráficos de barras de errores absolutos dados por *iSpec* entre los espectros r
 
 Encontramos destacada la mediana de los valores obtenidos y la distribución en histogramas de los errores de cada espectro. 
 
-Se aprecia como la mediana del error de la temperatura se ubica en todos los modelos alrededor del 0.25%, mientras que la de la gravedad superficial cerca del 0.10% y el error absoluto de la temperatura cerca de los 0.017. 
-Estos valores indican una relación de similitud entre las propiedades físicas de ambos espectros, por lo que podemos afirmar que los modelos densos estudiados conllevan una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con *iSpec* en rangos de error pequeños. 
+Se aprecia como la mediana del error de la temperatura se ubicaba en todos los modelos alrededor del 0.25%, mientras que la de la gravedad superficial cerca del 0.10% y el error absoluto de la temperatura cerca de los 0.017. 
+Estos valores indicaron una relación de similitud entre las propiedades físicas de ambos espectros, por lo que se pudo afirmar que los modelos densos estudiados conllevaban una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con *iSpec* en rangos de error pequeños. 
 
 #### Modelo denso con SNR
 
@@ -842,15 +841,15 @@ Por otro lado, las métricas obtenidas se encuentran en la @tbl-snr-gaia:
 Resultados obtenidos incluyendo la SNR de la muestra de Gaia como entrada del modelo.
 :::
 
-Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicional de entrada no produce una mejora significativa en el modelo. Los valores de pérdida, [MAE]{.acr} y [MSE]{.acr} son prácticamente los mismos a los obtenidos en pruebas anteriores y visualmente tampoco se aprecia una mejora de la captación de tendencias del espectro. Por este motivo, se decidió no incluir esta variable en el modelo final.
+Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicional de entrada no produjo una mejora significativa en el modelo. Los valores de pérdida, [MAE]{.acr} y [MSE]{.acr} fueron prácticamente los mismos que los obtenidos en pruebas anteriores y visualmente tampoco se apreció una mejora de la captación de tendencias del espectro. Por este motivo, se decidió no incluir esta variable en el modelo final.
 
 ### Resultados obtenidos con los modelos convolucionales
 
-Se presentan por separado los resultados de las dos versiones del modelo convolucional: el modelo convolucional 1D y el modelo convolucional U-Net. Ambas comparten la misma normalización (la mediana del flujo de Gaia de cada par), por lo que, a diferencia de lo que ocurre con el modelo denso, sus métricas sí son directamente comparables entre sí.
+Se presentan por separado los resultados de las dos versiones del modelo convolucional: el modelo convolucional 1D y el modelo convolucional U-Net. Ambas compartían la misma normalización (la mediana del flujo de Gaia de cada par), por lo que, a diferencia de lo que ocurría con el modelo denso, sus métricas sí eran directamente comparables entre sí.
 
 #### Modelo convolucional 1D
 
-En el caso del modelo convolucional residual, el entrenamiento se detuvo en la época 11 por la función de parada temprana. La evolución de las métricas, representada en la @fig-training-metrics-cnn, muestra un descenso muy rápido durante las dos primeras épocas seguido de un estancamiento, a pesar de las sucesivas reducciones de la tasa de aprendizaje aplicadas durante el proceso.
+En el caso del modelo convolucional residual, el entrenamiento se detuvo en la época 11 por la función de parada temprana. La evolución de las métricas, representada en la @fig-training-metrics-cnn, mostró un descenso muy rápido durante las dos primeras épocas seguido de un estancamiento, a pesar de las sucesivas reducciones de la tasa de aprendizaje aplicadas durante el proceso.
 
 :::{#fig-training-metrics-cnn}
 
@@ -864,11 +863,11 @@ En el caso del modelo convolucional residual, el entrenamiento se detuvo en la �
 
 *Fuente: Elaboración propia*
 
-Gráficas de las métricas de evolución de entranamiento en modelo convolucional 1D
+Gráficas de las métricas de evolución de entrenamiento en el modelo convolucional 1D
 :::
 
 
-Este comportamiento sugiere que la red converge casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación permanecen muy próximas entre sí durante todo el proceso, por lo que tampoco en esta arquitectura se aprecian indicios de sobreajuste.
+Este comportamiento sugirió que la red convergía casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación permanecieron muy próximas entre sí durante todo el proceso, por lo que tampoco en esta arquitectura se apreciaron indicios de sobreajuste.
 
 Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de test, obteniendo las métricas recogidas en la @tbl-test-cnn, muy similares a las de los conjuntos de entrenamiento y validación de la mejor época.
 
@@ -887,7 +886,7 @@ Resultados obtenidos con el modelo convolucional 1D para los diferentes conjunto
 
 
 En la @fig-generado_cnn se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, una vez deshecha la normalización. 
-En ambos ejemplos se observa que el espectro predicho se mantiene muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llega a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
+En ambos ejemplos se observó que el espectro predicho se mantenía muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llegó a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
 
 :::{#fig-generado_cnn}
 
@@ -907,7 +906,7 @@ Ejemplos de espectros generados por el modelo convolucional 1D.
 
 #### Modelo convolucional U-Net
 
-El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al del modelo convolucional 1D. Lejos de estancarse en las primeras épocas, la pérdida de validación siguió mejorando de forma sostenida: la función de reducción de la tasa de aprendizaje llegó a actuar cuatro veces (de 0.0003 hasta 0.000019) y cada reducción desbloqueó una nueva fase de mejora. El entrenamiento se interrumpió en la época 48, cuando la pérdida de validación llevaba varias épocas prácticamente estabilizada; gracias al guardado del mejor modelo en cada época, se conservan los pesos de la época 47, la de mejor validación. La evolución de las métricas se muestra en la @fig-loss-evolution-cnn-v2 donde de nuevo las curvas de entrenamiento y validación permanecen próximas entre sí, sin indicios de sobreajuste.
+El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al del modelo convolucional 1D. Lejos de estancarse en las primeras épocas, la pérdida de validación siguió mejorando de forma sostenida: la función de reducción de la tasa de aprendizaje llegó a actuar cuatro veces (de 0.0003 hasta 0.000019) y cada reducción desbloqueó una nueva fase de mejora. El entrenamiento se interrumpió en la época 48, cuando la pérdida de validación llevaba varias épocas prácticamente estabilizada; gracias al guardado del mejor modelo en cada época, se conservaron los pesos de la época 47, la de mejor validación. La evolución de las métricas se muestra en la @fig-loss-evolution-cnn-v2 donde de nuevo las curvas de entrenamiento y validación permanecieron próximas entre sí, sin indicios de sobreajuste.
 
 :::{#fig-loss-evolution-cnn-v2}
 
@@ -926,7 +925,7 @@ El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al 
 Gráficas de la evolución de las métricas de entrenamiento del modelo convolucional U-Net
 :::
 
-Las métricas de entrenamiento, validación y test de la mejor época se recogen en la @tbl-test-cnn-v2. Junto a las métricas sin ponderar, comparables con las del resto de modelos, se incluyen sus variantes ponderadas por la varianza inversa de [SDSS]{.acr}, que reflejan el objetivo que la red optimiza. La pérdida, al estar ponderada, no es comparable con la de las arquitecturas anteriores.
+Las métricas de entrenamiento, validación y test de la mejor época se recogen en la @tbl-test-cnn-v2. Junto a las métricas sin ponderar, comparables con las del resto de modelos, se incluyen sus variantes ponderadas por la varianza inversa de [SDSS]{.acr}, que reflejan el objetivo que la red optimizó. La pérdida, al estar ponderada, no es comparable con la de las arquitecturas anteriores.
 
 ::: {#tbl-test-cnn-v2}
 
@@ -941,7 +940,7 @@ Las métricas de entrenamiento, validación y test de la mejor época se recogen
 Resultados obtenidos con el modelo convolucional U-Net para los diferentes conjuntos de datos.
 :::
 
-La comparación con la @tbl-test-cnn es directa por compartir normalización: el [MAE]{.acr} sobre test baja de 0.1047 a 0.0786 (una mejora del 25 %) y el [MSE]{.acr} de 0.0272 a 0.0165 (un 39 %). En la @fig-espectros-generados_cnn_v2 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
+La comparación con la @tbl-test-cnn fue directa por compartir normalización: el [MAE]{.acr} sobre test bajó de 0.1047 a 0.0786 (una mejora del 25 %) y el [MSE]{.acr} de 0.0272 a 0.0165 (un 39 %). En la @fig-espectros-generados_cnn_v2 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
 
 :::{#fig-espectros-generados_cnn_v2}
 
@@ -958,14 +957,14 @@ La comparación con la @tbl-test-cnn es directa por compartir normalización: el
 Ejemplos de espectros generados por el modelo convolucional U-Net.
 :::
 
-A diferencia del modelo convolucional 1D, la U-Net no se limita a una corrección suave del continuo: la predicción reconstruye parte de la estructura espectral fina del espectro de [SDSS]{.acr}, incluidas líneas de absorción que no son visibles en la entrada de Gaia interpolada. Este salto cualitativo es coherente con las mejoras introducidas: el campo receptivo global permite corregir el continuo a todas las escalas, y la pérdida ponderada concentra la capacidad del modelo en los píxeles fiables del objetivo en lugar de en reproducir su ruido.
+A diferencia del modelo convolucional 1D, la U-Net no se limitó a una corrección suave del continuo: la predicción reconstruyó parte de la estructura espectral fina del espectro de [SDSS]{.acr}, incluidas líneas de absorción que no son visibles en la entrada de Gaia interpolada. Este salto cualitativo fue coherente con las mejoras introducidas: el campo receptivo global permitió corregir el continuo a todas las escalas, y la pérdida ponderada concentró la capacidad del modelo en los píxeles fiables del objetivo en lugar de en reproducir su ruido.
 
 ### Resultados obtenidos con el modelo recurrente
 
-Después de entrenar diversas combinaciones de las características descritas para los modelos en el apartado de redes recurrentes, podemos destacar tres modelos que obtuvieron los mejores resultados entre los estudiados. 
+Después de entrenar diversas combinaciones de las características descritas para los modelos en el apartado de redes recurrentes, se pudieron destacar tres modelos que obtuvieron los mejores resultados entre los estudiados. 
 
 #### Modelo basado en una capa GRU
-La primera arquitectura destacable, formada por una capa de [GRU]{.acr} y dos densas con función de activación ReLU, junto a las mismas funciones de disminución de la tasa de aprendizaje y parada temprana que los modelos basados únicamente en redes neuronales densas. Después de 23 épocas se obtuvieron las  métricas de entrenamiento, validación y test descritas en la @tbl-GRU-metrics:
+La primera arquitectura destacable, estaba formada por una capa de [GRU]{.acr} y dos densas con función de activación ReLU, junto a las mismas funciones de disminución de la tasa de aprendizaje y parada temprana que los modelos basados únicamente en redes neuronales densas. Después de 23 épocas se obtuvieron las  métricas de entrenamiento, validación y test descritas en la @tbl-GRU-metrics:
 
 ::: {#tbl-GRU-metrics}
 
@@ -980,9 +979,9 @@ La primera arquitectura destacable, formada por una capa de [GRU]{.acr} y dos de
 Resultados obtenidos con el primer modelo basado en GRU para los diferentes conjuntos de datos.
 :::
 
-Se puede observar que no se aprecian diferencias significativas entre los grupos, pudiendo confirmar la inexistencia de sobreajuste al conjunto de entrenamiento. 
+Se puede observar que no se apreciaban diferencias significativas entre los grupos, pudiendo confirmar la inexistencia de sobreajuste al conjunto de entrenamiento. 
 
-Respecto a las predicciones realizadas sobre las mismas observaciones que en los casos anteriores, obtenemos las figuras @fig-rnn-small_10 y @fig-rnn-small_245 :
+Respecto a las predicciones realizadas sobre las mismas observaciones que en los casos anteriores, se obtuvieron las figuras @fig-rnn-small_10 y @fig-rnn-small_245 :
 
 :::{#fig-rnn-small_10}
 
@@ -1002,7 +1001,7 @@ Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes co
 Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una capa de GRU.
 :::
 
-El modelo consigue reproducir la forma general de los espectros reales de [SDSS]{.acr}, acorde con las conclusiones obtenidas de las métricas estudiadas. 
+El modelo consiguió reproducir la forma general de los espectros reales de [SDSS]{.acr}, acorde con las conclusiones obtenidas de las métricas estudiadas. 
 
 La evolución de las métricas de entrenamiento puede observarse en la @fig-evolution-gru:
 
@@ -1023,7 +1022,7 @@ La evolución de las métricas de entrenamiento puede observarse en la @fig-evol
 Gráficas de la evolución de las métricas de entrenamiento del modelo basado en una capa GRU
 :::
 
-En estos gráficos se aprecia como el modelo converge con pocas iteraciones, pero mantiene una mejora constante que continúa alrededor de un total de 25 épocas.
+En estos gráficos se aprecia como el modelo convergió con pocas iteraciones, pero mantuvo una mejora constante que continuó alrededor de un total de 25 épocas.
 
 #### Modelo basado en una capa Bidireccional
 Los siguientes modelos a mencionar, usaron funciones de parada temprana con espera de 2 épocas y reducción de la tasa de aprendizaje con 1 época. 
@@ -1046,10 +1045,10 @@ Las métricas obtenidas tras las seis épocas de entrenamiento del modelo fueron
 Resultados obtenidos con el modelo basado en RNN bidireccionales para los diferentes conjuntos de datos.
 :::
 
-Estos valores son muy similares a los obtenidos en el modelo anterior, siendo entre un 0.001 y 0.01 más altos según la métrica. Siguen siendo buenas aproximaciones e indican un buen comportamiento del modelo, pero no presentan una mejora significativa comparado con el anterior. Contrariamente a lo que podría suponerse, el procesamiento de la secuencia en ambas direcciones no aporta una clara ventaja estadística en este conjunto de datos.
+Estos valores fueron muy similares a los obtenidos en el modelo anterior, siendo entre un 0.001 y 0.01 más altos según la métrica. Siguieron siendo buenas aproximaciones e indicaron un buen comportamiento del modelo, pero no presentaron una mejora significativa comparado con el anterior. Contrariamente a lo que podría suponerse, el procesamiento de la secuencia en ambas direcciones no aportó una clara ventaja estadística en este conjunto de datos.
 
 
-Los ejemplos usados para la representación visual de las aproximaciones tampoco presentan grandes diferencias, tal y como observamos en la @fig-BIRNN
+Los ejemplos usados para la representación visual de las aproximaciones tampoco presentaron grandes diferencias, tal y como observamos en la @fig-BIRNN
 
 :::{#fig-BIRNN}
 
@@ -1066,9 +1065,9 @@ Los ejemplos usados para la representación visual de las aproximaciones tampoco
 Ejemplos de espectros generados por el modelo de redes neuronales recurrentes con una capa bidireccional.
 :::
 
-Las predicciones vuelven a mantener la forma general del espectro, sin apreciarse una mejora visual evidente comparado con el modelo anterior.
+Las predicciones volvieron a mantener la forma general del espectro, sin apreciarse una mejora visual evidente comparado con el modelo anterior.
 
-En cuanto a la evolución de las métricas, los resultados se ven representados en la @fig-evolution-birnn. Como en el caso anterior, los valores de entrenamiento y validación convergen rápido, en este caso en la segunda época. A partir de aquí el modelo se mantiene constante hasta que termina su entrenamiento en la sexta iteración
+En cuanto a la evolución de las métricas, los resultados se ven representados en la @fig-evolution-birnn. Como en el caso anterior, los valores de entrenamiento y validación convergieron rápido, en este caso en la segunda época. A partir de aquí el modelo se mantuvo constante hasta que terminó su entrenamiento en la sexta iteración
 
 :::{#fig-evolution-birnn}
 
