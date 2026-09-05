@@ -2,7 +2,7 @@
 Conjuntos de entrenamiento, validación y test de los que parten los cuadernos.
 
 Servicio compartido por todos los cuadernos de entrenamiento de `models`. Todos
-arrancan del mismo `.npz`, el que deja el preprocesado en `data/splits`, así que
+arrancan del mismo `.npz`, el que deja el preprocesado en `data`, así que
 localizarlo y leerlo vive aquí y no repetido en la celda de datos de cada
 cuaderno.
 
@@ -22,8 +22,6 @@ import numpy as np
 
 from services.paths import DATA_DIR
 
-SPLITS_DIR = DATA_DIR / "splits"
-
 # Nombre del array -> su contenido, para no leer dos veces el mismo del disco
 _loaded_arrays = {}
 
@@ -39,15 +37,15 @@ def splits_path():
         Path: Ruta del `.npz` de datos.
 
     Raises:
-        FileNotFoundError: Si no hay ningún `.npz` de datos en `data/splits`.
+        FileNotFoundError: Si no hay ningún `.npz` de datos en `data`.
     """
     candidates = (
-        sorted(SPLITS_DIR.glob("*processed_data_no_duplicates.npz"))
-        + sorted(SPLITS_DIR.glob("*processed_data.npz"))
+        sorted(DATA_DIR.glob("*processed_data_no_duplicates.npz"))
+        + sorted(DATA_DIR.glob("*processed_data.npz"))
     )
 
     if not candidates:
-        raise FileNotFoundError(f"No hay ningún `.npz` de datos en {SPLITS_DIR}")
+        raise FileNotFoundError(f"No hay ningún `.npz` de datos en {DATA_DIR}")
 
     return candidates[0]
 

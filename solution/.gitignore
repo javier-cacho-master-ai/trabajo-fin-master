@@ -6,16 +6,18 @@
 # Data
 data/*
 
-# Excepción: las tablas del análisis con iSpec de cada modelo. Son unos pocos
-# kilobytes, pero cada una son horas de ajustes, así que se versionan para que
-# las figuras de error se rehagan sin repetir el análisis.
-!data/predictions/
-data/predictions/*
-!data/predictions/ispec_*.csv
+# Salidas del flujo de extracción, que viven junto a su código
+dataset_extraction_pipeline/data/
 
-# Snapshot de datos de test de los modelos: se regenera desde data/splits
-# y supera el límite de tamaño de fichero de GitHub
+# Snapshot de datos de test de los modelos: se regenera desde el `.npz` de
+# datos y supera el límite de tamaño de fichero de GitHub
 models/data/test/
+
+# Predicciones de los modelos, que pesan cientos de megabytes. Las tablas del
+# análisis con iSpec (models/data/ispec_deviations) sí se versionan: son unos
+# pocos kilobytes, pero cada una son horas de ajustes, así que se guardan para
+# que las figuras de error se rehagan sin repetir el análisis.
+models/data/predictions/
 
 # temp files
 temp_*
