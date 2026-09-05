@@ -283,13 +283,10 @@ print("Métricas de test:", test_metrics)
 
 # %%
 # Importamos funciones a usar para analizar resultados
-from model_functions import (
-    plot_training_metrics,
-    plot_worst_best_predictions,
-    calculate_all_chi2
-)
+from model_functions import plot_training_metrics, calculate_all_chi2
 
 plot_training_metrics(training_history)
+
 
 
 # %%
@@ -334,7 +331,32 @@ y_pred = predict_test_set(
 save_predictions(PREDICTIONS_PATH, y_pred=y_pred)
 
 # %%
-# Mismos objetos usados en las comparativas de la memoria
+import sys
+
+# 'plotting.py' vive en 'solution/services', y la celda de rutas solo añade
+# 'models' a 'sys.path'. Las dos carpetas se llaman 'services', así que Python
+# las une en un único paquete del que salen tanto 'services.paths' como
+# 'services.plotting'
+sys.path.insert(0, str(SOLUTION_DIR))
+
+from services.plotting import SELECTED_OBJECTS_PATH, plot_selected_objects
+
+# Comparativa sobre los mismos objetos en todos los cuadernos: la pareja de
+# cada zona del diagrama HR que eligió 'services/simbad.py', encabezada por el
+# nombre celeste oficial de cada objeto. Las figuras quedan guardadas en
+# 'models/images' con el nombre que cita la memoria.
+#
+# La celda parte del CSV de objetos y de los `.npz` de test y de predicciones,
+# así que se ejecuta suelta tras la de rutas: no reentrena, no vuelve a cargar
+# el `.npz` de datos completo y no necesita las variables que dejen en memoria
+# las demás celdas del cuaderno.
+plot_selected_objects(
+    SELECTED_OBJECTS_PATH,
+    TEST_DATA_PATH,
+    PREDICTIONS_PATH,
+    "cnn_v1"
+)
+
 
 # %%
 mae = np.mean(np.abs(y_test - y_pred))
@@ -345,22 +367,6 @@ print(f"MAE:  {mae:.4f}")
 print(f"MSE:  {mse:.4f}")
 print(f"RMSE: {rmse:.4f}")
 
-# Comparación invariante a escala: cada espectro se normaliza con su propia
-# mediana, de modo que el ranking refleja el error de forma y no el desajuste
-# de calibración absoluta entre Gaia y SDSS
-y_test_shape = y_test / np.nanmedian(np.abs(y_test), axis=1, keepdims=True)
-y_pred_shape = y_pred / np.nanmedian(np.abs(y_pred), axis=1, keepdims=True)
-X_test_shape = X_test / np.nanmedian(np.abs(X_test), axis=1, keepdims=True)
-
-plot_worst_best_predictions(
-    y_test_shape,
-    y_pred_shape,
-    X_test_shape,
-    X_id_test,
-    sdss_wavelength,
-    gaia_wavelength,
-    10
-)
 
 # %% [markdown]
 # Chi cuadrado normalizado frente al espectro real de SDSS, la métrica con la que se comparan entre sí todas las arquitecturas del trabajo: la diferencia de flujo se pondera con la varianza inversa de SDSS y se divide entre el número de puntos válidos (aquellos cuya varianza inversa es mayor que cero). Se calcula sobre el flujo sin normalizar, de modo que los valores son comparables con los de los modelos denso y recurrente.

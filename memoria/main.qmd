@@ -660,21 +660,66 @@ Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el 
 
 Cabe destacar que las métricas calculadas se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso fue necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
-En las gráficas detalladas de la @fig-generados_global, se muestran dos ejemplos distintos donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. Las observaciones representadas formaron parte del conjunto de test.  
+En las gráficas detalladas de las @fig-dense-global-left, @fig-dense-global-central, @fig-dense-global-right y @fig-dense-global-wd se muestra una comparación por cada uno de los cuatro grupos de objetos definidos sobre el diagrama [HR]{.acr}, donde se observan superpuestos los datos de entrada del modelo, es decir el espectro captado por Gaia, el espectro de SDSS real y el generado a partir del modelo entrenado. Cada grupo aportó dos observaciones del conjunto de test, identificadas con el nombre celeste y el tipo de objeto que les asigna SIMBAD: [LM*]{.acr} en los dos tramos de la secuencia central, [RR*]{.acr} y [QSO]{.acr} en el grupo de paralaje pequeño, y [WD*]{.acr} en el grupo restante.
 
-:::{#fig-generados_global}
+:::{#fig-dense-global-left}
 
 ::::{layout-nrow="2"}
 
-![](images/ejemplo_10_global_dense.png)
+![](images/dense-global_main_sequence_left_797526743414637056.png)
 
-![](images/ejemplo_245_global_dense.png)
+![](images/dense-global_main_sequence_left_1337575961276827264.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana del conjunto de entrenamiento.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo de redes neuronales densas con normalización global para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
+:::
+
+:::{#fig-dense-global-central}
+
+::::{layout-nrow="2"}
+
+![](images/dense-global_main_sequence_central_2545259196557506816.png)
+
+![](images/dense-global_main_sequence_central_846746862468190208.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central. Espectros generados por el modelo de redes neuronales densas con normalización global para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-dense-global-right}
+
+::::{layout-nrow="2"}
+
+![](images/dense-global_main_sequence_right_1333563847643825792.png)
+
+![](images/dense-global_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo de redes neuronales densas con normalización global para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-dense-global-wd}
+
+::::{layout-nrow="2"}
+
+![](images/dense-global_white_dwarfs_1029230844528601472.png)
+
+![](images/dense-global_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo de redes neuronales densas con normalización global para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 Por un lado, en azul encontramos el espectro que el modelo pretendía predecir, los puntos de [SDSS]{.acr} una vez habían sido recortados. Por otro, en verde podemos ver la entrada que recibía el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia fueron convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usaban escalas diferentes. 
@@ -682,7 +727,7 @@ Finalmente, en naranja encontramos el espectro predicho por el modelo.
 
 En gran parte de los gráficos observados, el modelo repdroducía la morfología general del espectro, incluso modelaba los picos más acentuados. 
 Si bien es cierto, había puntos que no podía inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
-Durante las comparaciones que se realizaron a continuación, siempre se usaron los mismos objetos, identificados por los id que aparecen en los gráficos recientemente comentados.
+Durante las comparaciones que se realizaron a continuación, siempre se usaron los mismos ocho objetos, identificados por el nombre celeste y los identificadores de Gaia y [SDSS]{.acr} que aparecen en los gráficos recientemente comentados.
 
 El segundo tipo de normalización se basó en la mediana por espectro. Se aplicó la siguiente transformación a cada espectro *i* :
 $$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{mediana}(F_i)} $$
@@ -710,45 +755,135 @@ Con este método, los resultados obtenidos fueron similares. Incluso las épocas
 Gráficas de evolución de las métricas de entrenamiento en la red densa.
 :::
 
-Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre las mismas observaciones que el modelo anterior fueron las observadas en la @fig-espectros-generados-red-densa:
+Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre los mismos objetos que el modelo anterior, un grupo del diagrama [HR]{.acr} por gráfica, fueron los observados en las @fig-dense-median-left, @fig-dense-median-central, @fig-dense-median-right y @fig-dense-median-wd:
 
-:::{#fig-espectros-generados-red-densa}
+:::{#fig-dense-median-left}
 
-:::: {layout-nrow="2"}
+::::{layout-nrow="2"}
 
-![](images/ejemplo_10_spec_mean_dense.png)
+![](images/dense-median_main_sequence_left_797526743414637056.png)
 
-![](images/ejemplo_245_spec_mean_dense.png)
+![](images/dense-median_main_sequence_left_1337575961276827264.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
+:::
+
+:::{#fig-dense-median-central}
+
+::::{layout-nrow="2"}
+
+![](images/dense-median_main_sequence_central_2545259196557506816.png)
+
+![](images/dense-median_main_sequence_central_846746862468190208.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central. Espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-dense-median-right}
+
+::::{layout-nrow="2"}
+
+![](images/dense-median_main_sequence_right_1333563847643825792.png)
+
+![](images/dense-median_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-dense-median-wd}
+
+::::{layout-nrow="2"}
+
+![](images/dense-median_white_dwarfs_1029230844528601472.png)
+
+![](images/dense-median_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 Comparándolas con las gráficas obtenidas con la primera normalización mencionada, pudimos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. 
 
-Por último, si nos fijamos en las figuras @fig-espectros-generados_maximo_espectro, observamos los resultados obtenidos sobre el mismo objeto con una normalización espectro a espectro basada en el máximo valor del flujo. En estas, la fórmula utilizada para normalizar los espectros fue:
+Por último, si nos fijamos en las @fig-dense-max-left, @fig-dense-max-central, @fig-dense-max-right y @fig-dense-max-wd, observamos los resultados obtenidos sobre los mismos objetos con una normalización espectro a espectro basada en el máximo valor del flujo. En estas, la fórmula utilizada para normalizar los espectros fue:
 $$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{max}(F_i)} $$
 
 Y para desnormalizarlos:
 
 $$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{max}(|F_i|) $$
 
-:::{#fig-espectros-generados_maximo_espectro}
+:::{#fig-dense-max-left}
 
-:::: {layout-nrow="2"}
+::::{layout-nrow="2"}
 
-![](images/ejemplo_10_spec_max_dense.png)
+![](images/dense-max_main_sequence_left_797526743414637056.png)
 
-![](images/ejemplo_245_spec_max_dense.png)
+![](images/dense-max_main_sequence_left_1337575961276827264.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generados por el modelo de redes neuronales densas con normalización basada en el máximo de cada espectro.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo de redes neuronales densas con normalización basada en el máximo de cada espectro para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
+:::
+
+:::{#fig-dense-max-central}
+
+::::{layout-nrow="2"}
+
+![](images/dense-max_main_sequence_central_2545259196557506816.png)
+
+![](images/dense-max_main_sequence_central_846746862468190208.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central. Espectros generados por el modelo de redes neuronales densas con normalización basada en el máximo de cada espectro para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-dense-max-right}
+
+::::{layout-nrow="2"}
+
+![](images/dense-max_main_sequence_right_1333563847643825792.png)
+
+![](images/dense-max_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo de redes neuronales densas con normalización basada en el máximo de cada espectro para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-dense-max-wd}
+
+::::{layout-nrow="2"}
+
+![](images/dense-max_white_dwarfs_1029230844528601472.png)
+
+![](images/dense-max_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo de redes neuronales densas con normalización basada en el máximo de cada espectro para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 A partir de las gráficas observadas, pareció que la opción con mejores resultados era la segunda, dado que era la que obtenía espectros más cercanos a los reales. Ahora bien, se comprobaron métricas para obtener resultados más concluyentes.
@@ -810,21 +945,66 @@ Estos valores indicaron una relación de similitud entre las propiedades física
 
 #### Modelo denso con SNR
 
-Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las gráficas @fig-espectros-generados-snr.
+Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las @fig-snr-left, @fig-snr-central, @fig-snr-right y @fig-snr-wd.
 
-:::{#fig-espectros-generados-snr}
+:::{#fig-snr-left}
 
-:::: {layout-nrow="2"}
+::::{layout-nrow="2"}
 
-![](images/ejemplo_10_snr.png)
+![](images/snr_main_sequence_left_797526743414637056.png)
 
-![](images/ejemplo_245_snr.png)
+![](images/snr_main_sequence_left_1337575961276827264.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generados por el modelo de redes neuronales densas con la variable SNR como entrada.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo de redes neuronales densas con la [SNR]{.acr} de Gaia como entrada para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
+:::
+
+:::{#fig-snr-central}
+
+::::{layout-nrow="2"}
+
+![](images/snr_main_sequence_central_2545259196557506816.png)
+
+![](images/snr_main_sequence_central_846746862468190208.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central. Espectros generados por el modelo de redes neuronales densas con la [SNR]{.acr} de Gaia como entrada para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-snr-right}
+
+::::{layout-nrow="2"}
+
+![](images/snr_main_sequence_right_1333563847643825792.png)
+
+![](images/snr_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo de redes neuronales densas con la [SNR]{.acr} de Gaia como entrada para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-snr-wd}
+
+::::{layout-nrow="2"}
+
+![](images/snr_white_dwarfs_1029230844528601472.png)
+
+![](images/snr_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo de redes neuronales densas con la [SNR]{.acr} de Gaia como entrada para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 Por otro lado, las métricas obtenidas se encuentran en la @tbl-snr-gaia: 
@@ -885,22 +1065,67 @@ Resultados obtenidos con el modelo convolucional 1D para los diferentes conjunto
 :::
 
 
-En la @fig-generado_cnn se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, una vez deshecha la normalización. 
-En ambos ejemplos se observó que el espectro predicho se mantenía muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llegó a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
+En las @fig-cnn-v1-left, @fig-cnn-v1-central, @fig-cnn-v1-right y @fig-cnn-v1-wd se muestran las predicciones obtenidas sobre los mismos objetos empleados en las comparativas del modelo denso, un grupo del diagrama [HR]{.acr} por gráfica y una vez deshecha la normalización. 
+En todos los grupos se observó que el espectro predicho se mantenía muy próximo a la entrada de Gaia interpolada, aplicando sobre ella una corrección suave que ajusta la escala local del continuo. Sin embargo, el modelo no llegó a reconstruir las estructuras finas del espectro de [SDSS]{.acr}, en línea con el estancamiento temprano observado durante el entrenamiento.
 
-:::{#fig-generado_cnn}
+:::{#fig-cnn-v1-left}
 
 ::::{layout-nrow="2"}
 
-![](_partials/assets/espectro_predicho_123_full_cnn.png)
+![](images/cnn_v1_main_sequence_left_797526743414637056.png)
 
-![](_partials/assets/espectro_predicho_191_full_cnn.png)
+![](images/cnn_v1_main_sequence_left_1337575961276827264.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generados por el modelo convolucional 1D.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo convolucional 1D para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
+:::
+
+:::{#fig-cnn-v1-central}
+
+::::{layout-nrow="2"}
+
+![](images/cnn_v1_main_sequence_central_2545259196557506816.png)
+
+![](images/cnn_v1_main_sequence_central_846746862468190208.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central. Espectros generados por el modelo convolucional 1D para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-cnn-v1-right}
+
+::::{layout-nrow="2"}
+
+![](images/cnn_v1_main_sequence_right_1333563847643825792.png)
+
+![](images/cnn_v1_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo convolucional 1D para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-cnn-v1-wd}
+
+::::{layout-nrow="2"}
+
+![](images/cnn_v1_white_dwarfs_1029230844528601472.png)
+
+![](images/cnn_v1_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo convolucional 1D para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 
@@ -940,21 +1165,66 @@ Las métricas de entrenamiento, validación y test de la mejor época se recogen
 Resultados obtenidos con el modelo convolucional U-Net para los diferentes conjuntos de datos.
 :::
 
-La comparación con la @tbl-test-cnn fue directa por compartir normalización: el [MAE]{.acr} sobre test bajó de 0.0645 a 0.0433 y el [MSE]{.acr} de 0.0130 a 0.0071. En la @fig-espectros-generados_cnn_v2 se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
+La comparación con la @tbl-test-cnn fue directa por compartir normalización: el [MAE]{.acr} sobre test bajó de 0.1047 a 0.0786 (una mejora del 25 %) y el [MSE]{.acr} de 0.0272 a 0.0165 (un 39 %). En las @fig-cnn-v2-left, @fig-cnn-v2-central, @fig-cnn-v2-right y @fig-cnn-v2-wd  se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
 
-:::{#fig-espectros-generados_cnn_v2}
+:::{#fig-cnn-v2-left}
 
 ::::{layout-nrow="2"}
 
-![](_partials/assets/espectro_predicho_123_full_cnn_v2.png)
+![](images/cnn-v2_main_sequence_left_797526743414637056.png)
 
-![](_partials/assets/espectro_predicho_191_full_cnn_v2.png)
+![](images/cnn-v2_main_sequence_left_1337575961276827264.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generados por el modelo convolucional U-Net.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo convolucional U-Net para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
+:::
+
+:::{#fig-cnn-v2-central}
+
+::::{layout-nrow="2"}
+
+![](images/cnn-v2_main_sequence_central_2545259196557506816.png)
+
+![](images/cnn-v2_main_sequence_central_846746862468190208.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central. Espectros generados por el modelo convolucional U-Net para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-cnn-v2-right}
+
+::::{layout-nrow="2"}
+
+![](images/cnn-v2_main_sequence_right_1333563847643825792.png)
+
+![](images/cnn-v2_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo convolucional U-Net para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-cnn-v2-wd}
+
+::::{layout-nrow="2"}
+
+![](images/cnn-v2_white_dwarfs_1029230844528601472.png)
+
+![](images/cnn-v2_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo convolucional U-Net para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 A diferencia del modelo convolucional 1D, la U-Net no se limitó a una corrección suave del continuo: la predicción reconstruyó parte de la estructura espectral fina del espectro de [SDSS]{.acr}, incluidas líneas de absorción que no son visibles en la entrada de Gaia interpolada. Este salto cualitativo fue coherente con las mejoras introducidas: el campo receptivo global permitió corregir el continuo a todas las escalas, y la pérdida ponderada concentró la capacidad del modelo en los píxeles fiables del objetivo en lugar de en reproducir su ruido.
@@ -981,24 +1251,66 @@ Resultados obtenidos con el primer modelo basado en GRU para los diferentes conj
 
 Se puede observar que no se apreciaban diferencias significativas entre los grupos, pudiendo confirmar la inexistencia de sobreajuste al conjunto de entrenamiento. 
 
-Respecto a las predicciones realizadas sobre las mismas observaciones que en los casos anteriores, se obtuvieron las figuras @fig-rnn-small_10 y @fig-rnn-small_245 :
+Respecto a las predicciones realizadas sobre las mismas observaciones que en los casos anteriores, se obtuvieron las gráficas de las @fig-gru-left, @fig-gru-central, @fig-gru-right y @fig-gru-wd, una por cada grupo del diagrama [HR]{.acr}:
 
-:::{#fig-rnn-small_10}
+:::{#fig-gru-left}
 
-![](images/ejemplo_10_RNN_small.png)
+::::{layout-nrow="2"}
+
+![](images/gru_main_sequence_left_797526743414637056.png)
+
+![](images/gru_main_sequence_left_1337575961276827264.png)
+
+::::
 
 *Fuente: Elaboración propia*
 
-Ejemplo 1 del espectro generado por el modelo de redes neuronales recurrentes con una capa de GRU.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo de redes neuronales recurrentes con una capa de [GRU]{.acr} para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
 :::
 
-:::{#fig-rnn-small_245}
+:::{#fig-gru-central}
 
-![](images/ejemplo_245_RNN_small.png)
+::::{layout-nrow="2"}
+
+![](images/gru_main_sequence_central_2545259196557506816.png)
+
+![](images/gru_main_sequence_central_846746862468190208.png)
+
+::::
 
 *Fuente: Elaboración propia*
 
-Ejemplo 2 del espectro generado por el modelo de redes neuronales recurrentes con una capa de GRU.
+Secuencia central. Espectros generados por el modelo de redes neuronales recurrentes con una capa de [GRU]{.acr} para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-gru-right}
+
+::::{layout-nrow="2"}
+
+![](images/gru_main_sequence_right_1333563847643825792.png)
+
+![](images/gru_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo de redes neuronales recurrentes con una capa de [GRU]{.acr} para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-gru-wd}
+
+::::{layout-nrow="2"}
+
+![](images/gru_white_dwarfs_1029230844528601472.png)
+
+![](images/gru_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo de redes neuronales recurrentes con una capa de [GRU]{.acr} para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 El modelo consiguió reproducir la forma general de los espectros reales de [SDSS]{.acr}, acorde con las conclusiones obtenidas de las métricas estudiadas. 
@@ -1048,21 +1360,66 @@ Resultados obtenidos con el modelo basado en RNN bidireccionales para los difere
 Estos valores fueron muy similares a los obtenidos en el modelo anterior, siendo entre un 0.001 y 0.01 más altos según la métrica. Siguieron siendo buenas aproximaciones e indicaron un buen comportamiento del modelo, pero no presentaron una mejora significativa comparado con el anterior. Contrariamente a lo que podría suponerse, el procesamiento de la secuencia en ambas direcciones no aportó una clara ventaja estadística en este conjunto de datos.
 
 
-Los ejemplos usados para la representación visual de las aproximaciones tampoco presentaron grandes diferencias, tal y como observamos en la @fig-BIRNN
+Los ejemplos usados para la representación visual de las aproximaciones tampoco presentaron grandes diferencias, tal y como observamos en las @fig-birnn-left, @fig-birnn-central, @fig-birnn-right y @fig-birnn-wd
 
-:::{#fig-BIRNN}
+:::{#fig-birnn-left}
 
-:::: {layout-nrow="2"}
+::::{layout-nrow="2"}
 
-![](images/ejemplo_10_BIRNN.png)
+![](images/birnn_main_sequence_left_797526743414637056.png)
 
-![](images/ejemplo_245_BIRNN.png)
+![](images/birnn_main_sequence_left_1337575961276827264.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generados por el modelo de redes neuronales recurrentes con una capa bidireccional.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo de redes neuronales recurrentes con una capa bidireccional para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
+:::
+
+:::{#fig-birnn-central}
+
+::::{layout-nrow="2"}
+
+![](images/birnn_main_sequence_central_2545259196557506816.png)
+
+![](images/birnn_main_sequence_central_846746862468190208.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central. Espectros generados por el modelo de redes neuronales recurrentes con una capa bidireccional para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-birnn-right}
+
+::::{layout-nrow="2"}
+
+![](images/birnn_main_sequence_right_1333563847643825792.png)
+
+![](images/birnn_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo de redes neuronales recurrentes con una capa bidireccional para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-birnn-wd}
+
+::::{layout-nrow="2"}
+
+![](images/birnn_white_dwarfs_1029230844528601472.png)
+
+![](images/birnn_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo de redes neuronales recurrentes con una capa bidireccional para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 Las predicciones volvieron a mantener la forma general del espectro, sin apreciarse una mejora visual evidente comparado con el modelo anterior.
@@ -1108,21 +1465,66 @@ Resultados obtenidos con el modelo basado en RNN bidireccionales y la función d
 
 A pesar de las ventajas del mecanismo de atención las métricas obtenidas siguieron estando muy cercanas a las de los demás modelos estudiados.
 
-Igual que en las métricas comentadas, en los espectros usados como punto de control tampoco se apreciaron grandes diferencias como se puede observar en las imágenes de la @fig-ATT. 
+Igual que en las métricas comentadas, en los espectros usados como punto de control tampoco se apreciaron grandes diferencias como se puede observar en las imágenes de las @fig-att-left, @fig-att-central, @fig-att-right y @fig-att-wd. 
 
-:::{#fig-ATT}
+:::{#fig-att-left}
 
-:::: {layout-nrow="2"}
+::::{layout-nrow="2"}
 
-![](images/ejemplo_10_ATT.png)
+![](images/birnn-attention_main_sequence_left_797526743414637056.png)
 
-![](images/ejemplo_245_ATT.png)
+![](images/birnn-attention_main_sequence_left_1337575961276827264.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Ejemplos de espectros generados por el modelo de redes neuronales recurrentes con una función de Atención.
+Secuencia central, alta luminosidad y alta temperatura. Espectros generados por el modelo de redes neuronales recurrentes con una función de Atención para los objetos con paralaje no significativo, por debajo de 0,01 mas, cuya magnitud absoluta no es fiable: SIMBAD identifica la pareja como una [RR*]{.acr} y un [QSO]{.acr}, y no como estrellas de la secuencia principal.
+:::
+
+:::{#fig-att-central}
+
+::::{layout-nrow="2"}
+
+![](images/birnn-attention_main_sequence_central_2545259196557506816.png)
+
+![](images/birnn-attention_main_sequence_central_846746862468190208.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central. Espectros generados por el modelo de redes neuronales recurrentes con una función de Atención para el tramo central de la secuencia, el grupo más poblado de la muestra con 655 objetos, formado por estrellas de baja masa con temperaturas efectivas en torno a 4 500 K.
+:::
+
+:::{#fig-att-right}
+
+::::{layout-nrow="2"}
+
+![](images/birnn-attention_main_sequence_right_1333563847643825792.png)
+
+![](images/birnn-attention_main_sequence_right_1487199019709432320.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Secuencia central, baja luminosidad y baja temperatura. Espectros generados por el modelo de redes neuronales recurrentes con una función de Atención para el extremo frío de la secuencia, con estrellas de baja masa de unos 3 100 K y paralajes de entre 8 y 27 mas, es decir, objetos cercanos y poco luminosos.
+:::
+
+:::{#fig-att-wd}
+
+::::{layout-nrow="2"}
+
+![](images/birnn-attention_white_dwarfs_1029230844528601472.png)
+
+![](images/birnn-attention_white_dwarfs_1601777507236908672.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Enanas blancas. Espectros generados por el modelo de redes neuronales recurrentes con una función de Atención para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
 
