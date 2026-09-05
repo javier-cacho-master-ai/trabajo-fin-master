@@ -1,21 +1,18 @@
 """
 Gráficas compartidas por los cuadernos.
 
-Además del espectro suelto, reúne la comparativa de espectros que repetían
-todos los cuadernos de entrenamiento: la misma figura de espectro real,
-espectro predicho y espectro de Gaia que dibujaba `plot_prediction_example`,
-pero sobre los objetos de `grouped_samples_selected_objects.csv` en lugar de
-sobre índices sueltos del conjunto de test escritos a mano en cada cuaderno.
+Además del espectro suelto, dibuja la comparativa que repetían todos los
+cuadernos de entrenamiento —espectro observado por SDSS, espectro predicho y
+espectro de Gaia que entra en el modelo— sobre los objetos de
+`grouped_samples_selected_objects.csv`, en lugar de sobre índices sueltos del
+conjunto de test escritos a mano en cada cuaderno.
 
-Así todos los modelos se ilustran con los mismos objetos —una pareja por cada
-zona del diagrama HR—, identificados por su nombre celeste oficial, y las
-figuras quedan guardadas en `models/images` con un nombre estable que la
-memoria puede citar.
+Sale una figura por objeto, guardada en `models/images` con un nombre estable
+que la memoria cita: allí se agrupan las de cada zona del diagrama HR en una
+misma figura, con el nombre del grupo en el pie.
 """
 
 from pathlib import Path
-import re
-import textwrap
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,41 +26,15 @@ GROUPED_SAMPLES_DIR = SOLUTION_DIR / "models" / "data" / "grouped_samples"
 SELECTED_OBJECTS_PATH = GROUPED_SAMPLES_DIR / "grouped_samples_selected_objects.csv"
 IMAGES_DIR = SOLUTION_DIR / "models" / "images"
 
-# Nombre de cada grupo, por la zona de la secuencia que ocupan sus objetos. El
-# color BP-RP crece hacia la derecha del diagrama, es decir, hacia las
-# temperaturas más bajas: el grupo de la izquierda es el más caliente
-# (Teff ~6 400 K) y el más luminoso, y el de la derecha, el más frío
-# (Teff ~3 100 K) y el más débil.
-#
-# La magnitud absoluta del grupo de la izquierda hay que tomarla con reservas:
-# sus paralajes no llegan a 0,01 mas, así que no son significativos y el módulo
-# de distancia que sale de ellos tampoco. De ahí que ahí aparezcan objetos
-# lejanos —RR Lyrae, cuásares— como si fueran muy luminosos.
-GROUP_LABELS = {
-    "main_sequence_left":    "Secuencia central, alta luminosidad y alta temperatura"
-  , "main_sequence_central": "Secuencia central"
-  , "main_sequence_right":   "Secuencia central, baja luminosidad y baja temperatura"
-  , "white_dwarfs":          "Enanas blancas"
-}
-
-# Grupos cuyo nombre ya dice de qué objetos se trata: repetir ahí el tipo de
-# SIMBAD sobra
-GROUPS_NAMED_BY_TYPE = frozenset({"white_dwarfs"})
-
-# Tipos de objeto de SIMBAD, en castellano: en el título del grupo el código
-# escueto que devuelve el catálogo ('LM*', 'RR*') no se entiende. Se acompaña
-# del código entre paréntesis, que es como lo publica el catálogo. Los tipos
-# que no estén aquí salen sólo con su código.
+# Tipos de objeto de SIMBAD, en castellano: el código escueto que devuelve el
+# catálogo ('LM*', 'RR*') no se entiende. Los que no estén aquí salen sólo con
+# su código.
 OTYPE_LABELS = {
     "LM*": "estrella de baja masa"
   , "RR*": "variable RR Lyrae"
   , "QSO": "cuásar"
   , "WD*": "enana blanca"
 }
-
-# La procedencia del nombre y del tipo de cada objeto, al pie de la figura: así
-# no hay que repetirla en cada panel
-SIMBAD_CREDIT = "Nombre y tipo de cada objeto según SIMBAD"
 
 # Paleta de Okabe-Ito: las tres series se distinguen también con deuteranopía y
 # protanopía, al contrario que el azul, naranja y verde por defecto de
@@ -74,32 +45,26 @@ INPUT_COLOR     = "#009e73"
 
 SUBTITLE_COLOR = "#52514e"
 
-# Los dos objetos de cada grupo van uno debajo del otro, en una sola columna, de
-# modo que las dos gráficas comparten el ancho completo de la figura. La memoria
-# las coloca a lo ancho de la caja de texto, a unos dos tercios de su tamaño
-# natural, y de ahí el tamaño de la letra.
-FIGURE_WIDTH_INCHES = 9.5
-PANEL_HEIGHT_INCHES = 3.8
+# Tamaño base de la letra, el 'em' de la figura: los demás tamaños son relativos
+# a él —Matplotlib entiende 'large' o 'small'— y también lo son las medidas del
+# lienzo, de modo que cambiarlo reescala la figura entera.
+BASE_FONT_SIZE = 12
 
-# Separación entre las gráficas de los dos objetos, en pulgadas: con el ajuste
-# automático quedaban pegadas, y el título del segundo objeto casi tocaba el eje
-# del primero. El hueco se suma al alto del lienzo en lugar de restarse a las
-# gráficas, de modo que estas conservan su tamaño
-PANEL_GAP_INCHES = 1.1
+FIGURE_WIDTH_EM = 56
+FIGURE_HEIGHT_EM = 20
 
-FONT_SIZES = {
-    "figure.titlesize": 15
-  , "axes.titlesize":   15
-  , "axes.labelsize":   13
-  , "xtick.labelsize":  12
-  , "ytick.labelsize":  12
-  , "legend.fontsize":  13
+# Hueco entre el nombre del objeto y su gráfica, donde caben los identificadores
+TITLE_PAD_EM = 2
+
+# Un punto es 1/72 de pulgada: es la única conversión del módulo, y hace falta
+# porque Matplotlib sólo admite pulgadas para el tamaño del lienzo
+POINTS_PER_INCH = 72
+
+FIGURE_STYLE = {
+    "font.size":  BASE_FONT_SIZE
+  , "axes.grid":  True
+  , "grid.alpha": 0.2
 }
-OBJECT_SUBTITLE_SIZE = 11
-CREDIT_SIZE = 10
-
-# El título de la figura se reparte en varias líneas a lo ancho del lienzo
-TITLE_WRAP_WIDTH = 80
 
 
 # ---------------------------------------------------------------------------
@@ -107,55 +72,24 @@ TITLE_WRAP_WIDTH = 80
 # ---------------------------------------------------------------------------
 
 
-def _slugify(text: str) -> str:
-    """Convierte un nombre de SIMBAD en un nombre de fichero manejable."""
-    return re.sub(r"[^0-9A-Za-z]+", "-", str(text)).strip("-")
-
-
-def _group_label(group: str) -> str:
-    return GROUP_LABELS.get(group, str(group).replace("_", " "))
-
-
-def _otype_labels(group: str, group_objects: pd.DataFrame) -> str:
+def _object_subtitle(selected_object):
     """
-    Tipos de objeto de un grupo, sin repetirlos y en el orden en que aparecen.
-    Casi siempre es uno solo; el grupo de paralaje pequeño mezcla dos. Sale
-    vacío cuando el nombre del grupo ya dice de qué objetos se trata.
+    Segunda línea del título: el tipo que SIMBAD asigna al objeto y sus
+    identificadores de catálogo, debajo del nombre oficial.
     """
-    if group in GROUPS_NAMED_BY_TYPE:
-        return ""
-
-    labels = []
-    for otype in group_objects["simbad_otype"]:
-        if str(otype) in ("", "nan"):
-            continue
-
-        label = OTYPE_LABELS.get(otype)
-        label = f"{label} ({otype})" if label else str(otype)
-
-        if label not in labels:
-            labels.append(label)
-
-    return " y ".join(labels)
-
-
-def _object_subtitle(selected_object: pd.Series) -> str:
-    """
-    Segunda línea del título: los identificadores de catálogo, debajo del
-    nombre oficial. Ni la zona del diagrama ni el tipo de objeto se repiten
-    aquí: encabezan la figura entera.
-    """
-    parts = [f"Gaia DR3 {selected_object['source_id']}"]
-
-    # La terna placa-MJD-fibra es la referencia con la que SDSS nombra sus
-    # espectros, más legible que el identificador numérico
-    if not pd.isna(selected_object.get("plate")):
-        parts.append(
-            "SDSS "
-            f"{int(selected_object['plate'])}-"
-            f"{int(selected_object['mjd'])}-"
-            f"{int(selected_object['fiberID'])}"
-        )
+    otype = str(selected_object["simbad_otype"])
+    parts = [
+        # El nombre que encabeza la figura y el tipo salen los dos de SIMBAD,
+        # así que la atribución va aquí y no repetida al pie
+        f"SIMBAD: {OTYPE_LABELS.get(otype, otype)} ({otype})"
+      , f"Gaia DR3 {selected_object['source_id']}"
+        # La terna placa-MJD-fibra es la referencia con la que SDSS nombra sus
+        # espectros, más legible que el identificador numérico
+      , "SDSS "
+        f"{int(selected_object['plate'])}-"
+        f"{int(selected_object['mjd'])}-"
+        f"{int(selected_object['fiberID'])}"
+    ]
 
     return "  ·  ".join(parts)
 
@@ -169,8 +103,8 @@ def _test_indices(source_ids, test_source_ids):
         test_source_ids (numpy.ndarray): Identificadores del conjunto de test.
 
     Returns:
-        list[int | None]: Índice de cada objeto en el conjunto de test, o
-            None si no está en él.
+        list[int | None]: Índice de cada objeto en el conjunto de test, o None
+            si no está en él.
     """
     positions = []
     for source_id in source_ids:
@@ -215,22 +149,14 @@ def plot_physical_spectrum(spectrum, title: str = "Espectro"):
     plt.show()
 
 
-def plot_selected_objects(
-    selection_path
-  , test_data_path
-  , predictions_path
-  , model_name
-  , images_dir=IMAGES_DIR
-  , prediction_key="y_pred"
-):
+def plot_selected_objects(selection_path, test_data_path, predictions_path, model_name):
     """
-    Dibuja, para cada zona del diagrama HR, la comparativa de espectros de los
-    objetos seleccionados en el CSV.
+    Dibuja la comparativa de espectros de cada objeto seleccionado en el CSV.
 
-    Sale una figura por zona, con un panel por objeto: el espectro observado por
-    SDSS, el que predice el modelo y el de Gaia que entra en él. Cada panel se
-    encabeza con el nombre celeste oficial del objeto y, debajo, sus
-    identificadores de catálogo.
+    Sale una figura por objeto —espectro observado por SDSS, espectro predicho
+    y espectro de Gaia—, encabezada por su nombre celeste oficial y, debajo,
+    su tipo y sus identificadores de catálogo. Cada una se guarda en
+    `models/images` como `<modelo>_<grupo>_<source_id>.png`.
 
     La celda que la llama se ejecuta suelta: la función parte del CSV de objetos
     y de los `.npz` del conjunto de test y de las predicciones, así que no
@@ -243,18 +169,12 @@ def plot_selected_objects(
         test_data_path (str | Path): `.npz` del conjunto de test del cuaderno.
         predictions_path (str | Path): `.npz` de predicciones del modelo.
         model_name (string): Nombre del modelo, el que llevan sus ficheros
-            ('dense-global', 'cnn-v2', 'gru'...). Encabeza las figuras y nombra
-            las imágenes.
-        images_dir (str | Path): Carpeta donde guardar las imágenes. Se crea si
-            no existe.
-        prediction_key (string): Nombre del array de predicciones dentro de su
-            `.npz`.
+            ('dense-global', 'cnn-v2', 'gru'...). Nombra las imágenes.
 
     Returns:
-        list[Path]: Rutas de las imágenes guardadas, una por zona.
+        list[Path]: Rutas de las imágenes guardadas, una por objeto.
     """
-    images_dir = Path(images_dir)
-    images_dir.mkdir(parents=True, exist_ok=True)
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
     selection = pd.read_csv(selection_path)
 
@@ -262,105 +182,72 @@ def plot_selected_objects(
         gaia_wavelength = test_data["gaia_wavelength"]
         sdss_wavelength = test_data["sdss_wavelength"]
         test_source_ids = test_data["X_id_test"]
-        X_test          = test_data["X_test"]
-        y_test          = test_data["y_test"]
+        X_test = test_data["X_test"]
+        y_test = test_data["y_test"]
 
     with np.load(predictions_path) as predictions:
-        y_pred = predictions[prediction_key]
+        y_pred = predictions["y_pred"]
 
     selection["test_index"] = _test_indices(selection["source_id"], test_source_ids)
 
-    missing = selection[selection["test_index"].isna()]
-    for _, absent_object in missing.iterrows():
-        print(
-            f"Aviso: {absent_object['simbad_main_id']} "
-            f"(Gaia DR3 {absent_object['source_id']}) no está en el conjunto de test"
-        )
-
     image_paths = []
+    inches_per_em = BASE_FONT_SIZE / POINTS_PER_INCH
 
-    grouped = selection.dropna(subset=["test_index"]).groupby("group", sort=False)
+    for _, selected_object in selection.iterrows():
+        if pd.isna(selected_object["test_index"]):
+            print(
+                f"Aviso: {selected_object['simbad_main_id']} "
+                f"(Gaia DR3 {selected_object['source_id']}) no está en el conjunto de test"
+            )
+            continue
 
-    for group, group_objects in grouped:
-        with plt.rc_context(FONT_SIZES):
-            figure, axes = plt.subplots(
-                len(group_objects), 1
-              , figsize=(
-                    FIGURE_WIDTH_INCHES
-                  , PANEL_HEIGHT_INCHES * len(group_objects)
-                    + PANEL_GAP_INCHES * (len(group_objects) - 1)
-                )
-              , squeeze=False
+        index = int(selected_object["test_index"])
+
+        with plt.rc_context(FIGURE_STYLE):
+            figure, axis = plt.subplots(
+                figsize=(FIGURE_WIDTH_EM * inches_per_em, FIGURE_HEIGHT_EM * inches_per_em)
+              , layout="constrained"
             )
 
-            for axis, (_, selected_object) in zip(axes[:, 0], group_objects.iterrows()):
-                index = int(selected_object["test_index"])
-
-                axis.plot(
-                    sdss_wavelength, y_test[index]
-                  , label="SDSS observado", color=OBSERVED_COLOR, linewidth=1.0, alpha=0.85
-                )
-                axis.plot(
-                    sdss_wavelength, y_pred[index]
-                  , label="SDSS predicho", color=PREDICTED_COLOR, linewidth=1.2
-                )
-                axis.plot(
-                    gaia_wavelength, X_test[index]
-                  , label="Gaia (entrada)", color=INPUT_COLOR, linewidth=1.4
-                )
-
-                # El nombre oficial del objeto encabeza el panel; los
-                # identificadores de Gaia y SDSS van debajo, en menor tamaño
-                axis.set_title(
-                    selected_object["simbad_main_id"], fontweight="bold", pad=24
-                )
-                axis.text(
-                    0.5, 1.015, _object_subtitle(selected_object)
-                  , transform=axis.transAxes, ha="center", va="bottom"
-                  , fontsize=OBJECT_SUBTITLE_SIZE, color=SUBTITLE_COLOR
-                )
-
-                axis.set_xlabel("Longitud de onda [Å]")
-                axis.set_ylabel("Flujo")
-                axis.grid(alpha=0.2)
-
-            # El pie de la figura lleva la leyenda y, debajo, la procedencia de los
-            # nombres. Las dos van en fracción de figura, así que la altura que se
-            # les reserva se reparte entre ambas
-            footer_height = 0.7 / figure.get_figheight()
-
-            handles, labels = axes[0, 0].get_legend_handles_labels()
-            figure.legend(
-                handles, labels
-              , loc="lower center", bbox_to_anchor=(0.5, 0.45 * footer_height)
-              , ncol=3, frameon=False
+            axis.plot(
+                sdss_wavelength, y_test[index]
+              , label="SDSS observado", color=OBSERVED_COLOR, alpha=0.85
             )
-            figure.text(
-                0.5, 0.1 * footer_height, SIMBAD_CREDIT
-              , ha="center", va="bottom", fontsize=CREDIT_SIZE, color=SUBTITLE_COLOR
+            axis.plot(
+                sdss_wavelength, y_pred[index], label="SDSS predicho", color=PREDICTED_COLOR
+            )
+            axis.plot(
+                gaia_wavelength, X_test[index], label="Gaia (entrada)", color=INPUT_COLOR
             )
 
-            otypes = _otype_labels(group, group_objects)
-
-            title = " — ".join(
-                part for part in
-                (_group_label(group), otypes, f"modelo {model_name}") if part
+            # El nombre oficial del objeto encabeza la figura; el tipo y los
+            # identificadores van debajo, en menor tamaño
+            axis.set_title(
+                selected_object["simbad_main_id"]
+              , fontsize="large", fontweight="bold", pad=TITLE_PAD_EM * BASE_FONT_SIZE
+            )
+            axis.text(
+                0.5, 1.02, _object_subtitle(selected_object)
+              , transform=axis.transAxes, ha="center", va="bottom"
+              , fontsize="small", color=SUBTITLE_COLOR
             )
 
-            figure.suptitle(textwrap.fill(title, TITLE_WRAP_WIDTH))
-            # `h_pad` va en múltiplos del tamaño de la letra, así que el hueco
-            # en pulgadas se convierte a puntos y se divide entre él
-            figure.tight_layout(
-                rect=(0, footer_height, 1, 0.95)
-              , h_pad=PANEL_GAP_INCHES * 72 / FONT_SIZES["axes.titlesize"]
-            )
+            axis.set_xlabel("Longitud de onda [Å]")
+            axis.set_ylabel("Flujo")
 
-            image_path = images_dir / f"{model_name}_{group}.png"
+            # La leyenda la coloca el propio motor de composición bajo la
+            # gráfica, sin coordenadas escritas a mano
+            figure.legend(loc="outside lower center", ncol=3, frameon=False)
+
+            image_path = (
+                IMAGES_DIR / f"{model_name}_{selected_object['group']}"
+                f"_{selected_object['source_id']}.png"
+            )
             figure.savefig(image_path, dpi=150)
             image_paths.append(image_path)
 
             plt.show()
 
-    print(f"Imágenes guardadas en {images_dir}")
+    print(f"Imágenes guardadas en {IMAGES_DIR}")
 
     return image_paths
