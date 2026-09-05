@@ -16,7 +16,14 @@ solution/
 ├── dataset_extraction_pipeline/         flujo de datos de producción (véase dataset_extraction_pipeline/README.md)
 │   ├── config.py                        dataclass inmutable PipelineConfig
 │   ├── run.py                           punto de entrada por línea de comandos
-│   └── steps/                           pasos numerados de el flujo (1–6)
+│   ├── steps/                           pasos numerados de el flujo (1–6)
+│   └── data/                            salida de el flujo (no rastreada en git)
+│       ├── 01_sdss_specobj/
+│       ├── 02_gaia_crossmatch/
+│       ├── 03_sdss_spectra/
+│       ├── 04_pruned/
+│       ├── 05_gaia_spectra/
+│       └── 06_training_data/training.h5
 ├── services/                            módulos de consulta y utilidades reutilizables
 │   ├── gaia.py                          utilidades TAP de Gaia
 │   ├── sdss.py                          análisis de FITS de SDSS y conversión de unidades
@@ -25,13 +32,8 @@ solution/
 │   └── queries/
 │       ├── gaia_sdss_random_subset.adql consulta de cruce Gaia×SDSS
 │       └── sdss.adql                    consulta de metadatos SpecObj de SDSS
-└── data/                                salida de el flujo (no rastreada en git)
-    ├── 01_gaia_crossmatch/
-    ├── 02_sdss_references/
-    ├── 03_sdss_spectra/
-    ├── 04_pruned/
-    ├── 05_gaia_spectra/
-    └── 06_training_data/training.h5
+└── data/                                datos ajenos al flujo (no rastreados en git)
+    └── *processed_data*.npz             particiones de entrenamiento, validación y test
 ```
 
 ## Inicio rápido

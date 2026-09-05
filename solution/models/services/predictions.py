@@ -5,8 +5,8 @@ Servicio compartido por todos los cuadernos de entrenamiento de `models`. Las
 predicciones no son un checkpoint del entrenamiento —de eso se ocupa
 `checkpoints.py`—, sino el dato que consume la comparativa entre arquitecturas,
 que vive en su propio cuaderno. Por eso tienen módulo propio y se guardan en
-`data/predictions/<modelo>_predictions.npz`, fuera de la carpeta del cuaderno
-que entrena el modelo.
+`models/data/predictions/<modelo>_predictions.npz`, fuera de la carpeta del
+cuaderno que entrena el modelo.
 
 `predict_test_set` las genera a partir de los ficheros de checkpoint —el
 `.keras` del modelo y el `.npz` del conjunto de test—, de modo que la celda que
