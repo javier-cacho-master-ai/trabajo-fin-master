@@ -15,6 +15,7 @@ memoria puede citar.
 
 from pathlib import Path
 import re
+import textwrap
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -72,6 +73,33 @@ PREDICTED_COLOR = "#d55e00"
 INPUT_COLOR     = "#009e73"
 
 SUBTITLE_COLOR = "#52514e"
+
+# Los dos objetos de cada grupo van uno debajo del otro, en una sola columna, de
+# modo que las dos gráficas comparten el ancho completo de la figura. La memoria
+# las coloca a lo ancho de la caja de texto, a unos dos tercios de su tamaño
+# natural, y de ahí el tamaño de la letra.
+FIGURE_WIDTH_INCHES = 9.5
+PANEL_HEIGHT_INCHES = 3.8
+
+# Separación entre las gráficas de los dos objetos, en pulgadas: con el ajuste
+# automático quedaban pegadas, y el título del segundo objeto casi tocaba el eje
+# del primero. El hueco se suma al alto del lienzo en lugar de restarse a las
+# gráficas, de modo que estas conservan su tamaño
+PANEL_GAP_INCHES = 1.1
+
+FONT_SIZES = {
+    "figure.titlesize": 15
+  , "axes.titlesize":   15
+  , "axes.labelsize":   13
+  , "xtick.labelsize":  12
+  , "ytick.labelsize":  12
+  , "legend.fontsize":  13
+}
+OBJECT_SUBTITLE_SIZE = 11
+CREDIT_SIZE = 10
+
+# El título de la figura se reparte en varias líneas a lo ancho del lienzo
+TITLE_WRAP_WIDTH = 80
 
 
 # ---------------------------------------------------------------------------
@@ -251,77 +279,87 @@ def plot_selected_objects(
 
     image_paths = []
 
-    for group, group_objects in selection.dropna(subset=["test_index"]).groupby("group", sort=False):
-        figure, axes = plt.subplots(
-            len(group_objects), 1
-          , figsize=(11, 3.6 * len(group_objects))
-          , squeeze=False
-        )
+    grouped = selection.dropna(subset=["test_index"]).groupby("group", sort=False)
 
-        for axis, (_, selected_object) in zip(axes[:, 0], group_objects.iterrows()):
-            index = int(selected_object["test_index"])
-
-            axis.plot(
-                sdss_wavelength, y_test[index]
-              , label="SDSS observado", color=OBSERVED_COLOR, linewidth=1.0, alpha=0.85
-            )
-            axis.plot(
-                sdss_wavelength, y_pred[index]
-              , label="SDSS predicho", color=PREDICTED_COLOR, linewidth=1.2
-            )
-            axis.plot(
-                gaia_wavelength, X_test[index]
-              , label="Gaia (entrada)", color=INPUT_COLOR, linewidth=1.4
+    for group, group_objects in grouped:
+        with plt.rc_context(FONT_SIZES):
+            figure, axes = plt.subplots(
+                len(group_objects), 1
+              , figsize=(
+                    FIGURE_WIDTH_INCHES
+                  , PANEL_HEIGHT_INCHES * len(group_objects)
+                    + PANEL_GAP_INCHES * (len(group_objects) - 1)
+                )
+              , squeeze=False
             )
 
-            # El nombre oficial del objeto encabeza el panel; los
-            # identificadores de Gaia y SDSS van debajo, en menor tamaño
-            axis.set_title(
-                selected_object["simbad_main_id"]
-              , fontsize=12, fontweight="bold", pad=20
+            for axis, (_, selected_object) in zip(axes[:, 0], group_objects.iterrows()):
+                index = int(selected_object["test_index"])
+
+                axis.plot(
+                    sdss_wavelength, y_test[index]
+                  , label="SDSS observado", color=OBSERVED_COLOR, linewidth=1.0, alpha=0.85
+                )
+                axis.plot(
+                    sdss_wavelength, y_pred[index]
+                  , label="SDSS predicho", color=PREDICTED_COLOR, linewidth=1.2
+                )
+                axis.plot(
+                    gaia_wavelength, X_test[index]
+                  , label="Gaia (entrada)", color=INPUT_COLOR, linewidth=1.4
+                )
+
+                # El nombre oficial del objeto encabeza el panel; los
+                # identificadores de Gaia y SDSS van debajo, en menor tamaño
+                axis.set_title(
+                    selected_object["simbad_main_id"], fontweight="bold", pad=24
+                )
+                axis.text(
+                    0.5, 1.015, _object_subtitle(selected_object)
+                  , transform=axis.transAxes, ha="center", va="bottom"
+                  , fontsize=OBJECT_SUBTITLE_SIZE, color=SUBTITLE_COLOR
+                )
+
+                axis.set_xlabel("Longitud de onda [Å]")
+                axis.set_ylabel("Flujo")
+                axis.grid(alpha=0.2)
+
+            # El pie de la figura lleva la leyenda y, debajo, la procedencia de los
+            # nombres. Las dos van en fracción de figura, así que la altura que se
+            # les reserva se reparte entre ambas
+            footer_height = 0.7 / figure.get_figheight()
+
+            handles, labels = axes[0, 0].get_legend_handles_labels()
+            figure.legend(
+                handles, labels
+              , loc="lower center", bbox_to_anchor=(0.5, 0.45 * footer_height)
+              , ncol=3, frameon=False
             )
-            axis.text(
-                0.5, 1.015, _object_subtitle(selected_object)
-              , transform=axis.transAxes, ha="center", va="bottom"
-              , fontsize=9, color=SUBTITLE_COLOR
+            figure.text(
+                0.5, 0.1 * footer_height, SIMBAD_CREDIT
+              , ha="center", va="bottom", fontsize=CREDIT_SIZE, color=SUBTITLE_COLOR
             )
 
-            axis.set_xlabel("Longitud de onda [Å]")
-            axis.set_ylabel("Flujo")
-            axis.grid(alpha=0.2)
+            otypes = _otype_labels(group, group_objects)
 
-        # El pie de la figura lleva la leyenda y, debajo, la procedencia de los
-        # nombres. Las dos van en fracción de figura, así que la altura que se
-        # les reserva se reparte entre ambas
-        footer_height = 0.42 / figure.get_figheight()
-
-        handles, labels = axes[0, 0].get_legend_handles_labels()
-        figure.legend(
-            handles, labels
-          , loc="lower center", bbox_to_anchor=(0.5, 0.45 * footer_height)
-          , ncol=3, frameon=False
-        )
-        figure.text(
-            0.5, 0.1 * footer_height, SIMBAD_CREDIT
-          , ha="center", va="bottom", fontsize=8, color=SUBTITLE_COLOR
-        )
-
-        otypes = _otype_labels(group, group_objects)
-
-        figure.suptitle(
-            " — ".join(
+            title = " — ".join(
                 part for part in
                 (_group_label(group), otypes, f"modelo {model_name}") if part
             )
-          , fontsize=13
-        )
-        figure.tight_layout(rect=(0, footer_height, 1, 0.97))
 
-        image_path = images_dir / f"{model_name}_{group}.png"
-        figure.savefig(image_path, dpi=150)
-        image_paths.append(image_path)
+            figure.suptitle(textwrap.fill(title, TITLE_WRAP_WIDTH))
+            # `h_pad` va en múltiplos del tamaño de la letra, así que el hueco
+            # en pulgadas se convierte a puntos y se divide entre él
+            figure.tight_layout(
+                rect=(0, footer_height, 1, 0.95)
+              , h_pad=PANEL_GAP_INCHES * 72 / FONT_SIZES["axes.titlesize"]
+            )
 
-        plt.show()
+            image_path = images_dir / f"{model_name}_{group}.png"
+            figure.savefig(image_path, dpi=150)
+            image_paths.append(image_path)
+
+            plt.show()
 
     print(f"Imágenes guardadas en {images_dir}")
 
