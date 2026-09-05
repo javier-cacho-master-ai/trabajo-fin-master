@@ -652,7 +652,7 @@ Durante el entrenamiento se pudo observar una evolución estable de las métrica
 
 :::{#fig-metricas-red-densa}
 
-::::{layout="[[-1,10,-1],[-1,10,-1],[-1,10,-1]]"}
+::::{layout="[[-1,5,-1],[-1,5,-1],[-1,5,-1]]"}
 
 ![](images/evo_loss_dense_global.png)
 
@@ -752,9 +752,10 @@ Enanas blancas. Espectros generados por el modelo de redes neuronales densas con
 Por un lado, en azul encontramos el espectro que el modelo pretendía predecir, los puntos de [SDSS]{.acr} una vez habían sido recortados. Por otro, en verde podemos ver la entrada que recibía el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia fueron convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usaban escalas diferentes. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
 
-En gran parte de los gráficos observados, el modelo repdroducía la morfología general del espectro, incluso modelaba los picos más acentuados. 
-Si bien es cierto, había puntos que no podía inferir debido a las estructuras detalladas de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
-Durante las comparaciones que se realizaron a continuación, siempre se usaron los mismos ocho objetos, identificados por el nombre celeste y los identificadores de Gaia y [SDSS]{.acr} que aparecen en los gráficos recientemente comentados.
+En los dos primeros espectros mostrados, correspondientes a los tipos RR* y QSO, el ajuste del espectro predicho no capta gran parte de la morfología de estos flujos. En el de tipo QSO no detecta la línea de emisión que encontramos sobre los 6750Å. En cambio, si parece adaptarse a la forma de los demás espectros
+Si bien es cierto, estas predicciones se ven afectadas por el alto nivel de detalle de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
+
+Durante las comparaciones realizadas, siempre se usaron los mismos ocho objetos, identificados por el nombre celeste y los identificadores de Gaia y [SDSS]{.acr} que aparecen en los gráficos recientemente comentados.
 
 El segundo tipo de normalización se basó en la mediana por espectro. Se aplicó la siguiente transformación a cada espectro *i* :
 $$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{mediana}(F_i)} $$
@@ -763,11 +764,11 @@ Para desnormalizarlos, se guardaron las variables originales y se aplicó la fó
 
 $$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{mediana}(|F_i|) $$
 
-Con este método, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar tal y como observamos en las gráficas representadas en las imágenes @fig-metricas-red-densa-normalizada.
+Con este método, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar, incluso con menor grado de sobreajuste, tal y como observamos en las gráficas representadas en las imágenes @fig-metricas-red-densa-median.
 
-:::{#fig-metricas-red-densa-normalizada}
+:::{#fig-metricas-red-densa-median}
 
-::::{layout="[[-1,10,-1],[-1,10,-1],[-1,10,-1]]"}
+::::{layout="[[-1,5,-1],[-1,5,-1],[-1,5,-1]]"}
 
 ![](images/evo_loss_dense_spec_mean.png)
 
@@ -779,10 +780,25 @@ Con este método, los resultados obtenidos fueron similares. Incluso las épocas
 
 *Fuente: Elaboración propia*
 
-Gráficas de evolución de las métricas de entrenamiento en la red densa.
+Gráficas de evolución de las métricas de entrenamiento en la red densa basada en una normalización con la mediana.
 :::
 
-Tampoco se apreciaron rasgos de sobreajuste en el modelo, y los espectros obtenidos sobre los mismos objetos que el modelo anterior, un grupo del diagrama [HR]{.acr} por gráfica, fueron los observados en las @fig-dense-median-left, @fig-dense-median-central, @fig-dense-median-right y @fig-dense-median-wd:
+Tampoco se apreciaron rasgos de sobreajuste en las métricas del modelo que encontramos en la tabla @tbl-met-dense-median.
+
+::: {#tbl-met-dense-median}
+
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0033 | 0.0429 | 0.0089 |
+| Validación | 0.0034 | 0.0433 | 0.0113 |
+| Test | 0.0033 | 0.0436 | 0.0084 |
+
+*Fuente: Elaboración propia*
+
+Resultados obtenidos con el modelo denso con la normalización espectro a espectro basada en la mediana para los diferentes conjuntos de datos.
+:::
+
+Los espectros obtenidos sobre los mismos objetos que el modelo anterior, un par por grupo del diagrama [HR]{.acr}, fueron los observados en las @fig-dense-median-left, @fig-dense-median-central, @fig-dense-median-right y @fig-dense-median-wd:
 
 :::{#fig-dense-median-left}
 
@@ -844,7 +860,7 @@ Secuencia central, baja luminosidad y baja temperatura. Espectros generados por 
 Enanas blancas. Espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
-Comparándolas con las gráficas obtenidas con la primera normalización mencionada, pudimos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. 
+Comparándolas con las gráficas obtenidas con la primera normalización mencionada, pudimos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. Esta mejora destaca sobre todo en los dos primeros gráficos representados en la @fig-dense-median-left.
 
 Por último, si nos fijamos en las @fig-dense-max-left, @fig-dense-max-central, @fig-dense-max-right y @fig-dense-max-wd, observamos los resultados obtenidos sobre los mismos objetos con una normalización espectro a espectro basada en el máximo valor del flujo. En estas, la fórmula utilizada para normalizar los espectros fue:
 $$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{max}(F_i)} $$
@@ -915,60 +931,40 @@ Enanas blancas. Espectros generados por el modelo de redes neuronales densas con
 
 A partir de las gráficas observadas, pareció que la opción con mejores resultados era la segunda, dado que era la que obtenía espectros más cercanos a los reales. Ahora bien, se comprobaron métricas para obtener resultados más concluyentes.
 
-En la @tbl-normalizaciones-densa se encuentran las métricas obtenidas con esta arquitectura al predecir el conjunto de test según el tipo de normalización aplicado.
+En la @tbl-met-dense-max se encuentran las métricas obtenidas con esta arquitectura y normalización sobre los diferentes conjuntos de datos.
 
-::: {#tbl-normalizaciones-densa}
+::: {#tbl-met-dense-max}
 
-| Normalización | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
 |---|---:|---:|---:|
-| Mediana del conjunto de entrenamiento | 0.0010 | 0.0778 | 0.0217 |
-| Por mediana de cada espectro | 0.0033 | 0.0436 | 0.0084 |
-| Por máximo de cada espectro | 0.0045 | 0.0610 | 0.0089 |
+| Entrenamiento | 0.0040 | 0.0597 | 0.0081 |
+| Validación | 0.0044 | 0.0628 | 0.0088 |
+| Test | 0.0045 | 0.0610 | 0.0089 |
 
 *Fuente: Elaboración propia*
 
-Resultados obtenidos con distintas estrategias de normalización.
+Resultados obtenidos con el modelo denso con la normalización espectro a espectro basada en el máximo para los diferentes conjuntos de datos.
 :::
 
-Igual que en la conclusión anterior, al aplicar una normalización por espectro basada en la mediana, obtuvimos ligeramente mejores resultados. 
+Los valores obtenidos con esta normalización, fueron muy similares a los anteriores y, a lo largo del entrenamiento, observamos en la @fig-metricas-red-densa-max como las líneas no parecían converger de igual modo que lo habían hecho en el modelo anterior.
 
-La última comparación vino dada por la librería *ISpec*. Con esta se estimaron los parámetros astrofísicos de los cuerpos observados a partir del espectro real de [SDSS]{.acr} y los predichos. 
-Para ello primero se transformó cada espectro en el formato requerido por iSpec, teniendo que añadir para cada punto el flujo, longitud de onda y error asociado. El análisis se realizó sin incertidumbre asignada a cada punto, con lo que se asignó un valor unitario de error a todos los puntos de modo que todos partiesen del mismo peso.
-Una vez teníamos la estructura requerida, normalizamos al continuo los espectros con la función propia de iSpec.
+:::{#fig-metricas-red-densa-max}
 
-Además, los puntos iniciales de comprobación de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto. 
+::::{layout="[[-1,5,-1],[-1,5,-1],[-1,5,-1]]"}
 
-En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES* [@Gustafsson2008], pero se observaron advertencias de que los valores quedaban fuera del rango disponible, así que se usó *ATLAS9.Castelli* [@CastelliKurucz2003], que prácticamente eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD* [@Piskunov1995], cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen e incluye parámetros necesarios para la síntesis espectral. 
-Se usaron las abundancias solares de Grevesse [@Grevesse2007] como referencia de la metalicidad y la información isotópica de *SPECTRUM* [@GrayCorbally1994].
+![](images/evo_loss_dense_spec_max.png)
 
-A partir de los datos iniciales, mallas e información base mencionada, se ajustó la temperatura, gravedad superficial y metalicidad de las estrellas.
+![](images/evo_mse_dense_spec_max.png)
 
-Para comprobar el funcionamiento del modelo de redes neuronales, se tomaron los resultados del espectro real de [SDSS]{.acr} como los verdaderos, y se compararon los predichos con estos, calculando las diferencias entre los datos obtenidos, sus errores absolutos y relativos. 
-
-Se analizaron muestras aleatorias de 250 espectros para cada modelo denso. El resultado se resume en las gráficas observadas en las figuras @fig-ispec-errors.
-
-:::{#fig-ispec-errors}
-
-::::{ layout="[[-1,4,-1],[-1,4,-1],[-1,4,-1]]"}
-
-![](images/iSpec_dense_logg.png)
-
-![](images/iSpec_dense_teff.png)
-
-![](images/iSpec_dense_logg.png)
+![](images/evo_mae_dense_spec_max.png)
 
 ::::
 
 *Fuente: Elaboración propia*
 
-Gráficos de barras de errores absolutos dados por *iSpec* entre los espectros reales de SDSS y los predichos.
+Gráficas de evolución de las métricas de entrenamiento en la red densa con normalización a partir del máximo de cada espectro.
 :::
 
-
-Encontramos destacada la mediana de los valores obtenidos y la distribución en histogramas de los errores de cada espectro. 
-
-Se aprecia como la mediana del error de la temperatura se ubicaba en todos los modelos alrededor del 0.25%, mientras que la de la gravedad superficial cerca del 0.10% y el error absoluto de la temperatura cerca de los 0.017. 
-Estos valores indicaron una relación de similitud entre las propiedades físicas de ambos espectros, por lo que se pudo afirmar que los modelos densos estudiados conllevaban una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con *iSpec* en rangos de error pequeños. 
 
 #### Modelo denso con SNR
 
@@ -1034,7 +1030,7 @@ Secuencia central, baja luminosidad y baja temperatura. Espectros generados por 
 Enanas blancas. Espectros generados por el modelo de redes neuronales densas con la [SNR]{.acr} de Gaia como entrada para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
-Por otro lado, las métricas obtenidas se encuentran en la @tbl-snr-gaia: 
+Por otro lado, las métricas obtenidas sobre el conjunto de test se encuentran en la @tbl-snr-gaia: 
 
 
 ::: {#tbl-snr-gaia}
@@ -1192,7 +1188,8 @@ Las métricas de entrenamiento, validación y test de la mejor época se recogen
 Resultados obtenidos con el modelo convolucional U-Net para los diferentes conjuntos de datos.
 :::
 
-La comparación con la @tbl-test-cnn fue directa por compartir normalización: el [MAE]{.acr} sobre test bajó de 0.1047 a 0.0786 (una mejora del 25 %) y el [MSE]{.acr} de 0.0272 a 0.0165 (un 39 %). En las @fig-cnn-v2-left, @fig-cnn-v2-central, @fig-cnn-v2-right y @fig-cnn-v2-wd  se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
+La comparación con la @tbl-test-cnn fue directa por compartir normalización: el [MAE]{.acr} sobre test bajó de 0.0645 a 0.0433 y el [MSE]{.acr} de 0.0130 a 0.0071. Asimismo, al comparar con el modelo denso normalizado con la mediana, se observó que los resultados obtenidos por este modelo convolucional eran generalmente mejores.
+En las @fig-cnn-v2-left, @fig-cnn-v2-central, @fig-cnn-v2-right y @fig-cnn-v2-wd  se muestran las predicciones sobre los mismos objetos de las comparativas anteriores.
 
 :::{#fig-cnn-v2-left}
 
@@ -1581,6 +1578,51 @@ En este caso, el modelo radó dos épocas más en converger que el basado en sol
 
 
 ## Discusión
+
+
+La última comparación vino dada por la librería *ISpec*. Con esta se estimaron los parámetros astrofísicos de los cuerpos observados a partir del espectro real de [SDSS]{.acr} y los predichos. 
+Para ello primero se transformó cada espectro en el formato requerido por iSpec, teniendo que añadir para cada punto el flujo, longitud de onda y error asociado. El análisis se realizó sin incertidumbre asignada a cada punto, con lo que se asignó un valor unitario de error a todos los puntos de modo que todos partiesen del mismo peso.
+Una vez teníamos la estructura requerida, normalizamos al continuo los espectros con la función propia de iSpec.
+
+Además, los puntos iniciales de comprobación de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto. 
+
+En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES* [@Gustafsson2008], pero se observaron advertencias de que los valores quedaban fuera del rango disponible, así que se usó *ATLAS9.Castelli* [@CastelliKurucz2003], que prácticamente eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD* [@Piskunov1995], cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen e incluye parámetros necesarios para la síntesis espectral. 
+Se usaron las abundancias solares de Grevesse [@Grevesse2007] como referencia de la metalicidad y la información isotópica de *SPECTRUM* [@GrayCorbally1994].
+
+A partir de los datos iniciales, mallas e información base mencionada, se ajustó la temperatura, gravedad superficial y metalicidad de las estrellas.
+
+Para comprobar el funcionamiento del modelo de redes neuronales, se tomaron los resultados del espectro real de [SDSS]{.acr} como los verdaderos, y se compararon los predichos con estos, calculando las diferencias entre los datos obtenidos, sus errores absolutos y relativos. 
+
+Se analizaron muestras aleatorias de 250 espectros para cada modelo denso. El resultado se resume en las gráficas observadas en las figuras @fig-ispec-errors.
+
+:::{#fig-ispec-errors}
+
+::::{ layout="[[-1,4,-1],[-1,4,-1],[-1,4,-1]]"}
+
+![](images/iSpec_dense_logg.png)
+
+![](images/iSpec_dense_teff.png)
+
+![](images/iSpec_dense_logg.png)
+
+::::
+
+*Fuente: Elaboración propia*
+
+Gráficos de barras de errores absolutos dados por *iSpec* entre los espectros reales de SDSS y los predichos.
+:::
+
+
+Encontramos destacada la mediana de los valores obtenidos y la distribución en histogramas de los errores de cada espectro. 
+
+Se aprecia como la mediana del error de la temperatura se ubicaba en todos los modelos alrededor del 0.25%, mientras que la de la gravedad superficial cerca del 0.10% y el error absoluto de la temperatura cerca de los 0.017. 
+Estos valores indicaron una relación de similitud entre las propiedades físicas de ambos espectros, por lo que se pudo afirmar que los modelos densos estudiados conllevaban una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con *iSpec* en rangos de error pequeños. 
+
+
+
+
+
+
 
 Para comparar la eficacia de cada modelo estudiado con estadísticas añadidas a las ya utilizadas, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del estadístico chi-cuadrado para cada observación del conjunto de test y la librería *iSpec*.
 
