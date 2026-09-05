@@ -15,9 +15,13 @@ import sys
 import numpy as np
 from pathlib import Path
 
-# Localizamos la carpeta 'solution' subiendo desde el directorio de trabajo, sin
-# suponer dónde arranca el kernel: sirve tanto la carpeta de este cuaderno como
-# 'models' o la raíz del repositorio. Su marca es el fichero 'pyproject.toml'.
+# 'services', 'model_functions' e 'iSpec_functions' están en 'models', así que
+# hay que poner esa carpeta en 'sys.path' antes de importarlos. Para eso
+# localizamos 'solution' subiendo desde el directorio de trabajo, sin suponer
+# dónde arranca el kernel: sirve tanto la carpeta de este cuaderno como 'models'
+# o la raíz del repositorio. Su marca es el fichero 'pyproject.toml'. iSpec
+# tampoco se instala como dependencia, pero de montarlo se encarga
+# 'iSpec_functions', que lo añade a 'sys.path' al importarse.
 SOLUTION_DIR = next(
     candidate
     for parent in (Path.cwd(), *Path.cwd().parents)
@@ -25,41 +29,25 @@ SOLUTION_DIR = next(
     if (candidate / "pyproject.toml").is_file()
 )
 
-DATA_DIR = SOLUTION_DIR / "data"
-MODELS_DIR = SOLUTION_DIR / "models"
-CNN_DIR = MODELS_DIR / "cnn"
+sys.path.insert(0, str(SOLUTION_DIR / "models"))
 
-# 'services', 'model_functions' e 'iSpec_functions' están en 'models', así que se
-# importan desde su carpeta. iSpec tampoco se instala como dependencia, pero de
-# montarlo se encarga 'iSpec_functions', que lo añade a 'sys.path' al importarse.
-sys.path.insert(0, str(MODELS_DIR))
+from services.paths import DATA_DIR, model_paths, test_data_path
 
-# Ficheros que deja el entrenamiento: el modelo en esta misma carpeta, por ser
-# la salida del cuaderno, y a su lado 'training' con el registro de cómo se
-# entrenó y 'test_data' con el conjunto de test que consumen las celdas de
-# análisis. Esta celda no carga datos, de modo que la recarga de una sesión
-# anterior solo necesita ejecutar esta celda y la de recarga.
-TRAINING_DIR = CNN_DIR / "training"
-TEST_DATA_DIR = CNN_DIR / "test_data"
+# Ficheros que deja el entrenamiento, nombrados por la convención que comparten
+# todos los cuadernos y que reúne 'services/paths.py': el modelo en esta misma
+# carpeta, por ser la salida del cuaderno; a su lado 'training' con el registro
+# de cómo se entrenó; y en 'data/predictions' las predicciones y la tabla del
+# análisis con iSpec, que no son un checkpoint del entrenamiento sino el dato
+# que consume la comparativa entre arquitecturas.
+MODEL_PATH, HISTORY_PATH, SUMMARY_PATH, PREDICTIONS_PATH, ISPEC_PATH = (
+    model_paths("cnn_v1", "cnn")
+)
 
-TRAINING_DIR.mkdir(parents=True, exist_ok=True)
-TEST_DATA_DIR.mkdir(parents=True, exist_ok=True)
-
-MODEL_PATH = CNN_DIR / "cnn_v1.keras"
-HISTORY_PATH = TRAINING_DIR / "cnn_v1_training_history.csv"
-SUMMARY_PATH = TRAINING_DIR / "cnn_v1_training_summary.json"
-TEST_DATA_PATH = TEST_DATA_DIR / "cnn_v1_test_data.npz"
-
-# Predicciones sobre el conjunto de test. No son un checkpoint del
-# entrenamiento, sino el dato que consume la comparativa entre arquitecturas,
-# así que van en 'data/predictions' y no en esta misma carpeta.
-PREDICTIONS_PATH = DATA_DIR / "predictions" / "cnn_v1_predictions.npz"
-
-# Tabla del análisis con iSpec de la muestra de espectros de test, con una fila
-# por espectro y los parámetros estelares del real y del predicho. Acompaña a
-# las predicciones porque, como ellas, se calcula una vez y la leen después la
-# comparativa entre arquitecturas y las figuras de error de la memoria.
-ISPEC_PATH = DATA_DIR / "predictions" / "ispec_cnn_v1.csv"
+# El conjunto de test que consumen las celdas de análisis va en
+# 'models/data/test', carpeta común a todos los cuadernos porque todos parten
+# del mismo conjunto de test. Esta celda no carga datos, de modo que la recarga
+# de una sesión anterior solo necesita ejecutar esta celda y la de recarga.
+TEST_DATA_PATH = test_data_path("cnn_v1")
 
 # Tamaño de lote del entrenamiento, guardado también en el resumen
 batch_size = 64
@@ -196,12 +184,12 @@ model_cnn.compile(
 model_cnn.summary()
 
 # %% [markdown]
-# El proceso deja cuatro ficheros, uno por cada forma de dato: el modelo en esta misma carpeta y los otros tres repartidos entre `training` y `test_data`, con los que las celdas de evaluación y análisis pueden ejecutarse en una sesión nueva sin repetir el entrenamiento ni volver a cargar el `.npz` de datos completo:
+# El proceso deja cuatro ficheros, uno por cada forma de dato: el modelo en esta misma carpeta, los dos del registro del entrenamiento en `training` y el conjunto de test en `models/data/test`, común a todos los cuadernos, con los que las celdas de evaluación y análisis pueden ejecutarse en una sesión nueva sin repetir el entrenamiento ni volver a cargar el `.npz` de datos completo:
 #
 # - `cnn_v1.keras`: el modelo con la mejor pérdida de validación, guardado cada vez que mejora.
 # - `training/cnn_v1_training_history.csv`: una fila por época con todas las métricas, escrita al final de cada época. Es una **tabla**, así que la escribe directamente el callback `CSVLogger` de Keras, sin código propio, y queda legible y comparable entre versiones del modelo. Un CSV además admite los `NaN` de una época divergente, que en JSON no serían válidos.
 # - `training/cnn_v1_training_summary.json`: el resumen del entrenamiento (mejor época, tamaño de lote y métricas de test). Son **datos sueltos y heterogéneos** que no caben en una tabla ni en un contenedor de arrays, y en JSON siguen siendo legibles y versionables en Git.
-# - `test_data/cnn_v1_test_data.npz`: las variables del conjunto de test que consumen las celdas posteriores. Son **arrays** de más de cien megabytes en total, para los que `.npz` es el único formato razonable de los tres: conserva forma y `dtype` sin código de conversión y se escribe y lee en menos de un segundo, mientras que en JSON o CSV los mismos datos ocuparían varias veces más en texto. Sobre todo, conserva los identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la mitad no se representan de forma exacta en el `float64` al que los llevaría un CSV o un JSON leído como decimal.
+# - `models/data/test/cnn_v1_test_data.npz`: las variables del conjunto de test que consumen las celdas posteriores. Son **arrays** de más de cien megabytes en total, para los que `.npz` es el único formato razonable de los tres: conserva forma y `dtype` sin código de conversión y se escribe y lee en menos de un segundo, mientras que en JSON o CSV los mismos datos ocuparían varias veces más en texto. Sobre todo, conserva los identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la mitad no se representan de forma exacta en el `float64` al que los llevaría un CSV o un JSON leído como decimal.
 #
 # La lógica de guardado y recarga vive en `models/services/checkpoints.py`, compartida por todos los cuadernos de entrenamiento. De la normalización se ocupa `models/services/normalization.py`, que reúne los esquemas de todos los cuadernos. De las predicciones se ocupa `models/services/predictions.py`, que las guarda aparte, en `data/predictions/cnn_v1_predictions.npz`: no son un checkpoint del entrenamiento sino el dato que consume la comparativa entre arquitecturas.
 #

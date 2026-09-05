@@ -4,8 +4,8 @@ Checkpoints del entrenamiento de los modelos.
 Servicio compartido por todos los cuadernos de entrenamiento de `models`. Cada
 modelo entrenado deja tres ficheros en la carpeta de su cuaderno, uno por cada
 forma de dato, y el cuaderno deja además el conjunto de test en uno o varios
-`.npz`, de modo que las celdas de evaluación y análisis puedan ejecutarse en una
-sesión nueva sin repetir el entrenamiento:
+`.npz` en `models/data/test`, de modo que las celdas de evaluación y análisis
+puedan ejecutarse en una sesión nueva sin repetir el entrenamiento:
 
 - `<modelo>.keras`: los pesos de la mejor época de validación.
 - `<modelo>_training_history.csv`: una fila por época con todas las métricas.
