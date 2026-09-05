@@ -56,6 +56,10 @@ acronyms:
   - key: JWST
     shortname: JWST
     longname: James Webb Space Telescope
+  - key: LM*
+    shortname: LM*
+    longname: Low-mass Star
+    translation: estrella de baja masa
   - key: MAE
     shortname: MAE
     longname: Mean Absolute Error
@@ -65,10 +69,18 @@ acronyms:
   - key: MANGA
     shortname: MaNGA
     longname: Mapping Nearby Galaxies at Apache Point Observatory
+  - key: QSO
+    shortname: QSO
+    longname: Quasi-Stellar Object
+    translation: cuásar
   - key: RNN
     shortname: RNN
     longname: Red neuronal recurrente
     translation: Recurrent neural network
+  - key: RR*
+    shortname: RR*
+    longname: RR Lyrae Variable
+    translation: variable RR Lyrae
   - key: RVS
     shortname: RVS
     longname: Radial Velocity Spectrometer
@@ -79,6 +91,10 @@ acronyms:
     shortname: SNR
     longname: Signal-to-Noise Ratio
     translation: relación señal-ruido
+  - key: WD*
+    shortname: WD*
+    longname: White Dwarf
+    translation: enana blanca
   - key: XP
     shortname: XP
     longname: Espectros conjuntos BP/RP de Gaia
