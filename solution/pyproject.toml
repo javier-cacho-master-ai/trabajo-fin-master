@@ -22,4 +22,10 @@ dependencies = [
     "statsmodels>=0.14.6",
     "numpy>=2.4.4",
     "pydot>=4.0.1",
+    "visualkeras>=0.2.0",
 ]
+
+# La versión publicada en PyPI (0.2.0) solo trae las vistas `layered` y `graph`;
+# las vistas `functional` y `lenet` están únicamente en el repositorio
+[tool.uv.sources]
+visualkeras = { git = "https://github.com/paulgavrikov/visualkeras", rev = "b5234255cf8f85315da27d6c58a8adaff6f78da8" }
