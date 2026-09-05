@@ -35,7 +35,7 @@ Lo que no es un checkpoint del entrenamiento no lo escribe este módulo. Las
 predicciones sobre el conjunto de test son el caso a tener presente: no son un
 registro de cómo se entrenó el modelo, sino el dato que consume la comparativa
 entre arquitecturas, así que de ellas se ocupa `predictions.py` y viven en
-`data/predictions`, fuera de la carpeta del cuaderno.
+`models/data/predictions`, fuera de la carpeta del cuaderno.
 """
 
 import json
