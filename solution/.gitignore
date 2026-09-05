@@ -15,7 +15,7 @@ data/predictions/*
 
 # Snapshot de datos de test de los modelos: se regenera desde data/splits
 # y supera el límite de tamaño de fichero de GitHub
-models/**/*_test_data.npz
+models/data/test/
 
 # temp files
 temp_*

@@ -1,13 +1,13 @@
 {
   "model": "dense-max.keras",
   "history": "dense-max_training_history.csv",
-  "updated": "2026-09-03T21:35:09",
+  "updated": "2026-09-05T12:59:09",
   "batch_size": 64,
-  "epochs_completed": 13,
-  "best_epoch": 13,
+  "epochs_completed": 19,
+  "best_epoch": 19,
   "test_metrics": {
-    "loss": 0.004669091198593378,
-    "mae": 0.06548231095075607,
-    "mse": 0.009338715113699436
+    "loss": 0.004468550439924002,
+    "mae": 0.06096259504556656,
+    "mse": 0.008937669917941093
   }
 }
