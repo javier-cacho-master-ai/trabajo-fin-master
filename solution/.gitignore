@@ -4,10 +4,17 @@
 .LSOverride
 
 # Data
-data/
+data/*
+
+# Excepción: las tablas del análisis con iSpec de cada modelo. Son unos pocos
+# kilobytes, pero cada una son horas de ajustes, así que se versionan para que
+# las figuras de error se rehagan sin repetir el análisis.
+!data/predictions/
+data/predictions/*
+!data/predictions/ispec_*.csv
 
 # Snapshot de datos de test de los modelos: se regenera desde data/splits
-# y supera el limite de tamano de fichero de GitHub
+# y supera el límite de tamaño de fichero de GitHub
 models/**/*_test_data.npz
 
 # temp files

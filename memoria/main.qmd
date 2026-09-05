@@ -640,7 +640,7 @@ Durante el entrenamiento se pudo observar una evolución estable de las métrica
 
 :::{#fig-metricas-red-densa}
 
-::::{layout="[[1,1],[-1,2,-1]]"}
+::::{layout="[[-1,10,-1],[-1,10,-1],[-1,10,-1]]"}
 
 ![](images/evo_loss_dense_global.png)
 
@@ -695,7 +695,7 @@ Con este método, los resultados obtenidos fueron similares. Incluso las épocas
 
 :::{#fig-metricas-red-densa-normalizada}
 
-::::{layout="[[1,1],[-1,2,-1]]"}
+::::{layout="[[-1,10,-1],[-1,10,-1],[-1,10,-1]]"}
 
 ![](images/evo_loss_dense_spec_mean.png)
 
@@ -787,7 +787,7 @@ Se analizaron muestras aleatorias de 250 espectros para cada modelo denso. El re
 
 :::{#fig-ispec-errors}
 
-::::{layout="[[1,1],[-1,2,-1]]"}
+::::{ layout="[[-1,4,-1],[-1,4,-1],[-1,4,-1]]"}
 
 ![](images/iSpec_dense_logg.png)
 
@@ -853,7 +853,7 @@ En el caso del modelo convolucional residual, el entrenamiento se detuvo en la �
 
 :::{#fig-training-metrics-cnn}
 
-::::{layout="[[1,1],[-1,2,-1]]"}
+::::{ layout="[[-1,5,-1],[-1,5,-1],[-1,5,-1]]"}
 ![](_partials/assets/loss_function_evolution_cnn.png)
 
 ![](_partials/assets/mse_evolution_cnn.png)
@@ -910,7 +910,7 @@ El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al 
 
 :::{#fig-loss-evolution-cnn-v2}
 
-::::{layout="[[1,1],[-1,2,-1]]"}
+::::{ layout="[[-1,20,-1],[-1,20,-1],[-1,20,-1]]"}
 
 ![](_partials/assets/loss_function_evolution_cnn_v2.png)
 
@@ -1007,7 +1007,7 @@ La evolución de las métricas de entrenamiento puede observarse en la @fig-evol
 
 :::{#fig-evolution-gru}
 
-::::{layout="[[1,1],[-1,2,-1]]"}
+::::{ layout="[[-1,10,-1],[-1,10,-1],[-1,10,-1]]"}
 
 ![](images/evo_loss_gru.png)
 
@@ -1071,7 +1071,7 @@ En cuanto a la evolución de las métricas, los resultados se ven representados 
 
 :::{#fig-evolution-birnn}
 
-::::{layout="[[1,1],[-1,2,-1]]"}
+::::{ layout="[[-1,10,-1],[-1,10,-1],[-1,10,-1]]"}
 
 ![](images/evo_loss_birnn.png)
 
@@ -1132,7 +1132,7 @@ Finalmente, en la @fig-evolution-att se observa el comportamiento del modelo a l
 
 :::{#fig-evolution-att}
 
-::::{layout="[[1,1],[-1,2,-1]]"}
+::::{ layout="[[-1,10,-1],[-1,10,-1],[-1,10,-1]]"}
 
 ![](images/evo_loss_att.png)
 
