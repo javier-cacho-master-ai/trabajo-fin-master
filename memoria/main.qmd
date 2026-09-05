@@ -535,8 +535,8 @@ El 80% de los datos se usó para el entrenamiento del modelo, mientras que el 20
 
 #### Planteamiento general del entrenamiento
 Para encontrar el modelo óptimo, se realizaron diversas pruebas con tal de analizar como afectaban al rendimiento del modelo. 
-En primer lugar, se probaron diferentes funciones de normalización para facilitar el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares cercanas al 1 y las funciones de pérdida se ubicaban en valores de más fácil interpretación.
-Como punto de partida, se aplicó una normalización global a través de la media y desviación típica de los datos del conjunto de entrenamiento. Esta opción no proporcionó malos resultados (tal y como se pudo observar en los próximos apartados) y tenía la ventaja de que se podía deshacer la normalización sin necesidad de conocer los valores del conjunto de test, pero al tratarse de un proceso demasiado generalizado para la variabilidad de valores de los espectros, se probaron otros enfoques. Por ejemplo, se consideró la normalización espectro a espectro, en la que cada flujo se normalizaba en su propia escala con la mediana de sus datos o su máximo. 
+En primer lugar, se probaron diferentes funciones de normalización para facilitar el entrenamiento de la red neuronal, ya que las variables de entrada y salida se situaban en escalas similares cercanas a 1 y las funciones de pérdida se ubicaban en valores de más fácil interpretación.
+Como punto de partida, se aplicó una normalización global a través de la media y desviación típica de los datos del conjunto de entrenamiento. Esta opción no proporcionó malos resultados (tal y como se puede observar en los próximos apartados) y tenía la ventaja de que se podía deshacer la normalización sin necesidad de conocer los valores del conjunto de test, pero al tratarse de un proceso demasiado generalizado para la variabilidad de valores de los espectros, se probaron otros enfoques. Por ejemplo, se consideró la normalización espectro a espectro, en la que cada flujo se normalizaba en su propia escala con la mediana de sus datos o su máximo. 
 
 Las diferentes pruebas de normalización se realizaron durante el ensayo del modelo neuronal denso, dado que era el más simple y rápido de entrenar para poder observar los resultados de pequeñas modificaciones como esta.
 Una vez se definió la normalización más efectiva, fue usada en modelos posteriores. 
@@ -616,10 +616,22 @@ Una vez entrenadas las distintas opciones de red neuronal, fue necesario evaluar
 
 Para hacerlo, se consideraron diversos caminos. Por un lado, se analizaron las métricas obtenidas durante el entrenamiento, como por ejemplo los valores de la función de pérdida, [MAE]{.acr} o [MSE]{.acr}. No obstante, debía tenerse en cuenta que se habían usado diferentes funciones de normalización, por lo que no en todos los casos estas métricas se podían comparar directamente. 
 
-Para evitar este problema, la evaluación se basó también en otras técnicas. La primera fue una comparativa visual de los espectros respecto al real de [SDSS]{.acr} tras deshacer la normalización, esto permitió comprobar si el modelo se ajustaba correctamente a la forma global del espectro y a sus zonas de emisión y absorción. 
+Para evitar este problema, la evaluación se basó también en otras técnicas. La primera fue una comparativa visual de los espectros respecto al real de [SDSS]{.acr} tras deshacer la normalización, esto permitió comprobar si el modelo se ajustaba correctamente a la forma global del espectro y a sus zonas de emisión y absorción. Para comprobar el comportamiento del modelo con diferentes tipos de estrellas, se seleccionaron dos ejemplos de cada grupo señalizado en el diagrama de la @fig-HR-grupos.
+
+:::{#fig-HR-grupos}
+
+![](images/HR-subconjuntos.png)
+
+*Fuente: Elaboración propia*
+
+Selección de diferentes regiones representativas del diagrama HR a partir del color BP - RP y la magnitud absoluta G.
+:::
+
+
+Se usó también el estadístico chi-cuadrado con la intención de evaluar el error entre el espectro real de [SDSS]{.acr} y el espectro predicho por los modelos. Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
 
 Por último, se empleó la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, como por ejemplo la temperatura efectiva o la gravedad superficial. El objetivo fue comparar los datos obtenidos con las predicciones y el espectro real. De esta forma no se valoró solo la similitud de los espectros por sí mismos, sino que también se tuvo en cuenta si las predicciones se aproximaban a la información astrofísica que se obtenía del espectro de [SDSS]{.acr} original.
-Para hacerlo se ordenaron aleatoriamente los espectros predichos con los modelos, de esta permutación, se trataron de aproximar 250 datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentó generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro obtuvieron algún tipo de error que no permitiera generar *iSpec*, se saltaba al siguiente.
+Para hacerlo se ordenaron aleatoriamente los espectros predichos con los modelos, de esta permutación, se trataron de aproximar 250 espectros a sus datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentó generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro obtuvieron algún tipo de error que no permitiera generar *iSpec*, se saltaba al siguiente.
 Las estadísticas usadas en los siguientes apartados constaron de tres errores: el error relativo de *Teff* y *log(g)* y el error absoluto de M/H. Para los dos primeros casos, el error relativo permitía expresar la desviación respecto al valor real teniendo en cuenta la escala de la magnitud estudiada. En cambio, para M/H, se empleó el error absoluto debido a que esta variable tomaba valores cercanos a cero, haciendo que el error relativo exagerase diferencias pequeñas.
 
 ### Resultados obtenidos con el modelo base
@@ -652,11 +664,26 @@ Durante el entrenamiento se pudo observar una evolución estable de las métrica
 
 *Fuente: Elaboración propia*
 
-Gráfica de la evolución del MAE en el modelo de redes neuronales densas con normalización global.
+Gráfica de la evolución de las métricas del modelo de redes neuronales densas con normalización global.
 :::
 
 En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento muy similar a la del conjunto de validación.
-Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento, reforzando la idea de que el modelo tenía un comportamiento estable ante los datos que no había sido vistos con anterioridad. 
+Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento como podemos observar en la @tbl-met-dense-glob, reforzando la idea de que el modelo tenía un comportamiento estable ante los datos que no había sido vistos con anterioridad. 
+
+
+::: {#tbl-met-dense-glob}
+
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0083 | 0.0736 | 0.0183 |
+| Validación | 0.0092 | 0.0759 | 0.0206 |
+| Test | 0.0100 | 0.0778 | 0.0217 |
+
+*Fuente: Elaboración propia*
+
+Resultados obtenidos con el modelo denso con la normalización global para los diferentes conjuntos de datos.
+:::
+
 
 Cabe destacar que las métricas calculadas se definen sobre espectros normalizados, por lo que no mantienen la escala de las unidades de flujo originales. Sin embargo, su uso fue necesario para poder valorar de forma comprensible la eficacia de los diferentes modelos estudiados.
 
@@ -1552,14 +1579,22 @@ Gráficas de la evolución de las métricas de entrenamiento del modelo basado e
 En este caso, el modelo radó dos épocas más en converger que el basado en solo capas bidireccionales, pero de igual forma, su entrenamiento se basó en pocas épocas, no llegando a superar las ocho.
 
 
-#### Comparación entre los modelos recurrentes con iSpec
 
-Por último, si nos basamos en los resultados obtenidos de la estimación de características astrofísicas con *iSpec*, las diferencias entre los valores estimados a partir de los espectros de [SDSS]{.acr} reales y los predichos por los modelos fueron los incluidos en la @tbl-RNN-iSpec:
+## Discusión
+
+Para comparar la eficacia de cada modelo estudiado con estadísticas añadidas a las ya utilizadas, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del estadístico chi-cuadrado para cada observación del conjunto de test y la librería *iSpec*.
+
+Si nos basamos en los resultados obtenidos de la estimación de características astrofísicas con *iSpec*, las diferencias entre los valores estimados a partir de los espectros de [SDSS]{.acr} reales y los predichos por los modelos fueron los incluidos en la @tbl-RNN-iSpec:
 
 ::: {#tbl-RNN-iSpec}
 
 | Modelo | Error relativo de Teff | Error relativo de log(g) | Error absoluto de M/H |
 |---|---:|---:|---:|
+| Densa global | 0.30% | 0.08% | 0.010dex |
+| Densa con mediana | 0.23% | 0.09% | 0.020dex |
+| Densa con máximo | 0.28% | 0.08% | 0.015dex |
+| Convolucional 1D | 0.37% | 0.21% | 0.018dex |
+| Convolucional U-Net | 0.35% | 0.19% | 0.022dex |
 | GRU | 0.24% | 0.11% | 0.018dex |
 | Bidireccional | 0.36% | 0.12% | 0.017dex |
 | Atención | 0.28% | 0.11% | 0.019dex |
@@ -1567,20 +1602,21 @@ Por último, si nos basamos en los resultados obtenidos de la estimación de car
 *Fuente: Elaboración propia*
 
 
-Resultados obtenidos con *iSpec* en los modelos destacados basados en RNNs.
+Resultados obtenidos con *iSpec* en los modelos comentados en apartados anteriores.
 :::
 
+
+<!--
 De estos resultados se aprecia que las arquitecturas con [GRU]{.acr} simple y atención presentaron mejores resultados que el modelo con solo una capa bidireccional.
 
 En general, las diferencias entre los tres modelos fueron reducidas, por lo que todos ellos conservaron de forma similar información necesaria para estimar los parámetros astrofísicos estudiados. 
-En conjunto, estos resultados reforzaron la idea de que no por aumentar la complejidad del modelo mejorael rendimiento.
+En conjunto, estos resultados reforzaron la idea de que no por aumentar la complejidad del modelo mejora el rendimiento.
 El modelo con una capa [GRU]{.acr} fue destacable como el más equilibrado entre complejidad y resultados dentro de esta sección, pero aun así no superó los resultados obtenidos con el modelo neuronal denso.
 
+-->
 
-## Discusión
 
-Para comparar la eficacia de cada modelo estudiado con estadísticas añadidas a las ya utilizadas, se cuantificó la diferencia entre los espectros reales de [SDSS]{.acr} y los predichos por cada modelo a partir del estadístico chi-cuadrado para cada observación del conjunto de test. 
-La fórmula usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa. Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado. 
+La fórmula de chi-cuadrado usada se basó en la diferencia entre el flujo real y el flujo predicho, ponderada con la varianza inversa. Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado. 
 
 
 La fórmula de chi-cuadrado se define como :
