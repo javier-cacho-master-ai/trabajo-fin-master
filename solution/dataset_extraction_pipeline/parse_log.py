@@ -3,7 +3,7 @@ Extrae estadísticas de ejecución del fichero pipeline.log (formato JSON Lines)
 
 Uso:
     uv run python -m dataset_extraction_pipeline.parse_log
-    uv run python -m dataset_extraction_pipeline.parse_log --log data/pipeline.log
+    uv run python -m dataset_extraction_pipeline.parse_log --log dataset_extraction_pipeline/data/pipeline.log
     uv run python -m dataset_extraction_pipeline.parse_log --run -1   # última ejecución (por omisión)
     uv run python -m dataset_extraction_pipeline.parse_log --run 0    # primera ejecución
 """
@@ -15,6 +15,8 @@ import json
 from functools import reduce
 from pathlib import Path
 from typing import Iterator
+
+from dataset_extraction_pipeline.config import PipelineConfig
 
 W    = 60
 SEP  = "=" * W
@@ -159,7 +161,7 @@ def _suggest_plate_end(run: dict, target: int) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(description="Analiza el fichero de log de el flujo.")
-    p.add_argument("--log",    default="data/pipeline.log", help="Ruta al fichero de log JSON Lines")
+    p.add_argument("--log",    default=str(PipelineConfig().data_dir / "pipeline.log"), help="Ruta al fichero de log JSON Lines")
     p.add_argument("--run",    type=int, default=-1,        help="Índice de la ejecución a mostrar (0 = primera, -1 = última)")
     p.add_argument("--all",    action="store_true",         help="Mostrar todas las ejecuciones registradas")
     p.add_argument("--target", type=int, default=None,      help="Estimar --sdss-plate-end necesario para obtener este número de pares Gaia-SDSS")

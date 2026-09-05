@@ -212,7 +212,7 @@ from pathlib import Path
 from specutils import Spectrum
 from services.plotting import plot_physical_spectrum
 
-_h5_path = Path("data") / "06_training_data" / "training.h5"
+_h5_path = Path("dataset_extraction_pipeline") / "data" / "06_training_data" / "training.h5"
 
 with h5py.File(str(_h5_path), "r") as _f:
     _i              = random.randrange(_f["gaia_source_id"].shape[0])

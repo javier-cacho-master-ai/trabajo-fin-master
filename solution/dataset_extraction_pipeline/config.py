@@ -1,12 +1,16 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+# La carpeta de datos cuelga de este paquete, así que se deduce de la posición
+# de este fichero y no del directorio desde el que se lance el flujo.
+PIPELINE_DIR = Path(__file__).resolve().parent
+
 
 @dataclass(frozen=True)
 class PipelineConfig:
     """Configuración inmutable para toda el flujo de extracción."""
 
-    data_dir: Path = Path("data")
+    data_dir: Path = PIPELINE_DIR / "data"
 
     # Paso 1 – Catálogo espectroscópico SDSS
     # Las placas SDSS DR13 van de ~266 a ~9190; lotes de 50 ≈ 20 000 espectros por lote

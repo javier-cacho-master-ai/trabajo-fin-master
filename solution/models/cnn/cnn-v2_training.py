@@ -37,9 +37,10 @@ from services.paths import DATA_DIR, model_paths, test_data_path
 # Ficheros que deja el entrenamiento, nombrados por la convención que comparten
 # todos los cuadernos y que reúne 'services/paths.py': el modelo en esta misma
 # carpeta, por ser la salida del cuaderno; a su lado 'training' con el registro
-# de cómo se entrenó; y en 'data/predictions' las predicciones y la tabla del
-# análisis con iSpec, que no son un checkpoint del entrenamiento sino el dato
-# que consume la comparativa entre arquitecturas.
+# de cómo se entrenó; y fuera de ella las predicciones, en
+# 'models/data/predictions', y la tabla del análisis con iSpec, en
+# 'models/data/ispec_deviations': no son un checkpoint del entrenamiento sino
+# el dato que consume la comparativa entre arquitecturas.
 MODEL_PATH, HISTORY_PATH, SUMMARY_PATH, PREDICTIONS_PATH, ISPEC_PATH = (
     model_paths("cnn-v2", "cnn")
 )
@@ -55,10 +56,9 @@ print("Carpeta de trabajo:", SOLUTION_DIR)
 
 # %%
 # El nombre del fichero puede llevar la fecha de generación como prefijo
-data_dir = DATA_DIR / "splits"
 candidates = (
-    sorted(data_dir.glob("*processed_data_no_duplicates.npz"))
-    + sorted(data_dir.glob("*processed_data.npz"))
+    sorted(DATA_DIR.glob("*processed_data_no_duplicates.npz"))
+    + sorted(DATA_DIR.glob("*processed_data.npz"))
 )
 processed_path = candidates[0]
 print("Usando:", processed_path)
@@ -360,7 +360,7 @@ model_cnn_v2.summary()
 # - `training/cnn-v2_training_summary.json`: el resumen del entrenamiento (mejor época, tamaño de lote y métricas de test). Son **datos sueltos y heterogéneos** que no caben en una tabla ni en un contenedor de arrays, y en JSON siguen siendo legibles y versionables en Git.
 # - `models/data/test/cnn-v2_test_data.npz`: las variables del conjunto de test que consumen las celdas posteriores (`X_test`, `y_test`, la varianza inversa de SDSS, los identificadores, las longitudes de onda, la escala y los espectros interpolados). Son **arrays** de 177 MB en total, para los que `.npz` es el único formato razonable de los tres: conserva forma y `dtype` sin código de conversión y se escribe y lee en menos de un segundo, mientras que en JSON o CSV los mismos datos ocuparían unos 800 MB de texto. Sobre todo, conserva los identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la mitad no se representan de forma exacta en el `float64` al que los llevaría un CSV o un JSON leído como decimal.
 #
-# La lógica de guardado y recarga vive en `models/services/checkpoints.py`, compartida por todos los cuadernos de entrenamiento. De la normalización se ocupa `models/services/normalization.py`, que reúne los esquemas de todos los cuadernos. De las predicciones se ocupa `models/services/predictions.py`, que las guarda aparte, en `data/predictions/cnn-v2_predictions.npz`: no son un checkpoint del entrenamiento sino el dato que consume la comparativa entre arquitecturas.
+# La lógica de guardado y recarga vive en `models/services/checkpoints.py`, compartida por todos los cuadernos de entrenamiento. De la normalización se ocupa `models/services/normalization.py`, que reúne los esquemas de todos los cuadernos. De las predicciones se ocupa `models/services/predictions.py`, que las guarda aparte, en `models/data/predictions/cnn-v2_predictions.npz`: no son un checkpoint del entrenamiento sino el dato que consume la comparativa entre arquitecturas.
 #
 
 # %%

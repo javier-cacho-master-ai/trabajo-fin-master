@@ -9,12 +9,12 @@ nombra vive aquí y no repetida en la celda de rutas de cada cuaderno:
 - `<carpeta>/training/<modelo>_training_history.csv`: el historial por época.
 - `<carpeta>/training/<modelo>_training_summary.json`: el resumen del
   entrenamiento.
-- `data/predictions/<modelo>_predictions.npz`: las predicciones sobre el
+- `models/data/predictions/<modelo>_predictions.npz`: las predicciones sobre el
   conjunto de test.
-- `data/predictions/ispec_<modelo>.csv`: la tabla del análisis con iSpec de esas
-  predicciones. Las dos últimas no son un checkpoint del entrenamiento, sino el
-  dato que consume la comparativa entre arquitecturas, así que viven fuera de la
-  carpeta del cuaderno.
+- `models/data/ispec_deviations/ispec_deviations_<modelo>.csv`: la tabla del
+  análisis con iSpec de esas predicciones. Las dos últimas no son un checkpoint
+  del entrenamiento, sino el dato que consume la comparativa entre
+  arquitecturas, así que viven fuera de la carpeta del cuaderno.
 - `models/data/test/<cuaderno>_test_data.npz`: el conjunto de test que consumen
   las celdas de análisis. Lo nombra el cuaderno y no el modelo porque un
   cuaderno cuyos modelos comparten normalización guarda uno solo para todos.
@@ -36,7 +36,8 @@ SOLUTION_DIR = Path(__file__).resolve().parents[2]
 
 DATA_DIR = SOLUTION_DIR / "data"
 MODELS_DIR = SOLUTION_DIR / "models"
-PREDICTIONS_DIR = DATA_DIR / "predictions"
+PREDICTIONS_DIR = MODELS_DIR / "data" / "predictions"
+ISPEC_DEVIATIONS_DIR = MODELS_DIR / "data" / "ispec_deviations"
 TEST_DATA_DIR = MODELS_DIR / "data" / "test"
 
 
@@ -70,13 +71,14 @@ def model_paths(model_name, model_dir):
 
     training_dir.mkdir(parents=True, exist_ok=True)
     PREDICTIONS_DIR.mkdir(parents=True, exist_ok=True)
+    ISPEC_DEVIATIONS_DIR.mkdir(parents=True, exist_ok=True)
 
     return ModelPaths(
         model=notebook_dir / f"{model_name}.keras",
         history=training_dir / f"{model_name}_training_history.csv",
         summary=training_dir / f"{model_name}_training_summary.json",
         predictions=PREDICTIONS_DIR / f"{model_name}_predictions.npz",
-        ispec=PREDICTIONS_DIR / f"ispec_{model_name}.csv",
+        ispec=ISPEC_DEVIATIONS_DIR / f"ispec_deviations_{model_name}.csv",
     )
 
 
