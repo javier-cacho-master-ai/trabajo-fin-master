@@ -25,69 +25,6 @@ def plot_training_metrics(model_history, metrics=None):
         plt.show()
 
 
-def plot_prediction_example(
-    i,
-    sdss_wavelength,
-    gaia_wavelength,
-    y_test,
-    y_pred,
-    y_id_test,
-    X_test,
-    X_id_test
-):
-    plt.figure(figsize=(9, 4))
-    plt.plot(sdss_wavelength, y_test[i], label="SDSS real", alpha = 0.5)
-    plt.plot(sdss_wavelength, y_pred[i], label="SDSS predicho", alpha = 0.9)
-    plt.plot(gaia_wavelength, X_test[i], label="Gaia entrada")
-    plt.xlabel("Longitud de onda [Å]")
-    plt.ylabel("Flujo")
-    plt.title(f"Gaia id: {X_id_test[i]} | SDSS id: {y_id_test[i]}")
-    plt.grid(alpha=0.2)
-    plt.legend()
-    plt.show()
-
-
-def plot_worst_best_predictions(
-    y_test,
-    y_pred,
-    X_test,
-    X_id_test,
-    sdss_wavelength,
-    gaia_wavelength,
-    n_plot=10
-):
-
-    mae_per_object = np.mean(np.abs(y_test - y_pred), axis=1)
-    mse_per_object = np.mean((y_test - y_pred) ** 2, axis=1)
-
-    worst_idx = np.argsort(mse_per_object)[-n_plot:]
-
-    for i in worst_idx:
-        plt.figure(figsize=(10, 4))
-        plt.plot(sdss_wavelength, y_test[i], label="SDSS real", alpha = 0.5)
-        plt.plot(sdss_wavelength, y_pred[i], label="SDSS predicho", alpha = 0.9)
-        plt.plot(gaia_wavelength, X_test[i], label="Gaia")
-        plt.xlabel("Longitud de onda [Å]")
-        plt.ylabel("Flujo")
-        plt.title(f"Peor objeto test {i} | id Gaia: {X_id_test[i]} | MSE={mse_per_object[i]:.3f} | MAE={mae_per_object[i]:.3f}")
-        plt.grid(alpha=0.2)
-        plt.legend()
-        plt.show()
-
-    best_idx = np.argsort(mse_per_object)[:n_plot]
-
-    for i in best_idx:
-        plt.figure(figsize=(10, 4))
-        plt.plot(sdss_wavelength, y_test[i], label="SDSS real", alpha = 0.5)
-        plt.plot(sdss_wavelength, y_pred[i], label="SDSS predicho", alpha = 0.9)
-        plt.plot(gaia_wavelength, X_test[i], label="Gaia")
-        plt.xlabel("Longitud de onda [Å]")
-        plt.ylabel("Flujo")
-        plt.title(f"Mejor objeto test {i} | id Gaia: {X_id_test[i]} | MSE={mse_per_object[i]:.3f} | MAE={mae_per_object[i]:.3f}")
-        plt.grid(alpha=0.2)
-        plt.legend()
-        plt.show()
-
 def calculate_chi2(y_real, y_pred, y_ivar):
 
     valid = (
