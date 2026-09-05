@@ -1,0 +1,13 @@
+{
+  "model": "cnn_v1.keras",
+  "history": "cnn_v1_training_history.csv",
+  "updated": "2026-09-04T03:47:02",
+  "batch_size": 64,
+  "epochs_completed": 12,
+  "best_epoch": 12,
+  "test_metrics": {
+    "loss": 0.005803419277071953,
+    "mae": 0.06447546929121017,
+    "mse": 0.013024695217609406
+  }
+}

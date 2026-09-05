@@ -35,12 +35,21 @@ CNN_DIR = MODELS_DIR / "cnn"
 # montarlo se encarga 'iSpec_functions', que lo añade a 'sys.path' al importarse.
 sys.path.insert(0, str(MODELS_DIR))
 
-# Ficheros de checkpoint. Esta celda no carga datos, de modo que la recarga de
-# una sesión anterior solo necesita ejecutar esta celda y la de recarga.
+# Ficheros que deja el entrenamiento: el modelo en esta misma carpeta, por ser
+# la salida del cuaderno, y a su lado 'training' con el registro de cómo se
+# entrenó y 'test_data' con el conjunto de test que consumen las celdas de
+# análisis. Esta celda no carga datos, de modo que la recarga de una sesión
+# anterior solo necesita ejecutar esta celda y la de recarga.
+TRAINING_DIR = CNN_DIR / "training"
+TEST_DATA_DIR = CNN_DIR / "test_data"
+
+TRAINING_DIR.mkdir(parents=True, exist_ok=True)
+TEST_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
 MODEL_PATH = CNN_DIR / "cnn-v2.keras"
-HISTORY_PATH = CNN_DIR / "cnn-v2_training_history.csv"
-SUMMARY_PATH = CNN_DIR / "cnn-v2_training_summary.json"
-TEST_DATA_PATH = CNN_DIR / "cnn-v2_test_data.npz"
+HISTORY_PATH = TRAINING_DIR / "cnn-v2_training_history.csv"
+SUMMARY_PATH = TRAINING_DIR / "cnn-v2_training_summary.json"
+TEST_DATA_PATH = TEST_DATA_DIR / "cnn-v2_test_data.npz"
 
 # Predicciones sobre el conjunto de test. No son un checkpoint del
 # entrenamiento, sino el dato que consume la comparativa entre arquitecturas,
@@ -101,43 +110,43 @@ print("Gaia:", X_train.shape, "| SDSS:", y_train.shape)
 
 
 # %% [markdown]
-# Normalizamos cada par de espectros con la mediana del flujo de Gaia, igual que en el modelo base. El error de Gaia se normaliza con la misma escala para que siga siendo coherente con su flujo.
+# Normalizamos cada espectro con la mediana de su propio flujo absoluto, igual que en el modelo base: la entrada con la de Gaia y el objetivo con la de SDSS. El error de Gaia se normaliza con la escala de su flujo para que siga siendo coherente con él.
 #
-# Los pesos por píxel se derivan de la varianza inversa de SDSS: al dividir el flujo por la escala `s`, la varianza queda dividida por `s²`, luego la varianza inversa del flujo normalizado es `ivar · s²`. Dentro de cada espectro normalizamos los pesos para que su media sobre los píxeles válidos sea 1: así todos los objetos contribuyen por igual a la pérdida y los pesos solo redistribuyen la importancia entre píxeles. Un recorte superior evita que unos pocos píxeles de varianza muy baja dominen el entrenamiento; los píxeles con `ivar = 0` quedan enmascarados con peso 0.
+# Los pesos por píxel se derivan de la varianza inversa de SDSS: al dividir el flujo de SDSS por su escala `s`, la varianza queda dividida por `s²`, luego la varianza inversa del flujo normalizado es `ivar · s²`. Dentro de cada espectro normalizamos los pesos para que su media sobre los píxeles válidos sea 1: así todos los objetos contribuyen por igual a la pérdida y los pesos solo redistribuyen la importancia entre píxeles. Ese paso cancela además el factor `s²` —`ivar · s² / media(ivar · s²) = ivar / media(ivar)`—, de modo que los pesos no dependen de la escala con la que se haya normalizado el objetivo y la función no necesita recibirla. Un recorte superior evita que unos pocos píxeles de varianza muy baja dominen el entrenamiento; los píxeles con `ivar = 0` quedan enmascarados con peso 0.
 #
 
 # %%
-# Escala por espectro: mediana del flujo de Gaia
-X_scale_train = np.nanmedian(np.abs(X_train), axis=1, keepdims=True)
-X_scale_val = np.nanmedian(np.abs(X_val), axis=1, keepdims=True)
-X_scale_test = np.nanmedian(np.abs(X_test), axis=1, keepdims=True)
+from services.normalization import normalize, normalize_splits, spectrum_scale
 
-X_train_norm = X_train / X_scale_train
-X_val_norm = X_val / X_scale_val
-X_test_norm = X_test / X_scale_test
+# Escala por espectro: la mediana de su propio flujo absoluto, la de Gaia para
+# la entrada y la de SDSS para el objetivo
+X_train_norm, X_val_norm, X_test_norm, X_scale_test = normalize_splits(
+    X_train, X_val, X_test
+)
+y_train_norm, y_val_norm, y_test_norm, y_scale_test = normalize_splits(
+    y_train, y_val, y_test
+)
 
-X_err_train_norm = X_err_train / X_scale_train
-X_err_val_norm = X_err_val / X_scale_val
-X_err_test_norm = X_err_test / X_scale_test
-
-# El objetivo se normaliza con la misma escala que su entrada
-y_train_norm = y_train / X_scale_train
-y_val_norm = y_val / X_scale_val
-y_test_norm = y_test / X_scale_test
+# El error de Gaia acompaña a su flujo, así que lleva la escala de este y no la
+# suya. Las de entrenamiento y validación no las devuelve 'normalize_splits',
+# pero recalcularlas sobre los 201 puntos de Gaia no cuesta nada.
+X_err_train_norm = normalize(X_err_train, spectrum_scale(X_train))
+X_err_val_norm = normalize(X_err_val, spectrum_scale(X_val))
+X_err_test_norm = normalize(X_err_test, X_scale_test)
 
 
-def build_pixel_weights(y_ivar, scale, max_weight=10.0):
-    # Varianza inversa del flujo normalizado
-    weights = y_ivar * scale**2
-    # Media 1 sobre los píxeles válidos de cada espectro
-    valid = np.where(weights > 0, weights, np.nan)
-    weights = weights / np.nanmean(valid, axis=1, keepdims=True)
+def build_pixel_weights(y_ivar, max_weight=10.0):
+    # Varianza inversa relativa a la media del propio espectro. La escala de la
+    # normalización se cancela en ese cociente, así que los pesos no dependen
+    # de ella y la función no necesita recibirla.
+    valid = np.where(y_ivar > 0, y_ivar, np.nan)
+    weights = y_ivar / np.nanmean(valid, axis=1, keepdims=True)
     return np.clip(weights, 0.0, max_weight).astype(np.float32)
 
 
-w_train = build_pixel_weights(y_ivar_train, X_scale_train)
-w_val = build_pixel_weights(y_ivar_val, X_scale_val)
-w_test = build_pixel_weights(y_ivar_test, X_scale_test)
+w_train = build_pixel_weights(y_ivar_train)
+w_val = build_pixel_weights(y_ivar_val)
+w_test = build_pixel_weights(y_ivar_test)
 
 print("Fracción de píxeles enmascarados (ivar = 0):", (w_train == 0).mean())
 
@@ -198,7 +207,7 @@ save_test_data(
     y_id_test=y_id_test,
     gaia_wavelength=gaia_wavelength,
     sdss_wavelength=sdss_wavelength,
-    X_scale_test=X_scale_test,
+    y_scale_test=y_scale_test,
     X_test_flux_interp=X_test_flux_interp,
     X_test_err_interp=X_test_err_interp
 )
@@ -356,14 +365,14 @@ model_cnn_v2.summary()
 
 
 # %% [markdown]
-# El proceso deja cuatro ficheros de checkpoint en esta misma carpeta, uno por cada forma de dato, con los que las celdas de evaluación y análisis pueden ejecutarse en una sesión nueva sin repetir el entrenamiento ni volver a cargar el `.npz` de datos completo:
+# El proceso deja cuatro ficheros, uno por cada forma de dato: el modelo en esta misma carpeta y los otros tres repartidos entre `training` y `test_data`, con los que las celdas de evaluación y análisis pueden ejecutarse en una sesión nueva sin repetir el entrenamiento ni volver a cargar el `.npz` de datos completo:
 #
 # - `cnn-v2.keras`: el modelo con la mejor pérdida de validación, guardado cada vez que mejora.
-# - `cnn-v2_training_history.csv`: una fila por época con todas las métricas, escrita al final de cada época. Es una **tabla**, así que la escribe directamente el callback `CSVLogger` de Keras, sin código propio, y queda legible y comparable entre versiones del modelo. Un CSV además admite los `NaN` de una época divergente, que en JSON no serían válidos.
-# - `cnn-v2_training_summary.json`: el resumen del entrenamiento (mejor época, tamaño de lote y métricas de test). Son **datos sueltos y heterogéneos** que no caben en una tabla ni en un contenedor de arrays, y en JSON siguen siendo legibles y versionables en Git.
-# - `cnn-v2_test_data.npz`: las variables del conjunto de test que consumen las celdas posteriores (`X_test`, `y_test`, la varianza inversa de SDSS, los identificadores, las longitudes de onda, la escala y los espectros interpolados). Son **arrays** de 177 MB en total, para los que `.npz` es el único formato razonable de los tres: conserva forma y `dtype` sin código de conversión y se escribe y lee en menos de un segundo, mientras que en JSON o CSV los mismos datos ocuparían unos 800 MB de texto. Sobre todo, conserva los identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la mitad no se representan de forma exacta en el `float64` al que los llevaría un CSV o un JSON leído como decimal.
+# - `training/cnn-v2_training_history.csv`: una fila por época con todas las métricas, escrita al final de cada época. Es una **tabla**, así que la escribe directamente el callback `CSVLogger` de Keras, sin código propio, y queda legible y comparable entre versiones del modelo. Un CSV además admite los `NaN` de una época divergente, que en JSON no serían válidos.
+# - `training/cnn-v2_training_summary.json`: el resumen del entrenamiento (mejor época, tamaño de lote y métricas de test). Son **datos sueltos y heterogéneos** que no caben en una tabla ni en un contenedor de arrays, y en JSON siguen siendo legibles y versionables en Git.
+# - `test_data/cnn-v2_test_data.npz`: las variables del conjunto de test que consumen las celdas posteriores (`X_test`, `y_test`, la varianza inversa de SDSS, los identificadores, las longitudes de onda, la escala y los espectros interpolados). Son **arrays** de 177 MB en total, para los que `.npz` es el único formato razonable de los tres: conserva forma y `dtype` sin código de conversión y se escribe y lee en menos de un segundo, mientras que en JSON o CSV los mismos datos ocuparían unos 800 MB de texto. Sobre todo, conserva los identificadores de Gaia como `int64`: son de hasta 19 dígitos y más de la mitad no se representan de forma exacta en el `float64` al que los llevaría un CSV o un JSON leído como decimal.
 #
-# La lógica de guardado y recarga vive en `models/services/checkpoints.py`, compartida por todos los cuadernos de entrenamiento. De las predicciones se ocupa `models/services/predictions.py`, que las guarda aparte, en `data/predictions/cnn-v2_predictions.npz`: no son un checkpoint del entrenamiento sino el dato que consume la comparativa entre arquitecturas.
+# La lógica de guardado y recarga vive en `models/services/checkpoints.py`, compartida por todos los cuadernos de entrenamiento. De la normalización se ocupa `models/services/normalization.py`, que reúne los esquemas de todos los cuadernos. De las predicciones se ocupa `models/services/predictions.py`, que las guarda aparte, en `data/predictions/cnn-v2_predictions.npz`: no son un checkpoint del entrenamiento sino el dato que consume la comparativa entre arquitecturas.
 #
 
 # %%
@@ -443,7 +452,7 @@ X_id_test = test_data["X_id_test"]
 y_id_test = test_data["y_id_test"]
 gaia_wavelength = test_data["gaia_wavelength"]
 sdss_wavelength = test_data["sdss_wavelength"]
-X_scale_test = test_data["X_scale_test"]
+y_scale_test = test_data["y_scale_test"]
 X_test_flux_interp = test_data["X_test_flux_interp"]
 X_test_err_interp = test_data["X_test_err_interp"]
 
@@ -468,6 +477,8 @@ plot_training_metrics(training_history)
 
 
 # %%
+from services.checkpoints import save_training_summary
+
 test_metrics = model_cnn_v2.evaluate(
     test_ds,
     verbose=1,
@@ -488,6 +499,7 @@ print(test_metrics)
 
 
 # %%
+from services.normalization import denormalize
 from services.predictions import predict_test_set, save_predictions
 
 # Predicciones sobre el conjunto de test. La celda parte del `.keras` del modelo
@@ -501,8 +513,10 @@ y_pred = predict_test_set(
         test["X_test_flux_interp"][..., None],
         test["X_test_err_interp"][..., None]
     ],
-    # La normalización se deshace solo con la escala de la entrada de Gaia
-    denormalize=lambda y_norm, test: y_norm[..., 0] * test["X_scale_test"]
+    # La normalización se deshace con la escala del espectro de SDSS
+    denormalize=lambda y_norm, test: denormalize(
+        y_norm[..., 0], test["y_scale_test"]
+    )
 )
 
 # Las guardamos para la comparativa entre arquitecturas, en su propio cuaderno

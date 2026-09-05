@@ -16,6 +16,9 @@
     #set table(align: center + horizon)
 
     #show figure: set align(center)
+    // Align the caption to the right
+    #show figure.caption: set align(left)
+
     #show math.equation: set text(weight: 400)
 
     // Figures, tables and equations numbered per chapter ("Figura 2.1"),

@@ -10,22 +10,22 @@ El objetivo es entrenar un modelo que tome un espectro XP calibrado de Gaia (R �
 
 ```
 solution/
-├── main.ipynb              cuaderno exploratorio: extracción de datos y visualización
-├── main.py                 versión en script del cuaderno
-├── pyproject.toml          dependencias del proyecto (uv/pip)
-├── pipeline/               flujo de datos de producción (véase pipeline/README.md)
-│   ├── config.py           dataclass inmutable PipelineConfig
-│   ├── run.py              punto de entrada por línea de comandos
-│   └── steps/              pasos numerados de el flujo (1–6)
-├── services/               módulos de consulta y utilidades reutilizables
-│   ├── gaia.py             utilidades TAP de Gaia
-│   ├── sdss.py             análisis de FITS de SDSS y conversión de unidades
-│   ├── plotting.py         utilidades para representación gráfica de espectros
-│   ├── querying.py         utilidades de saneamiento de ADQL
+├── main.ipynb                           cuaderno exploratorio: extracción de datos y visualización
+├── main.py                              versión en script del cuaderno
+├── pyproject.toml                       dependencias del proyecto (uv/pip)
+├── dataset_extraction_pipeline/         flujo de datos de producción (véase dataset_extraction_pipeline/README.md)
+│   ├── config.py                        dataclass inmutable PipelineConfig
+│   ├── run.py                           punto de entrada por línea de comandos
+│   └── steps/                           pasos numerados de el flujo (1–6)
+├── services/                            módulos de consulta y utilidades reutilizables
+│   ├── gaia.py                          utilidades TAP de Gaia
+│   ├── sdss.py                          análisis de FITS de SDSS y conversión de unidades
+│   ├── plotting.py                      utilidades para representación gráfica de espectros
+│   ├── querying.py                      utilidades de saneamiento de ADQL
 │   └── queries/
-│       ├── gaia_sdss_random_subset.adql   consulta de cruce Gaia×SDSS
-│       └── sdss.adql                      consulta de metadatos SpecObj de SDSS
-└── data/                   salida de el flujo (no rastreada en git)
+│       ├── gaia_sdss_random_subset.adql consulta de cruce Gaia×SDSS
+│       └── sdss.adql                    consulta de metadatos SpecObj de SDSS
+└── data/                                salida de el flujo (no rastreada en git)
     ├── 01_gaia_crossmatch/
     ├── 02_sdss_references/
     ├── 03_sdss_spectra/
@@ -46,13 +46,13 @@ uv sync
 **Ejecutar el flujo completa** (descarga ~100 000 objetos de Gaia y SDSS):
 
 ```bash
-uv run python -m pipeline.run
+uv run python -m dataset_extraction_pipeline.run
 ```
 
 **Ejecutar únicamente pasos concretos:**
 
 ```bash
-uv run python -m pipeline.run --steps 1,2
+uv run python -m dataset_extraction_pipeline.run --steps 1,2
 ```
 
 **Reanudación tras una interrupción:** el flujo es totalmente reanudable — cada paso comprueba qué salidas existen ya en disco y omite el trabajo completado.
@@ -70,7 +70,7 @@ El flujo descarga y alinea espectros de ambos catálogos y produce un fichero de
 | 5 | `5_gaia_spectra.py` | `05_gaia_spectra/spectra.vot` — espectros XP calibrados de Gaia |
 | 6 | `6_training_data.py` | `06_training_data/training.h5` — pares X/y alineados para ML |
 
-Véase [pipeline/README.md](pipeline/README.md) para la documentación detallada de cada paso, el esquema HDF5 y las decisiones de diseño.
+Véase [dataset_extraction_pipeline/README.md](dataset_extraction_pipeline/README.md) para la documentación detallada de cada paso, el esquema HDF5 y las decisiones de diseño.
 
 ## Cuaderno exploratorio
 
