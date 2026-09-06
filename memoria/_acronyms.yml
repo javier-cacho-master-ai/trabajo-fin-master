@@ -16,9 +16,11 @@ acronyms:
   - key: ADQL
     shortname: ADQL
     longname: Astronomical Data Query Language
+    translation: lenguaje de consulta de datos astronómicos
   - key: BP/RP
     shortname: BP/RP
     longname: Blue Photometer / Red Photometer
+    translation: fotómetro azul / fotómetro rojo
   - key: CNN
     shortname: CNN
     longname: Convolutional neural network
@@ -38,6 +40,7 @@ acronyms:
   - key: FITS
     shortname: FITS
     longname: Flexible Image Transport System
+    translation: sistema flexible de transporte de imágenes
   - key: GAN
     shortname: GAN
     longname: Generative Adversarial Network
@@ -45,9 +48,11 @@ acronyms:
   - key: GRU
     shortname: GRU
     longname: Gated Recurrent Unit
+    translation: unidad recurrente con puertas
   - key: HR
     shortname: HR
     longname: Hertzsprung-Russell
+    translation: diagrama de Hertzsprung-Russell
   - key: IA
     shortname: IA
     longname: Inteligencia Artificial
@@ -55,9 +60,11 @@ acronyms:
   - key: JADES
     shortname: JADES
     longname: JWST Advanced Deep Extragalactic Survey
+    translation: sondeo extragaláctico profundo avanzado del JWST
   - key: JWST
     shortname: JWST
     longname: James Webb Space Telescope
+    translation: telescopio espacial James Webb
   - key: LM*
     shortname: LM*
     longname: Low-mass Star
@@ -65,12 +72,15 @@ acronyms:
   - key: MAE
     shortname: MAE
     longname: Mean Absolute Error
+    translation: error absoluto medio
   - key: MSE
     shortname: MSE
     longname: Mean Squared Error
+    translation: error cuadrático medio
   - key: MANGA
     shortname: MaNGA
     longname: Mapping Nearby Galaxies at Apache Point Observatory
+    translation: cartografiado de galaxias cercanas en el Observatorio Apache Point
   - key: QSO
     shortname: QSO
     longname: Quasi-Stellar Object
@@ -86,9 +96,11 @@ acronyms:
   - key: RVS
     shortname: RVS
     longname: Radial Velocity Spectrometer
+    translation: espectrómetro de velocidad radial
   - key: SDSS
     shortname: SDSS
     longname: Sloan Digital Sky Survey
+    translation: sondeo digital del cielo Sloan
   - key: SNR
     shortname: SNR
     longname: Signal-to-Noise Ratio
