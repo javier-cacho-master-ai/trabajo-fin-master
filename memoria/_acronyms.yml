@@ -1,26 +1,30 @@
 # Fuente única de acrónimos. La lee la plantilla Typst (`_partials/acronyms.typ`)
 # para generar tanto el "Índice de acrónimos" como las menciones en el texto
-# (primera aparición en formato APA 7.ª, siguientes solo la sigla).
+# (primera mención encabezada por el término en español, siguientes solo la sigla).
 #
 # Campos por acrónimo:
 #   key          Identificador para referenciar en el texto con [KEY]{.acr}.
 #   shortname    Sigla mostrada.
 #   longname     Desarrollo en su idioma original, en texto plano.
-#   translation  Traducción al español (opcional). Aparece en la primera mención
-#                APA «longname (SIGLA; translation)» y en el índice.
+#   translation  Traducción al español, en minúscula salvo nombres propios
+#                (opcional). Encabeza la primera mención en el texto,
+#                «translation (SIGLA; longname)», y cierra la línea del índice,
+#                «SIGLA: longname (translation)».
 #   italic       Si el desarrollo va en cursiva en el índice (true por defecto;
 #                false para términos ya en español, como IA o XP).
 acronyms:
   - key: ADQL
     shortname: ADQL
     longname: Astronomical Data Query Language
+    translation: lenguaje de consulta de datos astronómicos
   - key: BP/RP
     shortname: BP/RP
     longname: Blue Photometer / Red Photometer
+    translation: fotómetro azul / fotómetro rojo
   - key: CNN
     shortname: CNN
     longname: Convolutional neural network
-    translation: Red neuronal convolucional
+    translation: red neuronal convolucional
   - key: DR
     shortname: DR
     longname: Data Release
@@ -36,6 +40,7 @@ acronyms:
   - key: FITS
     shortname: FITS
     longname: Flexible Image Transport System
+    translation: sistema flexible de transporte de imágenes
   - key: GAN
     shortname: GAN
     longname: Generative Adversarial Network
@@ -43,9 +48,11 @@ acronyms:
   - key: GRU
     shortname: GRU
     longname: Gated Recurrent Unit
+    translation: unidad recurrente con puertas
   - key: HR
     shortname: HR
     longname: Hertzsprung-Russell
+    translation: diagrama de Hertzsprung-Russell
   - key: IA
     shortname: IA
     longname: Inteligencia Artificial
@@ -53,9 +60,11 @@ acronyms:
   - key: JADES
     shortname: JADES
     longname: JWST Advanced Deep Extragalactic Survey
+    translation: sondeo extragaláctico profundo avanzado del JWST
   - key: JWST
     shortname: JWST
     longname: James Webb Space Telescope
+    translation: telescopio espacial James Webb
   - key: LM*
     shortname: LM*
     longname: Low-mass Star
@@ -63,20 +72,23 @@ acronyms:
   - key: MAE
     shortname: MAE
     longname: Mean Absolute Error
+    translation: error absoluto medio
   - key: MSE
     shortname: MSE
     longname: Mean Squared Error
+    translation: error cuadrático medio
   - key: MANGA
     shortname: MaNGA
     longname: Mapping Nearby Galaxies at Apache Point Observatory
+    translation: cartografiado de galaxias cercanas en el Observatorio Apache Point
   - key: QSO
     shortname: QSO
     longname: Quasi-Stellar Object
     translation: cuásar
   - key: RNN
     shortname: RNN
-    longname: Red neuronal recurrente
-    translation: Recurrent neural network
+    longname: Recurrent neural network
+    translation: red neuronal recurrente
   - key: RR*
     shortname: RR*
     longname: RR Lyrae Variable
@@ -84,9 +96,11 @@ acronyms:
   - key: RVS
     shortname: RVS
     longname: Radial Velocity Spectrometer
+    translation: espectrómetro de velocidad radial
   - key: SDSS
     shortname: SDSS
     longname: Sloan Digital Sky Survey
+    translation: sondeo digital del cielo Sloan
   - key: SNR
     shortname: SNR
     longname: Signal-to-Noise Ratio
