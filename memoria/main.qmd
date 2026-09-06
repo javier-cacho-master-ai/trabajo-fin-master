@@ -119,6 +119,8 @@ En el Capítulo 6 se realiza una discusión acerca de los resultados obtenidos e
 
 Finalmente, en el Capítulo 7 se recogen las conclusiones del trabajo y se proponen posibles líneas de trabajo futuro.
 
+Todo el material desarrollado —el código de extracción de los datos, el entrenamiento y la evaluación de los modelos, y las fuentes de esta memoria— está disponible públicamente en el repositorio del trabajo [@sequeroCacho2026repositorio].
+
 
 ## Contexto y estado del arte
 
