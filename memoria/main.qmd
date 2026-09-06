@@ -547,6 +547,17 @@ Probamos también la adición de los datos de la [SNR]{.acr} del espectro de Gai
 Después de un procedimiento de prueba y error, el modelo que mejores resultados obtuvo dentro de la categoría de red neuronal densa, estaba formado por una capa de entrada del tamaño de los datos de Gaia, varias capas intermedias (una con 512 neuronas y tres más con 1024) y finalmente una capa de salida con tantos puntos como el espectro de [SDSS]{.acr} a predecir.
 Además, se probaron diferentes funciones de activación, siendo ELU y LeakyReLU las que obtuvieron mejores resultados debido a que no anulan completamente las neuronas con valores negativos, a diferencia de ReLU, cuyo uso fue descartado. En el problema de regresión al que nos enfrentamos, las desviaciones pueden ser positivas y negativas respecto a la media, así que el uso de los métodos mencionados anteriormente favorecía el aprendizaje.
 
+La @fig-arquitectura-densa recoge la arquitectura resultante. Cada recuadro rotula una capa con su clase y el tamaño de su salida, cada círculo es una neurona, los puntos suspensivos representan las restantes y los rectángulos de los extremos son los tensores de entrada y de salida. La entrada son los 201 puntos del espectro XP de Gaia, las cuatro capas ocultas alternan LeakyReLU y ELU, y la capa de salida, lineal, produce de una vez los 2666 puntos de la malla de [SDSS]{.acr}, por lo que concentra la mitad de los 5,46 millones de parámetros del modelo. Cada neurona está conectada con todas las de la capa siguiente: la red no asume ninguna relación entre puntos vecinos del espectro y tiene que aprenderla de los datos, que es lo que distingue a esta arquitectura de las convolucionales y recurrentes que se describen en otras secciones.
+
+:::{#fig-arquitectura-densa}
+
+![](images/architectural_diagrams/dense_graph-diagram.png)
+
+*Fuente: Elaboración propia*
+
+Arquitectura del modelo denso
+:::
+
 La función de pérdida definida fue Huber [@huber1964robust], que combina el error cuadrático medio para errores pequeños, y el error absoluto medio para errores más grandes. La función matemática que la define es la siguiente:
 $$L_{\delta}(a)=
 \begin{cases}
@@ -573,6 +584,17 @@ El diseño siguió un planteamiento de superresolución análogo al de la primer
 
 En cuanto a la arquitectura interna, el modelo se componía de una capa convolucional inicial de 64 filtros con un núcleo de tamaño 9, seguida de cuatro bloques residuales. Cada bloque contenía dos convoluciones de 64 filtros con núcleo de tamaño 7 y activación ELU, junto con un atajo que sumaba la entrada del bloque a su salida para facilitar la propagación del gradiente. Una última capa convolucional con un único filtro y núcleo de tamaño 5 generaba la corrección final. En total, la red contaba con aproximadamente 230 000 parámetros entrenables, una cifra muy inferior a la del modelo denso descrito anteriormente.
 
+La @fig-arquitectura-cnn recoge las 21 capas de la red, coloreadas según la operación de cada una. La red no submuestrea en ningún punto: los 2666 puntos de la malla de [SDSS]{.acr} se conservan de la entrada a la salida, y el número de filtros se mantiene en 64 en toda la parte central. El patrón se repite en los cuatro bloques residuales, idénticos entre sí: dos convoluciones de 64 filtros con núcleo de tamaño 7, la suma del atajo y la activación ELU. Cierran la red la convolución final de un filtro, que produce la corrección, y la suma del flujo interpolado.
+
+:::{#fig-arquitectura-cnn}
+
+![](images/architectural_diagrams/cnn_v1_layered-diagram.png)
+
+*Fuente: Elaboración propia*
+
+Arquitectura del modelo convolucional 1D
+:::
+
 Respecto a la normalización, en este caso ambos espectros del par se escalaron con la mediana del flujo del espectro de Gaia. Al depender únicamente de la entrada, esta estrategia permitió deshacer la normalización de la predicción sin necesidad de conocer el espectro real de [SDSS]{.acr}, lo que resultaba imprescindible al aplicar el modelo sobre observaciones nuevas.
 
 El resto de la configuración del entrenamiento se mantuvo idéntica a la del modelo base: función de pérdida Huber con $\delta = 1$, optimizador Adam con tasa de aprendizaje de 0.0001 y limitación a 1 de la norma de los gradientes, lotes de 64 muestras, un máximo de 50 épocas y las mismas funciones de parada temprana y reducción de la tasa de aprendizaje.
@@ -589,6 +611,21 @@ Como veremos en el apartado de evaluación, el modelo convolucional 1D se estanc
 
 La arquitectura evolucionó de la pila de bloques residuales a una U-Net de una dimensión [@ronneberger2015unet]. El codificador partía de una convolución inicial de 64 filtros y encadenaba tres niveles de submuestreo por convolución con paso 2 (64, 96, 128 y 160 filtros); el cuello de botella aplicaba dos bloques residuales que veían el espectro completo a un octavo de su resolución; y el decodificador recuperaba la resolución original en tres niveles de sobremuestreo, concatenando en cada uno la conexión del nivel equivalente del codificador. Cada bloque residual incorporaba además atención de canal de tipo *squeeze-and-excitation* [@hu2018squeeze], que recalibraba la importancia relativa de los filtros en función del contenido global del espectro. Con los tres niveles de submuestreo, el campo receptivo cubría todo el rango de longitudes de onda, por lo que la red podía corregir tanto el detalle de las líneas como el desajuste de continuo a gran escala entre Gaia y [SDSS]{.acr}, algo fuera del alcance del campo receptivo local del modelo 1D. Se mantuvo la conexión residual global sobre el espectro interpolado, y el modelo alcanzó aproximadamente 2,3 millones de parámetros entrenables, una capacidad muy superior a la del modelo convolucional 1D aunque todavía del orden de la mitad que la del modelo denso.
 
+La red se organiza por niveles. La entrada tiene ahora dos canales, el flujo y el error de Gaia interpolados sobre la malla de [SDSS]{.acr}, y se rellena hasta 2672 puntos, múltiplo de 8, para que los tres submuestreos sean exactos. La primera mitad es el codificador: en cada nivel, una convolución de paso 2 reduce a la mitad la longitud del espectro (2672, 1336, 668 y 334 puntos) mientras crece el número de filtros (64, 96, 128 y 160). Le sigue el cuello de botella, y después el decodificador, simétrico, que en cada nivel sobremuestrea por dos y concatena la conexión de salto del nivel equivalente. La conexión residual global une la entrada con la salida, que recorta el relleno inicial antes de sumar el flujo interpolado. Cada bloque residual con atención de canal está formado por: las dos convoluciones, el módulo *squeeze-and-excitation*, que resume cada canal en su media global y aprende con dos capas densas el factor con el que reescalarlo, y el atajo que suma la entrada del bloque a su salida.
+
+El modelo consta de 95 capas de doce tipos distintos, cuya secuencia completa se recoge en la @fig-arquitectura-unet, con una barra por capa del color de la operación que realiza. El patrón se repite en los ocho bloques residuales —dos convoluciones, las cuatro capas del módulo de atención de canal, la suma del atajo y la activación—, y el crecimiento del número de filtros desde los 64 del primer nivel del codificador hasta los 160 del cuello de botella, al que es proporcional la altura de las barras.
+
+:::{#fig-arquitectura-unet}
+
+![](images/architectural_diagrams/cnn-v2_layered-diagram.png)
+
+*Fuente: Elaboración propia*
+
+Arquitectura del modelo convolucional U-Net
+:::
+
+Esta fue, con diferencia, la arquitectura más compleja de las estudiadas: 95 capas frente a las 21 del modelo convolucional 1D o la decena escasa de los modelos denso y recurrentes, con 27 convoluciones repartidas en cuatro niveles de resolución. Esa complejidad se tradujo en un coste computacional muy superior al del resto de modelos, y ello a pesar de que el modelo no era el que más parámetros tenía: sus 2,3 millones quedaban lejos de los 5,46 del modelo denso o los 5,65 del recurrente con atención. La diferencia radica en dónde trabaja la red. Los modelos denso y recurrentes comprimen los 201 puntos de Gaia en un vector de unos cientos de valores y solo lo expanden en la capa de salida, mientras que la U-Net aplicaba sus convoluciones sobre secuencias de hasta 2672 puntos, y cada filtro recorría la secuencia entera en cada una de las capas. Haciendo que el entrenamiento tomase más tiempo, tanto por el coste de cada época como por el número de épocas que necesitó hasta que la pérdida de validación dejó de mejorar.
+
 La configuración del entrenamiento conservó la función de pérdida Huber con $\delta = 1$ (ahora ponderada por píxel), las mismas métricas [MAE]{.acr} y [MSE]{.acr} sin ponderar para mantener la comparabilidad con el resto de modelos, el optimizador Adam con limitación a 1 de la norma de los gradientes y los lotes de 64 muestras. Al ser un modelo de mayor capacidad, se amplió el presupuesto de entrenamiento: tasa de aprendizaje inicial de 0.0003, un máximo de 100 épocas, parada temprana con paciencia de 10 épocas y reducción de la tasa de aprendizaje a la mitad tras 4 épocas sin mejora.
 
 #### Modelo recurrente
@@ -599,13 +636,47 @@ En estas, las funciones de pérdida, optimizador y parada temprana se mantuviero
 
 El primero de los modelos recurrentes seleccionados estaba formado por una capa de [GRU]{.acr} de dimensión 128. A continuación una capa densa de 512 neuronas, seguida de funciones de activación LeakyReLU intercaladas por otra capa densa de 1024 neuronas. Finalmente, se añadió una capa densa de salida del tamaño de los espectros de [SDSS]{.acr}.
 
+La @fig-arquitectura-gru esquematiza este modelo. La entrada es el espectro de Gaia visto como una secuencia de 201 pasos con una sola variable por paso, el flujo, de modo que el orden de los puntos, la longitud de onda creciente, sí forma parte del dato. La capa [GRU]{.acr} recorre esos 201 puntos arrastrando un estado interno y devuelve únicamente el último, un resumen de 128 valores del espectro completo, que la cabeza densa expande hasta los 2666 puntos de [SDSS]{.acr}. La celda [GRU]{.acr} hace en cada paso lo siguiente: sus dos puertas, ambas con activación sigmoide, deciden cuánto del estado anterior se conserva y cuánto entra en el estado candidato, y son las que le permiten arrastrar información de un extremo del espectro al otro sin que el gradiente se desvanezca por el camino.
+
+:::{#fig-arquitectura-gru}
+
+![](images/architectural_diagrams/gru_graph-diagram.png)
+
+*Fuente: Elaboración propia*
+
+Arquitectura del modelo recurrente basado en una capa [GRU]{.acr}
+:::
+
 Por otro lado, se probaron variantes bidireccionales de la arquitectura recurrente [@schuster1997bidirectional]. Esta capa procesa la secuencia de puntos en ambos sentidos, en sentido creciente y decreciente de longitud de onda. Se incluyeron versiones con y sin capas de normalización internas.
-En el modelo bidireccional destacado se utilizó una capa [GRU]{.acr} bidireccional con dimensión 128. A continuación se incorporaron dos capas densas de 512 y 1024 neuronas, intercaladas con funciones de activación LeakyReLU. Igual que en los casos anteriores, la capa de salida disponía del mismo tamaño que la dimensión de los espectros de [SDSS]{.acr}.
+En el modelo bidireccional destacado se utilizó una capa [GRU]{.acr} bidireccional con dimensión 128. A continuación se incorporó la misma cabeza densa del modelo base, cuatro capas de 512, 1024, 1024 y 1024 neuronas que alternan las funciones de activación LeakyReLU y ELU. Igual que en los casos anteriores, la capa de salida disponía del mismo tamaño que la dimensión de los espectros de [SDSS]{.acr}.
+
+La @fig-arquitectura-birnn muestra esta arquitectura. Las dos lecturas del espectro, en sentido creciente y decreciente de la longitud de onda, son en el modelo una única capa bidireccional que envuelve a la [GRU]{.acr}: cada una devuelve su último estado y los dos se concatenan en un resumen de 256 valores. Con una sola dirección, ese resumen lo escribe una capa que al llegar al extremo rojo lleva 201 pasos acumulados y uno solo al empezar por el azul; con las dos, cada extremo del espectro está igual de cerca de una de las lecturas.
+
+:::{#fig-arquitectura-birnn}
+
+![](images/architectural_diagrams/birnn_graph-diagram.png)
+
+*Fuente: Elaboración propia*
+
+Arquitectura del modelo recurrente bidireccional
+:::
 
 Finalmente, se evaluaron arquitecturas con mecanismos de atención [@vaswani2017attention], permitiendo que no se resumiese el entrenamiento en el último estado recurrente, sino que el modelo conservase información de todos los pasos de la secuencia y asignase pesos a aquellas regiones del espectro que se consideraban más importantes para la predicción.  
 
 El modelo con atención seleccionado estaba formado por dos capas [GRU]{.acr} bidireccionales, la primera de dimensión 128 y la segunda 64 en cada dirección. Sobre su salida se aplicó el mecanismo de atención, que generó un vector de dimensión 128. 
-El vector fue procesado por capas densas de 512 y 1024 neuronas, intercaladas otra vez con funciones LeakyReLU. 
+El vector fue procesado por la misma cabeza densa que el modelo bidireccional, las cuatro capas de 512, 1024, 1024 y 1024 neuronas con las activaciones LeakyReLU y ELU alternadas.
+
+La @fig-arquitectura-attention esquematiza el modelo. Las dos capas bidireccionales devuelven ahora la secuencia completa de estados, 201 de 256 valores la primera y 201 de 128 la segunda, uno por punto del espectro, y el resumen del espectro deja de ser el último estado para convertirse en una media ponderada de los 201 con unos pesos que la propia red aprende. Ese mecanismo son tres pasos: una capa densa de una sola neurona, compartida por todos los pasos, puntúa cada estado; una *softmax* sobre los 201 pasos convierte las puntuaciones en pesos que suman uno; y el resumen es la suma de los estados ponderada por esos pesos. Es todo lo que la atención añade en parámetros: 129 sobre los 5,65 millones del modelo.
+
+:::{#fig-arquitectura-attention}
+
+![](images/architectural_diagrams/birnn-attention_graph-diagram.png)
+
+*Fuente: Elaboración propia*
+
+Arquitectura del modelo recurrente bidireccional con atención
+:::
+
 
 En la arquitectura de estos dos últimos modelos mencionados, se redujeron las épocas de espera dado que la diferencia entre esperar 2 o 4 épocas no reflejaba mejoras en las estadísticas pero sí en el tiempo de entrenamiento.
 
@@ -967,6 +1038,17 @@ Gráficas de evolución de las métricas de entrenamiento en la red densa con no
 
 
 #### Modelo denso con SNR
+
+La @fig-arquitectura-snr muestra la arquitectura de esta variante. La red es exactamente la del modelo denso, y lo único que cambia es la entrada, que pasa de 201 a 402 valores al concatenar detrás del espectro los 201 valores de la [SNR]{.acr} de ese mismo espectro. Cada mitad se normalizó de una manera antes de entrar en la red: el espectro, dividiéndolo entre la mediana de su flujo absoluto; la [SNR]{.acr}, tipificándola punto a punto con la media y la desviación típica del conjunto de entrenamiento. Los 201 valores adicionales solo añaden parámetros a la primera capa oculta, un 1,9 % del total del modelo, y la red no sabe que la segunda mitad de su entrada es una medida de calidad y no un flujo: esa relación tenía que aprenderla de los datos.
+
+:::{#fig-arquitectura-snr}
+
+![](images/architectural_diagrams/snr_graph-diagram.png)
+
+*Fuente: Elaboración propia*
+
+Arquitectura del modelo denso con la [SNR]{.acr}
+:::
 
 Al tratar de añadir la [SNR]{.acr} de las muestras de Gaia como parte de los datos de entrada del modelo, los resultados obtenidos sobre los mismos objetos fueron los observados en las @fig-snr-left, @fig-snr-central, @fig-snr-right y @fig-snr-wd.
 
