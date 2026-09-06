@@ -26,16 +26,16 @@ def plot_training_metrics(model_history, metrics=None):
 
 
 def calculate_chi2(y_real, y_pred, y_ivar):
-
+    # Aplicamos la fórmula de chi-cuadrado sobre todos los puntos del espectro válidos
     valid = (
         np.isfinite(y_ivar)
         & (y_ivar > 0)
     )
     chi2 = np.sum((pow((y_real[valid] - y_pred[valid]), 2))* y_ivar[valid])
-
+    # Dividimos el resultado por la longitud del espectro para tener el chi-cuadrado normalizado
     return chi2 / len(y_real[valid])
 
-
+# Función para calcular el chi-cuadrado de todos los espectros incluidos en el conjunto de datos
 def calculate_all_chi2(y_real, y_pred, y_ivar, plot=True):
     chi2_values = []
 
@@ -43,7 +43,7 @@ def calculate_all_chi2(y_real, y_pred, y_ivar, plot=True):
         chi2_values.append(calculate_chi2(y_real[i], y_pred[i], y_ivar[i]))
 
     chi2_values = np.asarray(chi2_values)
-
+    # Si se quiere graficar el resultado, plot = true
     if plot:
         plt.figure(figsize=(8, 5))
 
@@ -76,7 +76,7 @@ def calculate_all_chi2(y_real, y_pred, y_ivar, plot=True):
 
     return chi2_values
 
-
+# Función para graficar el chi-cuadrado basada en un gráfico hexbin
 def plot_hr_chi2_hexbin(
     bp_rp,
     g_mag,
