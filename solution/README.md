@@ -121,3 +121,11 @@ Instalar todas las dependencias con `uv sync` o `pip install -e .`.
 [SDSS Schema Browser](https://skyserver.sdss.org/dr13/en/help/browser/browser.aspx)  
 [SDSS Data Model](https://data.sdss.org/datamodel/)  
 [SDSS CasJobs](https://skyserver.sdss.org/CasJobs/)
+
+## Licencia
+
+Copyright © 2026 Carla Sequero y J. Javier Cacho.
+
+Código distribuido bajo la [GNU Affero General Public License v3.0 o posterior](../LICENSE): toda obra derivada —incluido su uso ofrecido a través de una red— debe publicarse con esta misma licencia, conservar los avisos de copyright y citar a los autores originales.
+
+*iSpec* (`lib/iSpec/`, no versionado en este repositorio) es obra de sus autores y se distribuye igualmente bajo AGPL-3.0.
