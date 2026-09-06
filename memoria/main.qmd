@@ -1141,11 +1141,12 @@ En el caso del modelo convolucional residual, el entrenamiento se detuvo en la �
 :::{#fig-training-metrics-cnn}
 
 ::::{ layout="[[-1,5,-1],[-1,5,-1],[-1,5,-1]]"}
-![](_partials/assets/loss_function_evolution_cnn.png)
 
-![](_partials/assets/mse_evolution_cnn.png)
+![](images/evo_loss_cnn1.png)
 
-![](_partials/assets/mae_evolution_cnn.png)
+![](images/evo_mae_cnn1.png)
+
+![](images/evo_mse_cnn1.png)
 ::::
 
 *Fuente: Elaboración propia*
@@ -1242,13 +1243,13 @@ El comportamiento del modelo U-Net durante el entrenamiento fue muy distinto al 
 
 :::{#fig-loss-evolution-cnn-v2}
 
-::::{ layout="[[-1,20,-1],[-1,20,-1],[-1,20,-1]]"}
+::::{ layout="[[-1,5,-1],[-1,5,-1],[-1,5,-1]]"}
 
-![](_partials/assets/loss_function_evolution_cnn_v2.png)
+![](images/evo_loss_cnn2.png)
 
-![](_partials/assets/mse_evolution_cnn_v2.png)
+![](images/evo_mae_cnn2.png)
 
-![](_partials/assets/mae_evolution_cnn_v2.png)
+![](images/evo_mse_cnn2.png)
 
 ::::
 
@@ -1431,7 +1432,7 @@ La evolución de las métricas de entrenamiento puede observarse en la @fig-evol
 
 ![](images/evo_loss_gru.png)
 
-![](images/evo_lmae_gru.png)
+![](images/evo_mae_gru.png)
 
 ![](images/evo_mse_gru.png)
 
