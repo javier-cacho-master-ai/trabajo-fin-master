@@ -2,51 +2,59 @@
 #import "header.typ": get-header
 #import "styles.typ": styles
 
-// Acronyms read from the shared data file (single source of truth).
+// Acrónimos leídos del fichero de datos compartido (fuente única de verdad).
 #let acronyms-data = yaml("../_acronyms.yml").acronyms
 
-// Lookup by key, for the in-text references.
+// Búsqueda por clave, para las menciones en el texto.
 #let acronyms-by-key = {
   let m = (:)
   for e in acronyms-data { m.insert(e.key, e) }
   m
 }
 
-// Tracks which acronyms have already appeared, to distinguish first use.
+// Registra qué acrónimos ya han aparecido, para distinguir la primera mención.
 #let acronyms-seen = state("acronyms-seen", (:))
 
-// In-text reference. First use follows APA 7.ª:
-//   long name (SIGLA; traducción)      -- the translation is optional
-// subsequent uses show only the sigla. No italics in-text (per APA).
-#let acr(key) = {
+// Mención en el texto. La primera encabeza con el término en español:
+//   término en español (SIGLA; término original)
+// Sin `translation` solo se dispone del desarrollo original: «término (SIGLA)».
+// Las siguientes menciones muestran solo la sigla. Sin cursiva en el texto (APA).
+#let acr(key, short: false) = {
   let entry = acronyms-by-key.at(key, default: none)
   assert(entry != none, message: "Acrónimo desconocido: '" + key + "'")
-  let gloss = if "translation" in entry { "; " + entry.translation } else { "" }
-  let full = entry.longname + " (" + entry.shortname + gloss + ")"
+  // Enlace de vuelta a la entrada del "Índice de acrónimos".
+  let sigla = link(label("acr-" + key), entry.shortname)
+  // Encabezados y pies de figura se reproducen en los índices preliminares, así
+  // que solo llevan la sigla y no consumen la primera aparición del cuerpo.
+  if short { return sigla }
+
+  let full = if "translation" in entry {
+    entry.translation + " (" + entry.shortname + "; " + entry.longname + ")"
+  } else {
+    entry.longname + " (" + entry.shortname + ")"
+  }
   context {
     let first = not acronyms-seen.get().at(key, default: false)
-    let shown = if first { full } else { entry.shortname }
-    // Link back to the entry in the "Índice de acrónimos".
-    link(label("acr-" + key), shown)
+    if first { link(label("acr-" + key), full) } else { sigla }
   }
   acronyms-seen.update(s => { s.insert(key, true); s })
 }
 
-// The list itself: one entry per line, "SIGLA: desarrollo (traducción)", with
-// the long name italicised for foreign terms (`italic: true`, the default).
+// El índice: una entrada por línea, «SIGLA: desarrollo (traducción)», con el
+// desarrollo en cursiva para los términos extranjeros (`italic: true`, por defecto).
 #let acronyms-list() = {
   let sorted = acronyms-data.sorted(key: e => lower(e.shortname))
   for (i, e) in sorted.enumerate() {
     if i > 0 { linebreak() }
     let long = if e.at("italic", default: true) { emph(e.longname) } else { e.longname }
     let gloss = if "translation" in e { " (" + e.translation + ")" } else { "" }
-    // The label is the target of the in-text back-links (see `acr`).
+    // La etiqueta es el destino de los enlaces de vuelta del texto (véase `acr`).
     [#strong(e.shortname): #long#gloss#label("acr-" + e.key)]
   }
 }
 
-// The "Índice de acrónimos" page, placed in the front matter (after the Índice
-// de Tablas), with the same heading style as the other indices.
+// La página "Índice de acrónimos", en las páginas preliminares (tras el Índice
+// de Tablas), con el mismo estilo de encabezado que el resto de índices.
 #let get-acronyms-index(header-text: none) = {
   page(
     header: get-header(header-text: header-text),

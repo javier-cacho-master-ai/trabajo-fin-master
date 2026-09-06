@@ -1,7 +1,7 @@
 # %% [markdown]
 # # Diagramas de arquitectura del modelo convolucional 1D
 #
-# Figuras de la arquitectura del modelo entrenado en `cnn_v1_training.ipynb`, para la memoria. Las dibuja `services/architecture_diagram.py`, el módulo que comparten todos los cuadernos de diagramas de `models`:
+# Figuras de la arquitectura del modelo entrenado en `cnn_v1_training.ipynb`, para la memoria. Las dibuja `models/services/architecture_diagram.py`, el módulo que comparten todos los cuadernos de diagramas de `models`:
 #
 # - La vista `graph` que **visualkeras** saca del modelo ya entrenado, sin escribir la estructura a mano.
 #
@@ -12,9 +12,9 @@ import sys
 
 from pathlib import Path
 
-# 'services' está tanto en 'solution' como en 'models', así que las dos carpetas
-# van a 'sys.path'. 'solution' se localiza subiendo desde el directorio de
-# trabajo, sin suponer dónde arranca el kernel: su marca es 'pyproject.toml'.
+# 'services' cuelga de 'models', así que esa carpeta va a 'sys.path'. 'solution'
+# se localiza subiendo desde el directorio de trabajo, sin suponer dónde arranca
+# el kernel: su marca es 'pyproject.toml'.
 DIRECTORIES = (Path.cwd(), *Path.cwd().parents)
 CANDIDATES = (*DIRECTORIES, *(directory / "solution" for directory in DIRECTORIES))
 SOLUTION_DIR = next(
@@ -22,7 +22,6 @@ SOLUTION_DIR = next(
 )
 
 sys.path.insert(0, str(SOLUTION_DIR / "models"))
-sys.path.insert(0, str(SOLUTION_DIR))
 
 from services.architecture_diagram import DIAGRAMS_DIR, draw_diagrams
 from services.paths import model_paths

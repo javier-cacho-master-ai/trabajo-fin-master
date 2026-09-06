@@ -1,10 +1,14 @@
--- Clean in-text acronym references without writing Typst in the Markdown.
--- A span `[ESA]{.acr}` becomes a call to the `acr` helper defined in
--- `_partials/acronyms.typ`, which expands the first use (APA 7.ª) and shows just
--- the sigla afterwards. The span's text is the acronym key.
+-- Referencias limpias a acrónimos en el texto, sin escribir Typst en el Markdown.
+-- Un span `[ESA]{.acr}` se convierte en una llamada al ayudante `acr` definido en
+-- `_partials/acronyms.typ`, que desarrolla la primera aparición y muestra solo la
+-- sigla en las siguientes. El texto del span es la clave del acrónimo.
+-- Añadir `.short` (`[SNR]{.acr .short}`) fuerza la sigla sola y no cuenta como
+-- primera aparición: es la forma para encabezados y pies de figura, que se
+-- reproducen en los índices preliminares y adelantarían el desarrollo.
 function Span(el)
   if el.classes:includes("acr") then
     local key = pandoc.utils.stringify(el.content)
-    return pandoc.RawInline("typst", '#acr("' .. key .. '")')
+    local short = el.classes:includes("short") and ", short: true" or ""
+    return pandoc.RawInline("typst", '#acr("' .. key .. '"' .. short .. ')')
   end
 end
