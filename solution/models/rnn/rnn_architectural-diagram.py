@@ -1,7 +1,7 @@
 # %% [markdown]
 # # Diagramas de arquitectura de los modelos recurrentes
 #
-# Figuras de la arquitectura de los tres modelos entrenados en `rnn_training.ipynb`, para la memoria. De cada uno las dibuja `services/architecture_diagram.py`, el módulo que comparten todos los cuadernos de diagramas de `models`:
+# Figuras de la arquitectura de los tres modelos entrenados en `rnn_training.ipynb`, para la memoria. De cada uno las dibuja `models/services/architecture_diagram.py`, el módulo que comparten todos los cuadernos de diagramas de `models`:
 #
 # - La vista `graph` que **visualkeras** saca del modelo ya entrenado, sin escribir la estructura a mano.
 #
@@ -14,9 +14,9 @@ import sys
 
 from pathlib import Path
 
-# 'services' está tanto en 'solution' como en 'models', así que las dos carpetas
-# van a 'sys.path'. 'solution' se localiza subiendo desde el directorio de
-# trabajo, sin suponer dónde arranca el kernel: su marca es 'pyproject.toml'.
+# 'services' cuelga de 'models', así que esa carpeta va a 'sys.path'. 'solution'
+# se localiza subiendo desde el directorio de trabajo, sin suponer dónde arranca
+# el kernel: su marca es 'pyproject.toml'.
 DIRECTORIES = (Path.cwd(), *Path.cwd().parents)
 CANDIDATES = (*DIRECTORIES, *(directory / "solution" for directory in DIRECTORIES))
 SOLUTION_DIR = next(
@@ -24,7 +24,6 @@ SOLUTION_DIR = next(
 )
 
 sys.path.insert(0, str(SOLUTION_DIR / "models"))
-sys.path.insert(0, str(SOLUTION_DIR))
 
 from services.architecture_diagram import DIAGRAMS_DIR, draw_diagrams
 from services.paths import model_paths
@@ -113,4 +112,10 @@ draw_diagrams(models["birnn"], "birnn")
 # Es el único de los tres modelos que Keras guarda como red funcional y no como pila de capas. En la vista `graph`, el pie de la `AttentionPooling` recoge lo que hace con la secuencia: recibe los 201 estados de 128 números de la segunda capa bidireccional y devuelve un único vector de 128, que es donde la secuencia se colapsa en el resumen.
 
 # %%
-draw_diagrams(models["birnn-attention"], "birnn-attention")
+# Los pies de las dos capas bidireccionales miden 288 píxeles, mucho más de lo
+# que ocupa la columna que rotulan, así que esta figura separa sus columnas más
+# que las comunes: con el hueco común, cada pie se solapa con el siguiente
+draw_diagrams(
+    models["birnn-attention"], "birnn-attention"
+  , graph={"layer_spacing": 150}
+)

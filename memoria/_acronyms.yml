@@ -1,13 +1,15 @@
 # Fuente única de acrónimos. La lee la plantilla Typst (`_partials/acronyms.typ`)
 # para generar tanto el "Índice de acrónimos" como las menciones en el texto
-# (primera aparición en formato APA 7.ª, siguientes solo la sigla).
+# (primera mención encabezada por el término en español, siguientes solo la sigla).
 #
 # Campos por acrónimo:
 #   key          Identificador para referenciar en el texto con [KEY]{.acr}.
 #   shortname    Sigla mostrada.
 #   longname     Desarrollo en su idioma original, en texto plano.
-#   translation  Traducción al español (opcional). Aparece en la primera mención
-#                APA «longname (SIGLA; translation)» y en el índice.
+#   translation  Traducción al español, en minúscula salvo nombres propios
+#                (opcional). Encabeza la primera mención en el texto,
+#                «translation (SIGLA; longname)», y cierra la línea del índice,
+#                «SIGLA: longname (translation)».
 #   italic       Si el desarrollo va en cursiva en el índice (true por defecto;
 #                false para términos ya en español, como IA o XP).
 acronyms:
@@ -20,7 +22,7 @@ acronyms:
   - key: CNN
     shortname: CNN
     longname: Convolutional neural network
-    translation: Red neuronal convolucional
+    translation: red neuronal convolucional
   - key: DR
     shortname: DR
     longname: Data Release
@@ -75,8 +77,8 @@ acronyms:
     translation: cuásar
   - key: RNN
     shortname: RNN
-    longname: Red neuronal recurrente
-    translation: Recurrent neural network
+    longname: Recurrent neural network
+    translation: red neuronal recurrente
   - key: RR*
     shortname: RR*
     longname: RR Lyrae Variable

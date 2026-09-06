@@ -19,8 +19,6 @@ Los colores no los reparte visualkeras: los fija `LAYER_COLORS` por lo que hace
 cada capa, de modo que signifiquen lo mismo en las figuras de todos los modelos.
 """
 
-from pathlib import Path
-
 import visualkeras
 
 from IPython.display import Image, display
@@ -28,19 +26,21 @@ from keras.layers import InputLayer
 from matplotlib import font_manager
 from PIL import ImageFont
 
-# `services` cuelga de `solution`; las figuras se localizan desde aquí y no
-# desde el directorio en el que arranque el kernel de quien llama
-SOLUTION_DIR = Path(__file__).resolve().parents[1]
-DIAGRAMS_DIR = SOLUTION_DIR / "models" / "images" / "architectural_diagrams"
+from services.paths import MODELS_DIR
+
+# `models` lo deduce `paths.py` de su propia posición, de modo que las figuras
+# se localicen desde ahí y no desde el directorio en el que arranque el kernel
+# de quien llama
+DIAGRAMS_DIR = MODELS_DIR / "images" / "architectural_diagrams"
 
 # ---------------------------------------------------------------------------
 # Vistas de visualkeras
 # ---------------------------------------------------------------------------
 
-# Paleta de Okabe-Ito, la misma que las gráficas de `plotting.py`: se distingue
-# también con deuteranopía y protanopía y contrasta sobre blanco al imprimir.
-# Las capas se agrupan por lo que hacen y no por su clase, que es lo que
-# interesa comparar de una red a otra.
+# Paleta de Okabe-Ito, la misma que las gráficas de
+# `solution/services/plotting.py`: los colores contrastan bien y las capas 
+# se agrupan por lo que hacen y no por su clase, que es lo que interesa comparar
+# de una red a otra.
 INPUT_COLOR       = "#dfe7ef"  # la entrada, en un gris azulado
 DENSE_COLOR       = "#56b4e9"  # capas completamente conectadas
 CONVOLUTION_COLOR = "#009e73"  # convoluciones
@@ -103,15 +103,15 @@ LAYER_NAMES = {
 # imprimir. DejaVu Sans entra con Matplotlib, así que todas las figuras de un
 # modelo salen con la misma letra. Los recuadros de la vista `graph` la quieren
 # por su ruta y no ya cargada: solo admiten una cadena o la de mapa de bits.
-FONT_SIZE = 15
-FONT_PATH = font_manager.findfont("DejaVu Sans")
+FONT_SIZE = 12
+FONT_PATH = font_manager.findfont("Calibri")
 FONT = ImageFont.truetype(FONT_PATH, FONT_SIZE)
 
 # La vista `graph` sale mucho más apaisada que las demás —una columna por capa,
 # con las conexiones entre ellas—, así que hay que reducirla mucho más para
 # encajarla en un ancho dado. Sus pies van en un cuerpo mayor para que, ya
 # reducidos, se lean como los rótulos de las otras figuras.
-GRAPH_FONT_SIZE = 24
+GRAPH_FONT_SIZE = 18 
 
 # Recuadro con el que la vista `graph` rotula cada capa: en gris y sin relleno,
 # para que se vean las conexiones que lo cruzan
@@ -247,7 +247,7 @@ VIEW_OPTIONS = {
         # Los pies son más anchos que la columna que rotulan, así que las
         # columnas van separadas por lo que ocupa un nombre de capa largo.
         # Quien los tenga cortos puede apretarlas más.
-      , "layer_spacing":   260
+      , "layer_spacing":  100 
         # visualkeras calcula el alto del lienzo con las columnas y le suma
         # este margen arriba y abajo; los pies cuelgan por debajo de la
         # columna más alta, así que el margen es también su hueco
