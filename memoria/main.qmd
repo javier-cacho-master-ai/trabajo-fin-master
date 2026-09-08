@@ -835,11 +835,11 @@ Si bien es cierto, estas predicciones se ven afectadas por el alto nivel de deta
 Durante las comparaciones realizadas, siempre se usaron los mismos ocho objetos, identificados por el nombre celeste y los identificadores de Gaia y [SDSS]{.acr} que aparecen en los gráficos recientemente comentados.
 
 El segundo tipo de normalización se basó en la mediana por espectro. Se aplicó la siguiente transformación a cada espectro *i* :
-$$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{mediana}(|F_i|)} $$
+$$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{mediana}(F_i)} $$
 
 Para desnormalizarlos, se guardaron las variables originales y se aplicó la fórmula inversa:
 
-$$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{mediana}(|F_i|) $$
+$$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{mediana}(F_i) $$
 
 Con este método, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar, incluso con menor grado de sobreajuste, tal y como observamos en las gráficas representadas en las imágenes @fig-metricas-red-densa-median.
 
@@ -940,11 +940,11 @@ Enanas blancas. Espectros generados por el modelo de redes neuronales densas con
 Comparándolas con las gráficas obtenidas con la primera normalización mencionada, pudimos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. Esta mejora destaca sobre todo en los dos primeros gráficos representados en la @fig-dense-median-left.
 
 Por último, si nos fijamos en las @fig-dense-max-left, @fig-dense-max-central, @fig-dense-max-right y @fig-dense-max-wd, observamos los resultados obtenidos sobre los mismos objetos con una normalización espectro a espectro basada en el máximo valor del flujo. En estas, la fórmula utilizada para normalizar los espectros fue:
-$$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{max}(|F_i|)} $$
+$$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{max}(F_i)} $$
 
 Y para desnormalizarlos:
 
-$$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{max}(|F_i|) $$
+$$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{max}(F_i) $$
 
 :::{#fig-dense-max-left}
 

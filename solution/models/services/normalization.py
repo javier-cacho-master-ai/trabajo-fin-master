@@ -9,12 +9,12 @@ normalización sobre la predicción. Lo único que cambia de un modelo a otro es
 estadístico con el que lo hacen, y aquí están reunidos los tres del trabajo:
 
 - **Escala por espectro con la mediana** (`normalize_per_spectrum`): cada
-  espectro se divide entre la mediana de su flujo absoluto y queda con mediana
+  espectro se divide entre la mediana de su flujo y queda con mediana
   1, de modo que el modelo aprende la forma del espectro y no el brillo de la
   estrella. Es la normalización del modelo denso de referencia, y la que usan
   también el recurrente, el de la SNR y los convolucionales.
 - **Escala por espectro con el máximo** (`statistic="max"`): la misma idea
-  dividiendo entre el máximo del flujo absoluto, que deja el espectro dentro de
+  dividiendo entre el máximo del flujo, que deja el espectro dentro de
   [-1, 1] a costa de que un solo píxel —una línea de emisión, un pico de
   ruido— fije la escala de todo el espectro.
 - **Tipificación** (`normalize_standard`): se resta una media y se divide entre
@@ -58,7 +58,7 @@ def spectrum_scale(spectra, statistic="median"):
 
     Parameters:
         spectra (numpy.ndarray): Espectros, uno por fila.
-        statistic (str): 'median' para la mediana del flujo absoluto de cada
+        statistic (str): 'median' para la mediana del flujo de cada
             espectro o 'max' para su máximo.
 
     Returns:
@@ -67,7 +67,7 @@ def spectrum_scale(spectra, statistic="median"):
     """
     reduce_statistic = SPECTRUM_STATISTICS[statistic]
 
-    return reduce_statistic(np.abs(spectra), axis=1, keepdims=True)
+    return reduce_statistic(spectra, axis=1, keepdims=True)
 
 
 def normalize(spectra, scale):
@@ -110,7 +110,7 @@ def normalize_per_spectrum(spectra, statistic="median"):
 
     Parameters:
         spectra (numpy.ndarray): Espectros, uno por fila.
-        statistic (str): 'median' para la mediana del flujo absoluto de cada
+        statistic (str): 'median' para la mediana del flujo de cada
             espectro o 'max' para su máximo.
 
     Returns:
@@ -136,7 +136,7 @@ def normalize_splits(train, val, test, statistic="median"):
         train (numpy.ndarray): Espectros del conjunto de entrenamiento.
         val (numpy.ndarray): Espectros del conjunto de validación.
         test (numpy.ndarray): Espectros del conjunto de test.
-        statistic (str): 'median' para la mediana del flujo absoluto de cada
+        statistic (str): 'median' para la mediana del flujo de cada
             espectro o 'max' para su máximo.
 
     Returns:
