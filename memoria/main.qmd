@@ -726,7 +726,7 @@ Aunque las métricas de la función de pérdida, [MAE]{.acr} y [MSE]{.acr} permi
 
 #### Arquitectura densa con diferentes normalizaciones
 
-La primera opción de normalización evaluada consistía en calcular la media ($\mu$) y la desviación estándar ($\sigma$) del conjunto de entrenamiento y utilizar estos valores para normalizar los datos de entrenamiento, validación y test. La fórmula empleada fue la siguiente:
+La primera opción de normalización evaluada fue la normalización estándard. Consistía en calcular la media ($\mu$) y la desviación estándar ($\sigma$) del conjunto de entrenamiento y utilizar estos valores para normalizar los datos de entrenamiento, validación y test. La fórmula empleada fue la siguiente:
 
 $$ F_{\mathrm{norm}} = \frac{F-\mu}{\sigma} $$
 
