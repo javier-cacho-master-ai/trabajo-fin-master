@@ -736,6 +736,10 @@ $$ F_{\mathrm{pred}} = F_{\mathrm{pred,norm}}\sigma+\mu $$
 
 Durante el entrenamiento se pudo observar una evolución estable de las métricas controladas, tanto en el conjunto de entrenamiento como el de validación. Se observa esta disminución constante representada en la @fig-metricas-red-densa.
 
+En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento muy similar a la del conjunto de validación.
+Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento como podemos observar en la @tbl-met-dense-glob, reforzando la idea de que el modelo tenía un comportamiento estable ante los datos que no había sido vistos con anterioridad. 
+
+
 :::{#fig-metricas-red-densa}
 
 ::::{layout="[[-1,5,-1],[-1,5,-1],[-1,5,-1]]"}
@@ -753,8 +757,6 @@ Durante el entrenamiento se pudo observar una evolución estable de las métrica
 Gráfica de la evolución de las métricas del modelo de redes neuronales densas con normalización global.
 :::
 
-En la última época llevada a cabo, se obtuvo una pérdida del conjunto de entrenamiento muy similar a la del conjunto de validación.
-Una vez finalizado el entrenamiento del modelo, se evaluó su eficacia sobre el conjunto de test. Los valores obtenidos fueron muy cercanos a los de la muestra de validación y entrenamiento como podemos observar en la @tbl-met-dense-glob, reforzando la idea de que el modelo tenía un comportamiento estable ante los datos que no había sido vistos con anterioridad. 
 
 
 ::: {#tbl-met-dense-glob}
@@ -850,7 +852,23 @@ Para desnormalizarlos, se guardaron las variables originales y se aplicó la fó
 
 $$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{mediana}(|F_i|) $$
 
-Con este método, los resultados obtenidos fueron similares. Incluso las épocas avanzaron de forma similar, incluso con menor grado de sobreajuste, tal y como observamos en las gráficas representadas en las imágenes @fig-metricas-red-densa-median.
+Con este método, los resultados obtenidos fueron similares. 
+No se apreciaron rasgos de sobreajuste en las métricas del modelo que encontramos en la tabla @tbl-met-dense-median.
+
+::: {#tbl-met-dense-median}
+
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0033 | 0.0429 | 0.0089 |
+| Validación | 0.0034 | 0.0433 | 0.0113 |
+| Test | 0.0033 | 0.0436 | 0.0084 |
+
+*Fuente: Elaboración propia*
+
+Resultados obtenidos con el modelo denso con la normalización espectro a espectro basada en la mediana para los diferentes conjuntos de datos.
+:::
+
+Las épocas avanzaron de forma similar al modelo anterior, incluso con menor grado de sobreajuste, tal y como observamos en las gráficas representadas en las imágenes @fig-metricas-red-densa-median.
 
 :::{#fig-metricas-red-densa-median}
 
@@ -869,20 +887,6 @@ Con este método, los resultados obtenidos fueron similares. Incluso las épocas
 Gráficas de evolución de las métricas de entrenamiento en la red densa basada en una normalización con la mediana.
 :::
 
-Tampoco se apreciaron rasgos de sobreajuste en las métricas del modelo que encontramos en la tabla @tbl-met-dense-median.
-
-::: {#tbl-met-dense-median}
-
-| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
-| Entrenamiento | 0.0033 | 0.0429 | 0.0089 |
-| Validación | 0.0034 | 0.0433 | 0.0113 |
-| Test | 0.0033 | 0.0436 | 0.0084 |
-
-*Fuente: Elaboración propia*
-
-Resultados obtenidos con el modelo denso con la normalización espectro a espectro basada en la mediana para los diferentes conjuntos de datos.
-:::
 
 Los espectros obtenidos sobre los mismos objetos que el modelo anterior, un par por grupo del diagrama [HR]{.acr}, fueron los observados en las @fig-dense-median-left, @fig-dense-median-central, @fig-dense-median-right y @fig-dense-median-wd:
 
@@ -955,6 +959,27 @@ Y para desnormalizarlos:
 
 $$ F_i = F_{\mathrm{norm},i} \cdot \mathrm{max}(|F_i|) $$
 
+
+En la @tbl-met-dense-max se encuentran las métricas obtenidas con esta arquitectura y normalización sobre los diferentes conjuntos de datos.
+
+::: {#tbl-met-dense-max}
+
+| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
+|---|---:|---:|---:|
+| Entrenamiento | 0.0040 | 0.0597 | 0.0081 |
+| Validación | 0.0044 | 0.0628 | 0.0088 |
+| Test | 0.0045 | 0.0610 | 0.0089 |
+
+*Fuente: Elaboración propia*
+
+Resultados obtenidos con el modelo denso con la normalización espectro a espectro basada en el máximo para los diferentes conjuntos de datos.
+:::
+
+Los valores obtenidos con esta normalización, fueron muy similares a los anteriores.
+
+A partir de las gráficas observadas en las figuras @fig-dense-max-left, @fig-dense-max-central, @fig-dense-max-right y @fig-dense-max-wd, pareció que la opción con mejores resultados era la segunda, dado que era la que obtenía espectros más cercanos a los reales. Ahora bien, se comprobaron métricas para obtener resultados más concluyentes.
+
+
 :::{#fig-dense-max-left}
 
 ::::{layout-nrow="2"}
@@ -1015,24 +1040,7 @@ Secuencia central, baja luminosidad y baja temperatura. Espectros generados por 
 Enanas blancas. Espectros generados por el modelo de redes neuronales densas con normalización basada en el máximo de cada espectro para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
-A partir de las gráficas observadas, pareció que la opción con mejores resultados era la segunda, dado que era la que obtenía espectros más cercanos a los reales. Ahora bien, se comprobaron métricas para obtener resultados más concluyentes.
-
-En la @tbl-met-dense-max se encuentran las métricas obtenidas con esta arquitectura y normalización sobre los diferentes conjuntos de datos.
-
-::: {#tbl-met-dense-max}
-
-| Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
-| Entrenamiento | 0.0040 | 0.0597 | 0.0081 |
-| Validación | 0.0044 | 0.0628 | 0.0088 |
-| Test | 0.0045 | 0.0610 | 0.0089 |
-
-*Fuente: Elaboración propia*
-
-Resultados obtenidos con el modelo denso con la normalización espectro a espectro basada en el máximo para los diferentes conjuntos de datos.
-:::
-
-Los valores obtenidos con esta normalización, fueron muy similares a los anteriores y, a lo largo del entrenamiento, observamos en la @fig-metricas-red-densa-max como las líneas no parecían converger de igual modo que lo habían hecho en el modelo anterior.
+A lo largo del entrenamiento, observamos en la @fig-metricas-red-densa-max como las líneas no parecían converger de igual modo que lo habían hecho en el modelo anterior.
 
 :::{#fig-metricas-red-densa-max}
 
@@ -1050,6 +1058,11 @@ Los valores obtenidos con esta normalización, fueron muy similares a los anteri
 
 Gráficas de evolución de las métricas de entrenamiento en la red densa con normalización a partir del máximo de cada espectro.
 :::
+
+
+\
+
+
 
 
 #### Modelo denso con [SNR]{.acr .short}
@@ -1151,6 +1164,10 @@ Se presentan por separado los resultados de las dos versiones del modelo convolu
 
 En el caso del modelo convolucional residual, el entrenamiento se detuvo en la época 11 por la función de parada temprana. La evolución de las métricas, representada en la @fig-training-metrics-cnn, mostró un descenso muy rápido durante las dos primeras épocas seguido de un estancamiento, a pesar de las sucesivas reducciones de la tasa de aprendizaje aplicadas durante el proceso.
 
+
+Este comportamiento sugirió que la red convergía casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación de la función de pérdida y [MAE]{.acr} permanecieron muy próximas entre sí durante todo el proceso, a diferencia de lo observado para el [MSE]{.acr} donde sí se apreciaron indicios de sobreajuste.
+
+
 :::{#fig-training-metrics-cnn}
 
 ::::{ layout="[[-1,5,-1],[-1,5,-1],[-1,5,-1]]"}
@@ -1167,8 +1184,6 @@ En el caso del modelo convolucional residual, el entrenamiento se detuvo en la �
 Gráficas de las métricas de evolución de entrenamiento en el modelo convolucional 1D
 :::
 
-
-Este comportamiento sugirió que la red convergía casi de inmediato hacia una solución cercana al propio espectro interpolado, aportando sobre él únicamente una corrección pequeña. Las curvas de entrenamiento y validación de la función de pérdida y [MAE]{.acr} permanecieron muy próximas entre sí durante todo el proceso, a diferencia de lo observado para el [MSE]{.acr} donde sí se apreciaron indicios de sobreajuste.
 
 Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de test, obteniendo las métricas recogidas en la @tbl-test-cnn, muy similares a las de los conjuntos de entrenamiento y validación de la mejor época.
 
@@ -1654,6 +1669,8 @@ Visualmente los espectros no destacaron como para justificar la complejidad intr
 
 Finalmente, en la @fig-evolution-att se observa el comportamiento del modelo a lo largo del entrenamiento. 
 
+En este caso, el modelo tardó cuatro épocas en converger y su entrenamiento se basó en pocas épocas, no llegando a superar las nueve.
+
 :::{#fig-evolution-att}
 
 ::::{ layout="[[-1,10,-1],[-1,10,-1],[-1,10,-1]]"}
@@ -1671,7 +1688,6 @@ Finalmente, en la @fig-evolution-att se observa el comportamiento del modelo a l
 Gráficas de la evolución de las métricas de entrenamiento del modelo basado en el mecanismo de Atención
 :::
 
-En este caso, el modelo tardó cuatro épocas en converger y su entrenamiento se basó en pocas épocas, no llegando a superar las nueve.
 
 
 
