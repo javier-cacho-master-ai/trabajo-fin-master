@@ -24,7 +24,9 @@ SOLUTION_DIR = next(
 
 sys.path.insert(0, str(SOLUTION_DIR / "models"))
 
-from services.architecture_diagram import DIAGRAMS_DIR, draw_diagrams
+from PIL import ImageFont
+
+from services.architecture_diagram import DIAGRAMS_DIR, FONT_PATH, draw_diagrams
 from services.paths import model_paths
 
 MODEL_PATH = model_paths("cnn-v2", "cnn").model
@@ -59,6 +61,20 @@ model_cnn_v2.summary()
 # - `layered`: las 95 capas en plano, una barra por capa y del color de lo que hace. Es la que cuenta cuántas capas tiene de verdad la red. La altura de cada barra es proporcional al número de filtros o de unidades de la capa, así que crece del primer nivel del codificador al cuello de botella, y en ella se distingue el patrón que se repite en los ocho bloques residuales.
 
 # %%
+# visualkeras hace cada entrada de la leyenda tan ancha como su rótulo y luego
+# las va partiendo en filas, así que con doce clases de capa salen desiguales.
+# Midiendo todos los rótulos como el más largo, las entradas salen del mismo
+# ancho y su propio reparto las deja alineadas en columnas.
+LEGEND_FONT = ImageFont.truetype(FONT_PATH, 48)
+LEGEND_BOX = (
+    0
+  , 0
+  , round(max(map(LEGEND_FONT.getlength, (type(l).__name__ for l in model_cnn_v2.layers))))
+    # El alto sí es el de la letra: es el que le deja sitio a las jotas y las ges
+  , LEGEND_FONT.getbbox("Ag")[3]
+)
+LEGEND_FONT.getbbox = lambda text, *args, **kwargs: LEGEND_BOX
+
 # Las 95 capas del modelo no caben en las figuras con las opciones comunes: con
 # el hueco que estas dejan para el rótulo de cada capa, las vistas salen de más
 # de diez mil píxeles de ancho. Son las únicas figuras del trabajo que
@@ -76,5 +92,7 @@ draw_diagrams(
     # Sin rotular y con las capas muy juntas: son 95, y sus formas, reducidas
     # al ancho de una página, saldrían en menos de dos puntos. El hueco no baja
     # de 8 porque es también el que la leyenda deja entre cada color y su texto
-  , layered={"spacing": 8, "text_callable": None}
+    # La leyenda, con letra aún mayor: esta figura sale dos veces y media más
+    # ancha que las demás, así que se reduce otro tanto en la página
+  , layered={"spacing": 8, "text_callable": None, "font": LEGEND_FONT}
 )

@@ -34,6 +34,12 @@
   // "Figura 1. Caption" / "Tabla 1. Caption", not Typst's default "Figura 1: …"
   set figure.caption(separator: [. ])
 
+  // "*Figura 1.* Pie de la figura": el rótulo y su número en negrita, y en
+  // cursiva el texto del pie.
+  show figure.caption: it => [
+    #strong[#it.supplement #context it.counter.display(it.numbering)#it.separator]#emph(it.body)
+  ]
+
   // Table captions go above the table and left-aligned (figure captions stay
   // at their default bottom/centered). Covers both native Typst tables and
   // Quarto-rendered tables (kind: "quarto-float-tbl").
