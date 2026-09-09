@@ -9,8 +9,19 @@
     number-align: bottom + right,
   )[
     #index-heading[Índice de figuras]
-    #show outline.entry: set block(spacing: styles.outline-entry-spacing)
     #set outline.entry(fill: styles.outline-fill)
+
+    // El bloque envolvente aporta el espaciado entre entradas
+    #show outline.entry: it => block(
+      spacing: styles.outline-entry-spacing,
+      link(
+        it.element.location(),
+        it.indented(
+          it.prefix(),
+          emph(it.body()) + [ ] + box(width: 1fr, it.fill) + [ ] + it.page(),
+        ),
+      ),
+    )
     #outline(
       title: none,
       target: figure.where(kind: image).or(figure.where(kind: "quarto-float-fig")),

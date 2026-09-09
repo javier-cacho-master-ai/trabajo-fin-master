@@ -113,6 +113,10 @@ FONT = ImageFont.truetype(FONT_PATH, FONT_SIZE)
 # reducidos, se lean como los rótulos de las otras figuras.
 GRAPH_FONT_SIZE = 18 
 
+# La vista `layered` se lee por su leyenda, y con el cuerpo común esta sale
+# ilegible en cuanto se reduce la figura: la vista entera lleva la letra mayor.
+LEGEND_FONT = ImageFont.truetype(FONT_PATH, 26)
+
 # Recuadro con el que la vista `graph` rotula cada capa: en gris y sin relleno,
 # para que se vean las conexiones que lo cruzan
 GROUP_STYLE = {
@@ -269,11 +273,12 @@ VIEW_OPTIONS = {
         # las barras
       , "draw_funnel": False
         # El hueco entre capas, que es también el que la leyenda deja entre
-        # cada color y su texto, y el que separa un rótulo del siguiente
-      , "spacing":     30
+        # cada color y su texto, y el que separa un rótulo del siguiente: no
+        # baja de 50 porque con la letra de `LEGEND_FONT` los rótulos se pisan
+      , "spacing":     50
       , "padding":     24
       , "text_callable": _shape_label
-      , "font":        FONT
+      , "font":        LEGEND_FONT
     }
 }
 
