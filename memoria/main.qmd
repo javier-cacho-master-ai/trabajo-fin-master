@@ -462,9 +462,9 @@ Al mismo tiempo, se observaron algunos datos dispersos y distantes de las region
 
 Una vez creado y filtrado el conjunto de datos, para analizar la calidad de los espectros, se usó la [SNR]{.acr} y el error relativo. 
 En primer lugar, para los espectros de Gaia, se calculó la [SNR]{.acr} a partir del flujo y de la incertidumbre proporcionada por la librería *GaiaXPy*. La mediana obtenida fue de 20.04, representando un error relativo del 5%. 
-Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a partir del flujo y la varianza inversa ($ivar$), siendo $\mathrm{ivar} = 1/\mathrm{var} = 1/\sigma^2$. A partir de estas variables, se definió el error como $\sigma = \sqrt{\mathrm{var}} = 1/\sqrt{\mathrm{ivar}}$. A partir de estas fórmulas se calculó $\mathrm{SNR} = \operatorname{median}\left(\frac{F}{\sigma}\right)$.
+Para [SDSS]{.acr}, la [SNR]{.acr} se calculó a partir del flujo y la varianza inversa ($1/\mathrm{V_F}$). A partir de estas variables, se definió el error como $\sigma = \sqrt{\mathrm{V_F}}$, calculándose la [SNR]{.acr} como $\mathrm{SNR} = \operatorname{median}\left(\frac{F}{\sigma}\right)$.
 
- Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde $ivar$ era cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
+ Para calcular la relación entre el flujo y el ruido, se descartaron los valores donde la varianza o la varianza inversa de [SDSS]{.acr} eran cero. De este cálculo, se obtuvo un error relativo del 2.9% y un [SNR]{.acr} de 34.76. 
 
 Observamos a continuación en la @fig-SNR-gaia-sdss la distribución del [SNR]{.acr} en los espectros de Gaia y [SDSS]{.acr}. 
 
@@ -563,18 +563,22 @@ Arquitectura del modelo denso
 :::
 
 La función de pérdida definida fue Huber [@huber1964robust], que combina el error cuadrático medio para errores pequeños, y el error absoluto medio para errores más grandes. La función matemática que la define es la siguiente:
-$$L_{\delta}(a)=
+
+$$
+L_{\delta}(a)=
 \begin{cases}
 \frac{1}{2}a^2, & \text{si } |a| \leq \delta \\
 \delta \left(|a|-\frac{1}{2}\delta\right), & \text{si } |a| > \delta
-\end{cases}$$
+\end{cases}
+$$
 
-Donde *a* representa el error entre el valor real y predicho, y $\delta$ define el valor frontera en el que la función deja de estar definida como el [MSE]{.acr} y pasa a ser más similar al [MAE]{.acr}. En este caso, se definió $\delta$ como 1.
+
+donde *a* representa el error entre el valor real y predicho, y $\delta$ define el valor frontera en el que la función deja de estar definida como el [MSE]{.acr} y pasa a ser más similar al [MAE]{.acr}. En este caso, se definió $\delta$ como 1.
 
 Este comportamiento permite rebajar la penalización en aquellos casos en los que los espectros tengan desviaciones anómalas que no deban definir el comportamiento del modelo. 
 Se consideró el optimizador Adam [@kingma2014adam] con una tasa de aprendizaje de 0.0001 y una limitación a 1 en la norma de los gradientes con el objetivo de evitar las actualizaciones excesivas.
 
-El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana <!--EarlyStopping--> que monitoreaba la pérdida del set de validación y detenía el entrenamiento si después de 5 épocas no había mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estancaba durante dos épocas. 
+El entrenamiento se realizó con lotes de 64 muestras y un máximo de 50 épocas. Para evitar un sobreentrenamiento del modelo, definimos una función de parada temprana que monitoreaba la pérdida del set de validación y detenía el entrenamiento si después de 5 épocas no había mejorado como mínimo un 0.0001. De la misma forma, añadimos una función de disminución de la tasa de aprendizaje cuando la variable controlada durante el entrenamiento se estancaba durante dos épocas. 
 
 #### Modelo convolucional
 
@@ -703,11 +707,16 @@ Selección de diferentes regiones representativas del diagrama [HR]{.acr .short}
 :::
 
 
-Se usó también el estadístico chi-cuadrado con la intención de evaluar el error entre el espectro real de [SDSS]{.acr} y el espectro predicho por los modelos. Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
+Se usó también el estadístico chi-cuadrado definido como:
+$$\chi^2 = \sum_{i=1}^{N} \frac{\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2}{\sigma_i^2} $$
+ 
+ con la intención de evaluar el error entre el espectro real de [SDSS]{.acr} y el espectro predicho por los modelos. Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
 
-Por último, se empleó la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, como por ejemplo la temperatura efectiva o la gravedad superficial. El objetivo fue comparar los datos obtenidos con las predicciones y el espectro real. De esta forma no se valoró solo la similitud de los espectros por sí mismos, sino que también se tuvo en cuenta si las predicciones se aproximaban a la información astrofísica que se obtenía del espectro de [SDSS]{.acr} original.
-Para hacerlo se ordenaron aleatoriamente los espectros predichos con los modelos, de esta permutación, se trataron de aproximar 250 espectros a sus datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentó generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro obtuvieron algún tipo de error que no permitiera generar *iSpec*, se saltaba al siguiente.
-Las estadísticas usadas en los siguientes apartados constaron de tres errores: el error relativo de *Teff* y *log(g)* y el error absoluto de M/H. Para los dos primeros casos, el error relativo permitía expresar la desviación respecto al valor real teniendo en cuenta la escala de la magnitud estudiada. En cambio, para M/H, se empleó el error absoluto debido a que si esta variable tomaba valores cercanos a cero, el error relativo exageraría diferencias pequeñas.
+
+
+Por último, se empleó la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, en concreto la temperatura efectiva, la gravedad superficial y la metalicidad. El objetivo fue comparar los datos obtenidos con las predicciones y el espectro real. De esta forma no se valoró solo la similitud de los espectros por sí mismos, sino que también se tuvo en cuenta si las predicciones se aproximaban a la información astrofísica que se obtenía del espectro de [SDSS]{.acr} original.
+Para hacerlo se ordenaron aleatoriamente los espectros predichos con los modelos, de esta permutación, se trataron de aproximar 250 espectros a sus datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentó generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro obtuviera algún tipo de error que no permitiera generar *iSpec*, se saltaba al siguiente.
+Las estadísticas usadas en los siguientes apartados constaron de tres errores: el error relativo de *Teff* y *log(g)* y el error absoluto de M/H. Para los dos primeros casos, el error relativo permitía expresar la desviación respecto al valor real teniendo en cuenta la escala de la magnitud estudiada. En cambio, para M/H, se empleó el error absoluto debido a que generalmente esta variable tomaba valores positivos, negativos y cercanos a cero.
 
 ### Resultados obtenidos con el modelo base
 
@@ -829,7 +838,7 @@ Enanas blancas. Espectros generados por el modelo de redes neuronales densas con
 Por un lado, en azul encontramos el espectro que el modelo pretendía predecir, los puntos de [SDSS]{.acr} una vez habían sido recortados. Por otro, en verde podemos ver la entrada que recibía el modelo, siendo esta el espectro calibrado de Gaia. Los puntos de Gaia fueron convertidos a la misma unidad de medida de flujo que [SDSS]{.acr} para poder representar ambos espectros en la misma gráfica, pero en los datos originales, se usaban escalas diferentes. 
 Finalmente, en naranja encontramos el espectro predicho por el modelo. 
 
-En los dos primeros espectros mostrados, correspondientes a los tipos [RR*]{.acr} y [QSO]{.acr}, el ajuste del espectro predicho no captaba gran parte de la morfología de estos flujos. En el de tipo [QSO]{.acr} no detectaba la línea de emisión que encontramos sobre los 6750Å. En cambio, si parecía adaptarse a la forma de los demás espectros.
+En los dos primeros espectros mostrados (@fig-dense-global-left), correspondientes a los tipos [RR*]{.acr} y [QSO]{.acr}, el ajuste del espectro predicho no captaba gran parte de la morfología de estos flujos. En el de tipo [QSO]{.acr} no detectaba la línea de emisión que encontramos sobre los 6750Å. En cambio, si parecía adaptarse a la forma de los demás espectros.
 Si bien es cierto, estas predicciones se ven afectadas por el alto nivel de detalle de [SDSS]{.acr} y la baja resolución inicial de Gaia. 
 
 Durante las comparaciones realizadas, siempre se usaron los mismos ocho objetos, identificados por el nombre celeste y los identificadores de Gaia y [SDSS]{.acr} que aparecen en los gráficos recientemente comentados.
@@ -937,7 +946,7 @@ Secuencia central, baja luminosidad y baja temperatura. Espectros generados por 
 Enanas blancas. Espectros generados por el modelo de redes neuronales densas con normalización basada en la mediana de cada espectro para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
-Comparándolas con las gráficas obtenidas con la primera normalización mencionada, pudimos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. Esta mejora destaca sobre todo en los dos primeros gráficos representados en la @fig-dense-median-left.
+Comparándolas con las gráficas obtenidas con la primera normalización mencionada, pudimos destacar una diferencia visual pequeña, pero positiva hacia este segundo tipo de normalización. Esta mejora destaca sobre todo en los dos primeros gráficos representados en la @fig-dense-median-left, donde a pesar de no captar las las líneas de emisión u absorción, la predicción se ajustó más a la forma general del espectro real de [SDSS]{.acr}.
 
 Por último, si nos fijamos en las @fig-dense-max-left, @fig-dense-max-central, @fig-dense-max-right y @fig-dense-max-wd, observamos los resultados obtenidos sobre los mismos objetos con una normalización espectro a espectro basada en el máximo valor del flujo. En estas, la fórmula utilizada para normalizar los espectros fue:
 $$ F_{\mathrm{norm},i} = \frac{F_i}{\mathrm{max}(|F_i|)} $$
@@ -1132,7 +1141,7 @@ Por otro lado, las métricas obtenidas sobre el conjunto de test se encuentran e
 Resultados obtenidos incluyendo la [SNR]{.acr .short} de la muestra de Gaia como entrada del modelo.
 :::
 
-Se puede apreciar como la incorporación de la [SNR]{.acr} como variable adicional de entrada no produjo una mejora significativa en el modelo. Los valores de pérdida, [MAE]{.acr} y [MSE]{.acr} fueron prácticamente los mismos que los obtenidos en pruebas anteriores y visualmente tampoco se apreció una mejora de la captación de tendencias del espectro. Por este motivo, se decidió no incluir esta variable en el modelo final.
+Se puede apreciar cómo la incorporación de la [SNR]{.acr} como variable adicional de entrada no produjo una mejora significativa en el modelo. Los valores de pérdida, [MAE]{.acr} y [MSE]{.acr} fueron prácticamente los mismos que los obtenidos en pruebas anteriores y visualmente tampoco se apreció una mejora de la captación de tendencias del espectro. Por este motivo, se decidió no incluir esta variable en el modelo final.
 
 ### Resultados obtenidos con los modelos convolucionales
 
@@ -1340,7 +1349,7 @@ Secuencia central, baja luminosidad y baja temperatura. Espectros generados por 
 Enanas blancas. Espectros generados por el modelo convolucional U-Net para las enanas blancas, objetos calientes y poco luminosos cuyo espectro es un continuo decreciente con muy pocos rasgos.
 :::
 
-A diferencia del modelo convolucional 1D, la U-Net no se limitó a una corrección suave del continuo: la predicción reconstruyó parte de la estructura espectral fina del espectro de [SDSS]{.acr}, incluidas líneas de absorción que no son visibles en la entrada de Gaia interpolada. Este salto cualitativo fue coherente con las mejoras introducidas: el campo receptivo global permitió corregir el continuo a todas las escalas, y la pérdida ponderada concentró la capacidad del modelo en los píxeles fiables del objetivo en lugar de en reproducir su ruido.
+A diferencia del modelo convolucional 1D, la U-Net no se limitó a una corrección suave del continuo: la predicción reconstruyó parte de la estructura espectral fina del espectro de [SDSS]{.acr}, incluidas líneas de absorción y emisión que no eran visibles en la entrada de Gaia interpolada. Este salto cualitativo fue coherente con las mejoras introducidas: el campo receptivo global permitió corregir el continuo a todas las escalas, y la pérdida ponderada concentró la capacidad del modelo en los píxeles fiables del objetivo en lugar de en reproducir su ruido.
 
 ### Resultados obtenidos con el modelo recurrente
 
@@ -1675,7 +1684,7 @@ Con *iSpec* se estimaron los parámetros astrofísicos de los cuerpos observados
 Para ello primero se transformó cada espectro en el formato requerido por *iSpec*, teniendo que añadir para cada punto el flujo, longitud de onda y error asociado. El análisis se realizó sin incertidumbre asignada a cada punto, con lo que se asignó un valor unitario de error a todos los puntos de modo que todos partiesen del mismo peso.
 Una vez teníamos la estructura requerida, normalizamos al continuo los espectros con la función propia de *iSpec*.
 
-Además, los puntos iniciales de comprobación de las variables *teff, logg y mh* se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto. 
+Además, los puntos iniciales de comprobación de las variables $T_{\mathrm{eff}}$, $\log g$ y $[\mathrm{M}/\mathrm{H}]$ se definieron a partir de las observaciones de Gaia para facilitar el entrenamiento y no partir siempre de unos valores por defecto. 
 
 En primer lugar, se realizó el ajuste con la malla de modelos atmosféricos *MARCS.GES* [@Gustafsson2008], pero se observaron advertencias de que los valores quedaban fuera del rango disponible, así que se usó *ATLAS9.Castelli* [@CastelliKurucz2003], que prácticamente eliminó el problema. Estas mallas atmosféricas incluyen modelos teóricos de atmósferas estelares, describiendo el comportamiento atmosférico de las estrellas bajo diferentes condiciones de temperatura, gravedad y metalicidad. Por otro lado, la lista de líneas atómicas usada fue *VALD* [@Piskunov1995], cuyo contenido identifica las líneas espectrales con los elementos a los que pertenecen e incluye parámetros necesarios para la síntesis espectral. 
 Se usaron las abundancias solares de Grevesse [@Grevesse2007] como referencia de la metalicidad y la información isotópica de *SPECTRUM* [@GrayCorbally1994].
@@ -1704,6 +1713,18 @@ Se analizaron muestras aleatorias de 250 espectros para cada modelo las diferenc
 
 Resultados obtenidos con *iSpec* en los modelos comentados en apartados anteriores.
 :::
+
+Las fórmulas utilizadas para el cálculo de los errores relativos fueron las siguientes:
+
+$$
+\mathrm{Error\ relativo}\,(T_{\mathrm{eff}}) = \frac{|T_{\mathrm{eff,pred}} - T_{\mathrm{eff,real}}|} {|T_{\mathrm{eff,real}}|} \cdot 100
+$$
+
+$$
+\mathrm{Error\ relativo}\,(\log(g)) =
+\frac{|\log(g)_{\mathrm{pred}} - \log(g)_{\mathrm{real}}|}
+{|\log(g)_{\mathrm{real}}|} \cdot 100
+$$
 
 Los resultados obtenidos a partir de los dos datos anteriores muestran cómo la elección del modelo con mejor ajuste a los objetivos dependió del tipo de estadístico comprobado.
 En primer lugar, teniendo en cuenta las métricas de entrenamiento y test, la arquitectura basada en una red convolucional U-Net fue la que obtuvo mejores resultados. Al mismo tiempo, visualmente parecía captar más regiones de absorción y emisión que otros modelos no eran capaces de aproximar. Por otro lado, no consiguió ajustarse tanto a las pequeñas fluctuaciones locales como por ejemplo el modelo basado en una red neuronal densa con la normalización a través de la mediana. Este hecho podría deberse a que el modelo tenía en cuenta la incertidumbre de los puntos para aportar peso en su entrenamiento a aquellos que menos ruido presentasen.
@@ -1830,7 +1851,8 @@ Otra opción consistiría en entrenar modelos especializados para distintos tipo
 Una línea de trabajo futura adicional estaría relacionada con el proceso de normalización llevado a cabo para entrenar los espectros. En este estudio, se usaron datos del espectro real de [SDSS]{.acr} para normalizar los datos de entrenamiento del modelo y para deshacer la normalización en el espectro predicho. 
 En un entorno de aplicación real del modelo, el espectro de [SDSS]{.acr} no estaría disponible, ya que el espectro de mejor calidad es el objetivo a aproximar. Una posible alternativa consistiría en usar los datos del espectro de Gaia para normalizar el espectro de [SDSS]{.acr}. En ese caso, sería necesario volver a entrenar y comparar las arquitecturas y sus resultados.
 
-Por otro lado, también existiría la opción de considerar nuevas estadísticas para valorar la calidad de los modelos. Por ejemplo, podría desarrollarse una evaluación centrada en aquellas regiones del espectro que presentan más interés astrofísico, como intervalos de absorción o emisión asociados a elementos concretos. 
+Por otro lado, también existiría la opción de considerar nuevas estadísticas para valorar la calidad de los modelos. Por ejemplo, podría desarrollarse una evaluación centrada en aquellas regiones del espectro que presentan más interés astrofísico, como intervalos de absorción o emisión asociados a elementos concretos.
+Además, podría añadirse una paso más a la comparación realizada con *iSpec*: se podrían usar también los espectros de Gaia para sacar estimaciones de sus parámetros astrofísicos y comparar los valores obtenidos con los datos estimados con espectros de[SDSS]{.acr} reales y los predichos. Incluyendo también más datos acerca de las diferencias relativas y absolutas de cada variable estudiada.
 
 Durante el trabajo se consideró la posibilidad de incluir la [SNR]{.acr} como uno de los parámetros de entrada del modelo. Si bien es cierto, este hecho no produjo mejoras significativas en los resultados obtenidos, pero es una opción a tener en cuenta como posible línea de exploración. En el modelo convolucional U-Net, se tuvo en cuenta la varianza inversa como peso para ponderar la función de pérdida. Expandiendo este camino se podría valorar la fiabilidad de cada punto de los espectros observados por Gaia y [SDSS]{.acr}, aplicándolo sobre otros modelos permitiría valorar de forma más precisa el error cometido por cada uno. 
 
