@@ -25,6 +25,8 @@ from IPython.display import Image, display
 from keras.layers import InputLayer
 from matplotlib import font_manager
 from PIL import ImageFont
+from unittest.mock import patch
+from visualkeras.graph import _DummyLayer
 
 from services.paths import MODELS_DIR
 
@@ -117,10 +119,12 @@ GRAPH_FONT_SIZE = 18
 # ilegible en cuanto se reduce la figura: la vista entera lleva la letra mayor.
 LEGEND_FONT = ImageFont.truetype(FONT_PATH, 26)
 
+TRANSPARENT = (255, 255, 255, 0)
+
 # Recuadro con el que la vista `graph` rotula cada capa: en gris y sin relleno,
 # para que se vean las conexiones que lo cruzan
 GROUP_STYLE = {
-    "fill":         (255, 255, 255, 0)
+    "fill":         TRANSPARENT
   , "outline":      "#c3ccd6"
   , "padding":      12
   , "text_spacing": 10
@@ -128,6 +132,19 @@ GROUP_STYLE = {
   , "font_size":    GRAPH_FONT_SIZE
   , "font_color":   "black"
 }
+
+
+def tensor_shape(tensor):
+    """
+    Forma de un tensor, sin el eje del lote y ya escrita.
+
+    Parameters:
+        tensor (keras.KerasTensor): Tensor simbólico de un modelo cargado.
+
+    Returns:
+        str: Las dimensiones separadas por aspas ('2666 × 64').
+    """
+    return " × ".join(map(str, tensor.shape[1:]))
 
 
 def layer_shape(layer):
@@ -140,7 +157,7 @@ def layer_shape(layer):
     Returns:
         str: Las dimensiones separadas por aspas ('2666 × 64').
     """
-    return " × ".join(map(str, layer.output.shape[1:]))
+    return tensor_shape(layer.output)
 
 
 def layer_signature(model):
@@ -169,15 +186,37 @@ def layer_name(layer):
     return LAYER_NAMES.get(type(layer).__name__, type(layer).__name__)
 
 
-def _layer_label(layer):
+def _caption_lines(name, shape, split):
     """
-    Rótulo de una capa: su nombre y su forma de salida, en una sola línea.
+    Líneas del pie de una columna de la vista `graph`: su nombre y su forma.
 
-    En una y no en dos porque visualkeras mide el rótulo entero como si fuese
-    una línea: partido, lo mide más ancho de lo que es y lo centra desplazado
-    a la izquierda de la capa que rotula.
+    Parameters:
+        name (str): Nombre de la capa, o de la salida.
+        shape (str): Forma de su tensor, ya escrita.
+        split (bool): Si el nombre y la forma van en dos líneas, una debajo de
+            la otra, o juntos en una.
+
+    Returns:
+        tuple: Las líneas del pie, de arriba abajo.
     """
-    return f"{layer_name(layer)} {layer_shape(layer)}"
+    lines = (name, shape)
+
+    return lines if split else (" ".join(lines),)
+
+
+class OutputTensor(_DummyLayer):
+    """
+    Tensor de salida de la vista `graph`, creado antes de dibujarla.
+
+    La vista añade tras la última capa un tensor por cada salida del modelo,
+    pero lo crea mientras dibuja, y un recuadro solo encuentra lo que se le da
+    de antemano: sin crearlo antes, la salida no se puede rotular. `draw_view`
+    le da a visualkeras los que encuentre en los recuadros en lugar de dejarle
+    crear los suyos, que no llevan otra cosa que el nombre.
+    """
+
+    def __init__(self):
+        super().__init__("salida")
 
 
 def _shape_label(index, layer):
@@ -200,25 +239,53 @@ def _shape_label(index, layer):
     return layer_shape(layer).replace(" × ", "\n× "), False
 
 
-def layer_groups(model):
+def layer_groups(model, font_size=GRAPH_FONT_SIZE, split=False, output=False):
     """
     Recuadros con los que la vista `graph` rotula las capas de un modelo.
 
     Es la única vista que no admite rótulos por capa, así que la clase y la
     forma de salida de cada una entran como el pie de un recuadro alrededor de
-    sus neuronas. Los tensores de entrada y de salida no llevan: los añade la
-    propia vista y no son capas del modelo.
+    sus neuronas. Los tensores de entrada y de salida los añade la propia vista
+    y no son capas del modelo, así que solo llevan pie si se pide: la salida,
+    con `output`, y la entrada nunca, salvo en los modelos funcionales, que sí
+    cuentan la suya entre las capas.
+
+    visualkeras mide cada pie como si fuese una sola línea: uno partido lo mide
+    más ancho de lo que es, lo centra desplazado a la izquierda y no le deja
+    sitio en el lienzo a la segunda línea. Así que cada línea va en un recuadro
+    propio alrededor de las mismas neuronas, cada una una línea más abajo que
+    la anterior, y el borde lo dibuja solo el de la primera: repasado por los
+    demás saldría más oscuro.
 
     Parameters:
         model (keras.Model): Modelo entrenado, recién cargado de su '.keras'.
+        font_size (int): Cuerpo de la letra de los pies.
+        split (bool): Si el nombre y la forma van en dos líneas y no en una.
+            En dos, el pie es más estrecho y las columnas se pueden juntar, lo
+            que deja sitio para un cuerpo mayor.
+        output (bool): Si también se rotula el tensor de salida, con su forma.
 
     Returns:
-        list: Un recuadro por capa, como los espera el parámetro
+        list: Uno o dos recuadros por capa, como los espera el parámetro
             `layered_groups` de visualkeras.
     """
+    layers = [(layer, layer_name(layer), layer_shape(layer)) for layer in model.layers]
+    outputs = [(OutputTensor(), "Salida", tensor_shape(tensor)) for tensor in model.outputs]
+    columns = (*layers, *(outputs if output else ()))
+
+    ascent, descent = ImageFont.truetype(FONT_PATH, font_size).getmetrics()
+
     return [
-        {"layers": [layer], "name": _layer_label(layer), **GROUP_STYLE}
-        for layer in model.layers
+        {
+            **GROUP_STYLE
+          , "layers":       [node]
+          , "name":         line
+          , "font_size":    font_size
+          , "text_spacing": GROUP_STYLE["text_spacing"] + index * (ascent + descent)
+          , "outline":      GROUP_STYLE["outline"] if index == 0 else TRANSPARENT
+        }
+        for node, name, shape in columns
+        for index, line in enumerate(_caption_lines(name, shape, split))
     ]
 
 
@@ -257,8 +324,6 @@ VIEW_OPTIONS = {
         # columna más alta, así que el margen es también su hueco
       , "padding":         60
       , "connector_width": 2
-      , "legend": True
-      , "font" : LEGEND_FONT
     }
     # La pila de capas de la entrada a la salida, cada una como una barra cuya
     # altura sigue al tamaño de su tensor. Es la vista que cuenta cuántas capas
@@ -350,13 +415,25 @@ def draw_view(model, model_name, view, **overrides):
     path = diagram_path(model_name, view)
     render = getattr(visualkeras, f"{view}_view")
     extras = VIEW_EXTRAS.get(view, lambda model: {})(model)
+    options = {**VIEW_OPTIONS[view], **extras, **overrides}
 
-    render(
-        model
-      , to_file=str(path)
-      , color_map=color_map(model)
-      , **{**VIEW_OPTIONS[view], **extras, **overrides}
-    )
+    # Los tensores de salida ya rotulados, sin repetir —el pie partido en dos
+    # líneas pone el mismo en dos recuadros— y en el orden de las salidas
+    tensors = iter(dict.fromkeys(
+        node
+        for group in options.get("layered_groups", ())
+        for node in group["layers"]
+        if isinstance(node, OutputTensor)
+    ))
+
+    # La vista `graph` crea sus tensores de salida llamando a `_DummyLayer`:
+    # mientras dibuja, esa llamada devuelve los rotulados, y los que falten los
+    # sigue creando ella
+    with patch(
+        "visualkeras.graph._DummyLayer"
+      , lambda *args: next(tensors, None) or _DummyLayer(*args)
+    ):
+        render(model, to_file=str(path), color_map=color_map(model), **options)
 
     return path
 
