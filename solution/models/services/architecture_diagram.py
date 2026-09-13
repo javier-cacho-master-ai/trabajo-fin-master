@@ -257,6 +257,8 @@ VIEW_OPTIONS = {
         # columna más alta, así que el margen es también su hueco
       , "padding":         60
       , "connector_width": 2
+      , "legend": True
+      , "font" : LEGEND_FONT
     }
     # La pila de capas de la entrada a la salida, cada una como una barra cuya
     # altura sigue al tamaño de su tensor. Es la vista que cuenta cuántas capas
