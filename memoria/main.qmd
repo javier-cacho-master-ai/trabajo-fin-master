@@ -529,7 +529,6 @@ Ejemplo 1 de espectro observado por Gaia y [SDSS]{.acr .short} con bandas de err
 Ejemplo 2 de espectro observado por Gaia y [SDSS]{.acr .short} con bandas de error
 :::
 
-En estos se observó cómo la banda de error de Gaia tendía a ser más ancha y constante, mientras que [SDSS]{.acr} presentaba picos donde la imprecisión era destacable.
 
 ### Entrenamiento del modelo
 
@@ -713,12 +712,12 @@ Selección de diferentes regiones representativas del diagrama [HR]{.acr .short}
 Se usó también el estadístico $\chi^2$ definido como:
 $$\chi^2 = \sum_{i=1}^{N} \frac{\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2}{\sigma_i^2} $$
  
- con la intención de evaluar el error entre el espectro real de [SDSS]{.acr} y el espectro predicho por los modelos. Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
+ con la intención de evaluar el error entre el espectro real ($f_{\mathrm{real}$) de [SDSS]{.acr} y el espectro predicho ($f_{\mathrm{pred}$) por los modelos (se pondera por la incertidumbre asociada a cada valor del flujo, $\sigma_i$). Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
 
 
 
 Por último, se empleó la librería *ISpec* [@blancocuaresma2014ispec] para estimar parámetros físicos de los objetos observados, en concreto la temperatura efectiva, la gravedad superficial y la metalicidad. El objetivo fue comparar los datos obtenidos con las predicciones y el espectro real. De esta forma no se valoró solo la similitud de los espectros por sí mismos, sino que también se tuvo en cuenta si las predicciones se aproximaban a la información astrofísica que se obtenía del espectro de [SDSS]{.acr} original.
-Para hacerlo se ordenaron aleatoriamente los espectros predichos con los modelos, de esta permutación, se trataron de aproximar 250 espectros a sus datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentó generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro obtuviera algún tipo de error que no permitiera generar *iSpec*, se saltaba al siguiente.
+Para hacerlo se ordenaron aleatoriamente los espectros predichos con los modelos, de esta permutación, se trataron de aproximar 250 espectros a sus datos astrofísicos a partir de *iSpec*. Para tratar de coger siempre los mismos espectros, se intentó generar las aproximaciones siguiendo el orden de la lista permutada. En caso de que un espectro produjera algún error que impidiera realizar el ajuste con *iSpec*, se descartaba y se pasaba al siguiente.
 Las estadísticas usadas en los siguientes apartados constaron de tres errores: el error relativo de *Teff* y *log(g)* y el error absoluto de M/H. Para los dos primeros casos, el error relativo permitía expresar la desviación respecto al valor real teniendo en cuenta la escala de la magnitud estudiada. En cambio, para M/H, se empleó el error absoluto debido a que generalmente esta variable tomaba valores positivos, negativos y cercanos a cero.
 
 ### Resultados obtenidos con el modelo base
@@ -733,7 +732,7 @@ La primera opción de normalización evaluada fue la normalización estándard. 
 
 $$ F_{\mathrm{norm}} = \frac{F-\mu}{\sigma} $$
 
-Que nos permitió desnormalizar los espectros siguiendo el proceso inverso:
+que nos permitió desnormalizar los espectros siguiendo el proceso inverso:
 
 $$ F_{\mathrm{pred}} = F_{\mathrm{pred,norm}}\sigma+\mu $$
 
@@ -1900,7 +1899,7 @@ A partir de los datos iniciales, mallas e información base mencionada, se ajust
 
 Para comprobar el funcionamiento del modelo de redes neuronales, se tomaron los resultados del espectro real de [SDSS]{.acr} como los verdaderos, y se compararon los predichos con estos, calculando las diferencias entre los datos obtenidos, sus errores absolutos y relativos. 
 
-Se analizaron muestras aleatorias de 250 espectros para cada modelo las diferencias entre los valores estimados a partir de los espectros de [SDSS]{.acr} reales y los predichos por los modelos fueron los incluidos en la @tbl-iSpec:
+Se ordenaron aleatoriamente los espectros y se seleccionaron los 250 primeros que no generaron errores durante el ajuste con iSpec. A partir de estos, se estimaron los parámetros estelares usando *iSpec* tanto para el espectro original de [SDSS]{.acr} como para el generado por cada uno de los modelos entrenados. En la @tbl-iSpec se observan las diferencias entre los valores obtenidos.
 
 ::: {#tbl-iSpec tbl-colwidths="false"}
 
@@ -1934,7 +1933,7 @@ $$
 $$
 
 Los resultados obtenidos a partir de los dos datos anteriores muestran cómo la elección del modelo con mejor ajuste a los objetivos dependió del tipo de estadístico comprobado.
-En primer lugar, teniendo en cuenta las métricas de entrenamiento y test, la arquitectura basada en una red convolucional U-Net fue la que obtuvo mejores resultados. Al mismo tiempo, visualmente parecía captar más regiones de absorción y emisión que otros modelos no eran capaces de aproximar. Por otro lado, no consiguió ajustarse tanto a las pequeñas fluctuaciones locales como por ejemplo el modelo basado en una red neuronal densa con la normalización a través de la mediana. Este hecho podría deberse a que el modelo tenía en cuenta la incertidumbre de los puntos para aportar peso en su entrenamiento a aquellos que menos ruido presentasen.
+En primer lugar, teniendo en cuenta las métricas de entrenamiento y test, la arquitectura basada en una red convolucional U-Net fue la que obtuvo mejores resultados. Al mismo tiempo, visualmente parecía captar más regiones de absorción y emisión que otros modelos no eran capaces de aproximar. Por otro lado, no consiguió ajustarse tanto a las pequeñas fluctuaciones locales como, por ejemplo, el modelo basado en una red neuronal densa con la normalización a través de la mediana. Este hecho podría deberse a que el modelo tenía en cuenta la incertidumbre de los puntos para aportar peso en su entrenamiento a aquellos que menos ruido presentasen.
 
 No obstante, al evaluar mediante *iSpec* las aproximaciones de características astrofísicas, se observó que todos los modelos presentaban un comportamiento similar. A partir de esta herramienta no se pudo destacar un único modelo de forma clara con mejor rendimiento que los demás. Aún así, si se obervó que las predicciones producían parámetros astrofísicos muy próximos a los obtenidos mediante los espectros reales, indicando que las diferencias entre métricas de entrenamiento y visuales, no se reflejaban de forma llamativa en los parámetros estimados con esta librería. 
 En todo caso, al comparar los datos de los modelos destacables de este estudio se observó como el modelo basado en redes neuronales densas y normalización con la mediana parecía obtener estadísticas ligeramente mejores, siendo el que menores diferencias presenta en cuanto a la temperatura y un 0.01% for detrás del mejor valor obtenido sobre la gravedad superficial. 
