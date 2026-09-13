@@ -25,7 +25,7 @@ SOLUTION_DIR = next(
 
 sys.path.insert(0, str(SOLUTION_DIR / "models"))
 
-from services.architecture_diagram import DIAGRAMS_DIR, draw_diagrams
+from services.architecture_diagram import DIAGRAMS_DIR, draw_diagrams, layer_groups
 from services.paths import model_paths
 
 MODEL_PATHS = {
@@ -112,10 +112,20 @@ draw_diagrams(models["birnn"], "birnn")
 # Es el único de los tres modelos que Keras guarda como red funcional y no como pila de capas. En la vista `graph`, el pie de la `AttentionPooling` recoge lo que hace con la secuencia: recibe los 201 estados de 128 números de la segunda capa bidireccional y devuelve un único vector de 128, que es donde la secuencia se colapsa en el resumen.
 
 # %%
-# Los pies de las dos capas bidireccionales miden 288 píxeles, mucho más de lo
-# que ocupa la columna que rotulan, así que esta figura separa sus columnas más
-# que las comunes: con el hueco común, cada pie se solapa con el siguiente
+# Con los pies comunes, en una línea, la figura sale tan apaisada que reducida
+# al ancho de la página no se leen. Aquí van al doble de cuerpo y partidos en
+# dos líneas, el nombre de la capa sobre su forma: el más ancho, 'Bidireccional',
+# mide 187 píxeles, y con un hueco de 180 entre columnas ninguno se solapa con
+# el siguiente. El margen sube a 100 porque visualkeras se queda corto al medir
+# el lienzo para la segunda línea de los pies de las columnas más altas, y sin
+# él la corta.
 draw_diagrams(
     models["birnn-attention"], "birnn-attention"
-  , graph={"layer_spacing": 150}
+  , graph={
+        "layer_spacing":  180
+      , "padding":        100
+      , "layered_groups": layer_groups(
+            models["birnn-attention"], font_size=36, split=True, output=True
+        )
+    }
 )
