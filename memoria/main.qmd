@@ -511,6 +511,8 @@ A partir de los 9000 Å la mediana fue más inestable y la banda de los percenti
 
 Sobreponiendo el espectro del mismo objeto observado por Gaia y [SDSS]{.acr} con su respectiva banda +-error, obtuvimos los gráficos observados en la @fig-error-margin-1\-@fig-error-margin-2. 
 
+En estos se observó cómo la banda de error de Gaia tendía a ser más ancha y constante, mientras que [SDSS]{.acr} presentaba picos donde la imprecisión era destacable.
+
 :::{#fig-error-margin-1}
 
 ![](_partials/assets/error_margin_1.png)
@@ -710,9 +712,9 @@ Selección de diferentes regiones representativas del diagrama [HR]{.acr .short}
 
 
 Se usó también el estadístico $\chi^2$ definido como:
-$$\chi^2 = \sum_{i=1}^{N} \frac{\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2}{\sigma_i^2} $$
+$$\chi^2 = \sum_{i=1}^{N} \frac{\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2}{\sigma_i^2} $$ {#eq-chi2}
  
- con la intención de evaluar el error entre el espectro real ($f_{\mathrm{real}$) de [SDSS]{.acr} y el espectro predicho ($f_{\mathrm{pred}$) por los modelos (se pondera por la incertidumbre asociada a cada valor del flujo, $\sigma_i$). Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
+ con la intención de evaluar el error entre el espectro real ($f_{\mathrm{real}}$) de [SDSS]{.acr} y el espectro predicho ($f_{\mathrm{pred}}$) por los modelos (se pondera por la incertidumbre asociada a cada valor del flujo, $\sigma_i$). Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
 
 
 
@@ -1945,15 +1947,9 @@ El modelo con una capa [GRU]{.acr} fue destacable como el más equilibrado entre
 Aún así estos valores indicaron una relación de similitud entre las propiedades físicas de ambos espectros, por lo que se pudo afirmar que los modelos estudiados conllevaban una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con *iSpec* en rangos de error pequeños. 
 
 
-El siguiente estadístico analizado fue $\chi^2$. La definición utilizada se basó en la diferencia entre el flujo real y el flujo predicho ponderada con la varianza inversa. Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado. 
+El siguiente estadístico analizado fue $\chi^2$, calculado según la @eq-chi2 a partir de la diferencia entre el flujo real y el flujo predicho ponderada con la varianza inversa. Al considerar esta definición, los puntos espectrales con una incertidumbre menor tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado.
 
-
-La fórmula de $\chi^2$ se define como :
-
-$$ \chi^2 = \sum_{i=1}^{N} \frac{\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2}{\sigma_i^2} = \sum_{i=1}^{N}\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2 \mathrm{ivar}_i $$
-
-
-donde $f_{\mathrm{real},i}$ y $f_{\mathrm{pred},i}$ representan, respectivamente, el flujo real y predicho en el punto espectral $i$, respectivamente, mientras que $\mathrm{ivar}_i$ es la varianza inversa sacada de los datos de [SDSS]{.acr}. Esta ponderación permite tener en cuenta la incertidumbre de cada punto espectral en lugar de suponer que todos tienen la misma precisión.
+En dicha ecuación, $f_{\mathrm{real},i}$ y $f_{\mathrm{pred},i}$ representan, respectivamente, el flujo real y predicho en el punto espectral $i$, mientras que la varianza $\sigma_i^2 = 1/\mathrm{ivar}_i$ se obtuvo a partir de la varianza inversa ($\mathrm{ivar}_i$) proporcionada en los datos de [SDSS]{.acr}. Esta ponderación permite tener en cuenta la incertidumbre de cada punto espectral en lugar de suponer que todos tienen la misma precisión.
 
 Por otro lado, como $\chi^2$ también depende del número de puntos de cada espectro, se consideró una versión normalizada dividida por la cantidad de puntos espectrales válidos (con varianza inversa no nula). La normalización facilita la comparación entre los distintos espectros, dado que valores próximos a la unidad indican que las diferencias entre ambos espectros son comparables con la incertidumbre de la muestra, mientras que valores mayores implican discrepancias superiores a las esperadas en los puntos espectrales. 
 Teniendo esto en cuenta, la fórmula final fue:
