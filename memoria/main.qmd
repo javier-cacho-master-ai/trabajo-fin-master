@@ -1998,7 +1998,7 @@ Diagrama [HR]{.acr .short} del estadístico $\chi^2$ normalizado aplicado sobre 
 
 La distribución de los valores del estadístico $\chi^2$ a lo largo del diagrama [HR]{.acr} no mostró una concentración evidente de zonas con grandes fallos, por lo que el rendimiento del modelo pareció no depender del tipo de estrella.
 
-Cabe destacar que en el gráfico se observaron algunas estrellas puntuales con un valor de $\chi^2$ muy superior al resto. Sin embargo, estas no parecieron seguir una distribución discreta, sino que se encontraron dispersas a lo largo del diagrama.
+Cabe destacar que en el gráfico se observaron algunas estrellas puntuales con un valor de $\chi^2$ muy superior al resto. Sin embargo, estas no parecieron seguir una distribución concreta, sino que se encontraron dispersas a lo largo del diagrama.
 
 Las mismas conclusiones se extrajeron al analizar la distribución del $\chi^2$ sobre los datos generados con el modelo convolucional U-Net de la @fig-HR-CHI-UNET.
 
