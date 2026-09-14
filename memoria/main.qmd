@@ -712,9 +712,9 @@ Selección de diferentes regiones representativas del diagrama [HR]{.acr .short}
 
 
 Se usó también el estadístico $\chi^2$ definido como:
-$$\chi^2 = \sum_{i=1}^{N} \frac{\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2}{\sigma_i^2} $$
+$$\chi^2 = \sum_{i=1}^{N} \frac{\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2}{\sigma_i^2} $$ {#eq-chi2}
  
- con la intención de evaluar el error entre el espectro real ($f_{\mathrm{real}$) de [SDSS]{.acr} y el espectro predicho ($f_{\mathrm{pred}$) por los modelos (se pondera por la incertidumbre asociada a cada valor del flujo, $\sigma_i$). Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
+ con la intención de evaluar el error entre el espectro real ($f_{\mathrm{real}}$) de [SDSS]{.acr} y el espectro predicho ($f_{\mathrm{pred}}$) por los modelos (se pondera por la incertidumbre asociada a cada valor del flujo, $\sigma_i$). Este estadístico nos permitió cuantificar cuanto se desvían los espectros teniendo en cuenta la incertidumbre asociada a cada punto.
 
 
 
@@ -1947,15 +1947,9 @@ El modelo con una capa [GRU]{.acr} fue destacable como el más equilibrado entre
 Aún así estos valores indicaron una relación de similitud entre las propiedades físicas de ambos espectros, por lo que se pudo afirmar que los modelos estudiados conllevaban una alta capacidad para predecir los espectros de [SDSS]{.acr} manteniendo las características astrofísicas predichas con *iSpec* en rangos de error pequeños. 
 
 
-El siguiente estadístico analizado fue $\chi^2$. La definición utilizada se basó en la diferencia entre el flujo real y el flujo predicho ponderada con la varianza inversa. Al considerar esta definición, los puntos espectrales con una incertidumbre menor, tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado. 
+El siguiente estadístico analizado fue $\chi^2$, calculado según la @eq-chi2 a partir de la diferencia entre el flujo real y el flujo predicho ponderada con la varianza inversa. Al considerar esta definición, los puntos espectrales con una incertidumbre menor tienen más peso en el cálculo, mientras que los puntos con mayor rango de error contribuyen en menor medida al resultado.
 
-
-La fórmula de $\chi^2$ se define como :
-
-$$ \chi^2 = \sum_{i=1}^{N} \frac{\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2}{\sigma_i^2} = \sum_{i=1}^{N}\left(f_{\mathrm{real},i}-f_{\mathrm{pred},i}\right)^2 \mathrm{ivar}_i $$
-
-
-donde $f_{\mathrm{real},i}$ y $f_{\mathrm{pred},i}$ representan, respectivamente, el flujo real y predicho en el punto espectral $i$, respectivamente, mientras que $\mathrm{ivar}_i$ es la varianza inversa sacada de los datos de [SDSS]{.acr}. Esta ponderación permite tener en cuenta la incertidumbre de cada punto espectral en lugar de suponer que todos tienen la misma precisión.
+En dicha ecuación, $f_{\mathrm{real},i}$ y $f_{\mathrm{pred},i}$ representan, respectivamente, el flujo real y predicho en el punto espectral $i$, mientras que la varianza $\sigma_i^2 = 1/\mathrm{ivar}_i$ se obtuvo a partir de la varianza inversa ($\mathrm{ivar}_i$) proporcionada en los datos de [SDSS]{.acr}. Esta ponderación permite tener en cuenta la incertidumbre de cada punto espectral en lugar de suponer que todos tienen la misma precisión.
 
 Por otro lado, como $\chi^2$ también depende del número de puntos de cada espectro, se consideró una versión normalizada dividida por la cantidad de puntos espectrales válidos (con varianza inversa no nula). La normalización facilita la comparación entre los distintos espectros, dado que valores próximos a la unidad indican que las diferencias entre ambos espectros son comparables con la incertidumbre de la muestra, mientras que valores mayores implican discrepancias superiores a las esperadas en los puntos espectrales. 
 Teniendo esto en cuenta, la fórmula final fue:
@@ -1986,14 +1980,11 @@ $\chi^2$ normalizado aplicado sobre los conjuntos de test predichos por los dive
 
 Igual que en el caso anterior, el modelo basado en una red neuronal densa con la normalización aplicada con la mediana por espectro fue el que mejores resultados obtuvo. Ni los modelos convolucionales ni los recurrentes mejoraron sus mediana. 
 Al comparar el mínimo y máximo $\chi^2$, destacamos que aunque la red densa obtuviese la mejor mediana, la red convolucional U-Net obtuvo el rango de valores más desplazado hacia el cero. 
-Al comparar el mínimo y máximo $\chi^2$, destacamos que aunque la red densa obtuviese la mejor mediana, la red convolucional U-Net obtuvo el rango de valores más desplazado hacia el cero. 
 
 Por otro lado, el modelo denso normalizado con el máximo de cada espectro fue el menos estable, tal y como se apreció en la diferencia entre el mínimo y máximo, dos órdenes de magnitud por encima de la del resto de modelos. Presentó una mediana aproximadamente 4 veces superior al modelo con mejores resultados, confirmando que era el que peor comportamiento presentaba de entre los modelos seleccionados en este estudio. Además, el valor máximo tan elevado indicó la presencia de predicciones con discrepancias mucho mayores a las del resto de arquitecturas.
 
 Entre las arquitecturas convolucionales, la U-Net redujo prácticamente a la mitad la mediana del modelo convolucional 1D (de 3.96 a 1.82), en la misma línea que la mejora que ya mostraban el [MAE]{.acr} y el [MSE]{.acr} sobre el conjunto de test. Este resultado puede deberse a que el $\chi^2$ pondera cada punto espectral con su varianza inversa, de modo que penaliza especialmente la corrección suave que esta redes aplican sobre el espectro de Gaia interpolado, que no llegaron a reproducir las estructuras finas del espectro de [SDSS]{.acr}.
-Entre las arquitecturas convolucionales, la U-Net redujo prácticamente a la mitad la mediana del modelo convolucional 1D (de 3.96 a 1.82), en la misma línea que la mejora que ya mostraban el [MAE]{.acr} y el [MSE]{.acr} sobre el conjunto de test. Este resultado puede deberse a que el $\chi^2$ pondera cada punto espectral con su varianza inversa, de modo que penaliza especialmente la corrección suave que esta redes aplican sobre el espectro de Gaia interpolado, que no llegaron a reproducir las estructuras finas del espectro de [SDSS]{.acr}.
 
-Si nos centramos en los resultados obtenidos por la red que mejores estadísticas presentó en cuanto a *iSpec* y el estadístico $\chi^2$, la red neuronal densa con la normalización por la mediana, observamos en la @fig-HR-CHI-dense que no destaca una categoría de estrellas donde el modelo presentara un mejor o peor ajuste.
 Si nos centramos en los resultados obtenidos por la red que mejores estadísticas presentó en cuanto a *iSpec* y el estadístico $\chi^2$, la red neuronal densa con la normalización por la mediana, observamos en la @fig-HR-CHI-dense que no destaca una categoría de estrellas donde el modelo presentara un mejor o peor ajuste.
 
 :::{#fig-HR-CHI-dense}
@@ -2003,10 +1994,8 @@ Si nos centramos en los resultados obtenidos por la red que mejores estadística
 *Fuente: Elaboración propia*
 
 Diagrama [HR]{.acr .short} del estadístico $\chi^2$ normalizado aplicado sobre la muestra de test en el modelo denso.
-Diagrama [HR]{.acr .short} del estadístico $\chi^2$ normalizado aplicado sobre la muestra de test en el modelo denso.
 :::
 
-La distribución de los valores del estadístico $\chi^2$ a lo largo del diagrama [HR]{.acr} no mostró una concentración evidente de zonas con grandes fallos, por lo que el rendimiento del modelo pareció no depender del tipo de estrella.
 La distribución de los valores del estadístico $\chi^2$ a lo largo del diagrama [HR]{.acr} no mostró una concentración evidente de zonas con grandes fallos, por lo que el rendimiento del modelo pareció no depender del tipo de estrella.
 
 Cabe destacar que en el gráfico se observaron algunas estrellas puntuales con un valor de $\chi^2$ muy superior al resto. Sin embargo, estas no parecieron seguir una distribución discreta, sino que se encontraron dispersas a lo largo del diagrama.
