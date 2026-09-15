@@ -4,7 +4,7 @@ author    : "Carla Sequero, J. Javier Cacho"
 director  : "Dr. Guillermo Torralba Elipe"
 degree    : "Máster Universitario en Inteligencia Artificial"
 work_type : "Proyecto Piloto"
-date      : 2026-09-09
+date      : 2026-09-15
 keywords  : [inteligencia artificial generativa, aprendizaje automático, espectro azul, espectro rojo, Gaia, astronomía]
 keywords_en : [generative ai, machine learning, blue spectrum, red spectrum, gaia, astronomy]
 ---
