@@ -7,6 +7,11 @@
 #import "_partials/acronyms.typ": acr, get-acronyms-index
 #import "_partials/group-work.typ": get-group-work
 #import "_partials/body.typ": get-body
+#import "@preview/smartaref:0.1.0"
+
+// Figure ranges: `#Cref[@fig-a @fig-b]` renders "Figuras 5.16 - 5.23", with
+// the supplement pluralized from the figures' own "Figura".
+#let Cref = smartaref.Cref.with(join-func: refs => refs.join(" - "))
 
 #let unir_master-ia_tfe_template(
   lang: none,
