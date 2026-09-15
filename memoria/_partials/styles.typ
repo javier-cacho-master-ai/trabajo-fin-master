@@ -13,7 +13,7 @@
       ),
       // header-ascent: 0.6cm,
     ),
-    text-config: (size: 12pt, font: "Calibri"),
+    text-config: (size: 12pt, font: "Calibri", hyphenate: false),
     heading-config: (numbering: "1.1."),
     heading-rules-setup: it => {
       if (
