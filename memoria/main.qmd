@@ -775,7 +775,7 @@ Evolución del MAE durante el entrenamiento
 ::: {#tbl-met-dense-glob}
 
 | Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Entrenamiento | 0.0083 | 0.0736 | 0.0183 |
 | Validación | 0.0092 | 0.0759 | 0.0206 |
 | Test | 0.0100 | 0.0778 | 0.0217 |
@@ -883,7 +883,7 @@ No se apreciaron rasgos de sobreajuste en las métricas del modelo que encontram
 ::: {#tbl-met-dense-median}
 
 | Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Entrenamiento | 0.0033 | 0.0429 | 0.0089 |
 | Validación | 0.0034 | 0.0433 | 0.0113 |
 | Test | 0.0033 | 0.0436 | 0.0084 |
@@ -1012,7 +1012,7 @@ En la @tbl-met-dense-max se encuentran las métricas obtenidas con esta arquitec
 ::: {#tbl-met-dense-max}
 
 | Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Entrenamiento | 0.0040 | 0.0597 | 0.0081 |
 | Validación | 0.0044 | 0.0628 | 0.0088 |
 | Test | 0.0045 | 0.0610 | 0.0089 |
@@ -1282,7 +1282,7 @@ Una vez finalizado el entrenamiento, se evaluó el modelo sobre el conjunto de t
 ::: {#tbl-test-cnn}
 
 | Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Entrenamiento | 0.0060 | 0.0650 | 0.0140 |
 | Validación | 0.0059 | 0.0648 | 0.0160 |
 | Test | 0.0058 | 0.0645 | 0.0130 |
@@ -1405,7 +1405,7 @@ Las métricas de entrenamiento, validación y test de la mejor época se recogen
 ::: {#tbl-test-cnn-v2 tbl-colwidths="false"}
 
 | Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} | [MAE]{.acr} ponderado | [MSE]{.acr} ponderado |
-|---|---:|---:|---:|---:|---:|
+|---|---|---|---|---|---|
 | Entrenamiento | 0.0015 | 0.0414 | 0.0076 | 0.0341 | 0.0032 |
 | Validación | 0.0016 | 0.0427 | 0.0101 | 0.0352 | 0.0034 |
 | Test | 0.0017 | 0.0433 | 0.0071 | 0.0362 | 0.0034 |
@@ -1502,7 +1502,7 @@ La primera arquitectura destacable, estaba formada por una capa de [GRU]{.acr} y
 ::: {#tbl-GRU-metrics}
 
 | Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Entrenamiento | 0.0045 | 0.0484 | 0.0118 |
 | Validación | 0.0045 | 0.0482 | 0.0139 |
 | Test | 0.0044 | 0.0480 | 0.0110 |
@@ -1631,7 +1631,7 @@ Las métricas obtenidas tras las seis épocas de entrenamiento del modelo fueron
 ::: {#tbl-BIRNN-metrics}
 
 | Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Entrenamiento | 0.0045 | 0.0496 | 0.0120 |
 | Validación | 0.0045 | 0.0492 | 0.0140 |
 | Test | 0.0044 | 0.0500 | 0.0110 |
@@ -1759,7 +1759,7 @@ Esta adición tampoco representó grandes mejoras en las métricas del modelo, c
 ::: {#tbl-ATT-metrics}
 
 | Conjunto de datos | Pérdida | [MAE]{.acr} | [MSE]{.acr} |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Entrenamiento | 0.0046 | 0.0505 | 0.0122 |
 | Validación | 0.0047 | 0.0506 | 0.0143 |
 | Test | 0.0045 | 0.0503 | 0.0113 |
@@ -1906,7 +1906,7 @@ Se seleccionó un conjunto aleatorio de 250 espectros y se estimaron los paráme
 ::: {#tbl-iSpec tbl-colwidths="false"}
 
 | Modelo | Error relativo de Teff | Error relativo de log(g) | Error absoluto de M/H |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Densa global | 0.30% | 0.08% | 0.010dex |
 | Densa con mediana | 0.23% | 0.09% | 0.020dex |
 | Densa con máximo | 0.28% | 0.08% | 0.015dex |
@@ -1961,7 +1961,7 @@ A partir de esta expresión se obtuvieron los valores de la @tbl-chi-square:
 ::: {#tbl-chi-square}
 
 | Modelo | Mediana | Mínimo | Máximo |
-|---|---:|---:|---:|
+|---|---|---|---|
 | Densa con mediana | 1.52 | 0.53 | 137.00 |
 | [GRU]{.acr .short} | 1.69 | 0.51 | 195.58 |
 | Convolucional U-Net | 1.82 | 0.51 | 111.73 |
