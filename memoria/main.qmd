@@ -1024,7 +1024,7 @@ Resultados obtenidos con el modelo denso con la normalización espectro a espect
 
 Los valores obtenidos con esta normalización, fueron muy similares a los anteriores.
 
-A partir de las gráficas observadas en las figuras @fig-dense-max-left-1\-@fig-dense-max-wd-2, pareció que la opción con mejores resultados era la segunda, dado que era la que obtenía espectros más cercanos a los reales. Ahora bien, se comprobaron métricas para obtener resultados más concluyentes.
+A partir de las gráficas observadas en las @fig-dense-max-left-1\-@fig-dense-max-wd-2, pareció que la opción con mejores resultados era la segunda, dado que era la que obtenía espectros más cercanos a los reales. Ahora bien, se comprobaron métricas para obtener resultados más concluyentes.
 
 
 :::{#fig-dense-max-left-1}
@@ -1901,7 +1901,7 @@ A partir de los datos iniciales, mallas e información base mencionada, se ajust
 
 Para comprobar el funcionamiento del modelo de redes neuronales, se tomaron los resultados del espectro real de [SDSS]{.acr} como los verdaderos, y se compararon los predichos con estos, calculando las diferencias entre los datos obtenidos, sus errores absolutos y relativos. 
 
-Se ordenaron aleatoriamente los espectros y se seleccionaron los 250 primeros que no generaron errores durante el ajuste con iSpec. A partir de estos, se estimaron los parámetros estelares usando *iSpec* tanto para el espectro original de [SDSS]{.acr} como para el generado por cada uno de los modelos entrenados. En la @tbl-iSpec se observan las diferencias entre los valores obtenidos.
+Se seleccionó un conjunto aleatorio de 250 espectros y se estimaron los parámetros estelares mediante *iSpec* tanto para el espectro original de [SDSS]{.acr} como para el generado por cada uno de los modelos entrenados. En la @tbl-iSpec se observan las diferencias entre los valores obtenidos.
 
 ::: {#tbl-iSpec tbl-colwidths="false"}
 
